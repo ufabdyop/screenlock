@@ -16,29 +16,28 @@ class OverlayFrame( wx.Frame )  :
     
 #end OverlayFrame class
     
-class RunProgram (object):
+class RunProgram ():
     def __init__ (self):
         config = ConfigParser.ConfigParser()
         config.readfp(open(r'config.ini'))
         path = config.get('Section', 'front_window')
         p = subprocess.Popen(path)
         self.pid = p.pid
-        print "self.pid"
-        print self.pid
-        print
-    
+        print "self.pid", self.pid
+        
     def makeProgramInFront(self, pid):
         def callback(hwnd, _):
             ctid, cpid = win32process.GetWindowThreadProcessId(hwnd)
-            print "cpid"
-            print cpid
+            print ctid, cpid, hwnd
             if cpid == pid:
-                win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST,0,0,500,500,0)
-                print "hwnd"
-                print hwnd
+                win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST,0,0,500,500,0)    
                 return False
             return True
-        win32gui.EnumWindows(callback, None)
+        try:
+            win32gui.EnumWindows(callback, None)
+        except:
+            print "Error"
+            
 
            
 #end RunProgram class
@@ -50,7 +49,7 @@ if __name__ == '__main__' :
     frm = OverlayFrame()
     frm.Show()
     runP = RunProgram()
-    time.sleep (2)
+    time.sleep (3)
     runP.makeProgramInFront(runP.pid)
     windowList = []
     win32gui.EnumWindows(lambda hwnd, windowList: windowList.append((win32gui.GetWindowText(hwnd),hwnd)), windowList)
