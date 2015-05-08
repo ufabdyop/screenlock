@@ -22,22 +22,24 @@ class RunProgram ():
         config.readfp(open(r'config.ini'))
         path = config.get('Section', 'front_window')
         p = subprocess.Popen(path)
+        time.sleep (2)
         self.pid = p.pid
-        print "self.pid", self.pid
+        #print "self.pid", self.pid
         
     def makeProgramInFront(self, pid):
         def callback(hwnd, _):
             ctid, cpid = win32process.GetWindowThreadProcessId(hwnd)
-            print ctid, cpid, hwnd
+            #print ctid, cpid, hwnd
             if cpid == pid:
-                win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST,0,0,500,500,0)    
+                win32gui.SetForegroundWindow(hwnd)
+                win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)    
                 return False
             return True
         try:
             win32gui.EnumWindows(callback, None)
+            return True
         except:
-            print "Error"
-            
+            return False
 
            
 #end RunProgram class
@@ -49,12 +51,15 @@ if __name__ == '__main__' :
     frm = OverlayFrame()
     frm.Show()
     runP = RunProgram()
-    time.sleep (3)
     runP.makeProgramInFront(runP.pid)
     windowList = []
     win32gui.EnumWindows(lambda hwnd, windowList: windowList.append((win32gui.GetWindowText(hwnd),hwnd)), windowList)
     print len(windowList)
     for i in windowList:
         print i
+    while True:
+        if runP.makeProgramInFront(runP.pid):
+            break
+        
     app.MainLoop()
     
