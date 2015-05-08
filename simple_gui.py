@@ -8,7 +8,7 @@ class OverlayFrame( wx.Frame )  :
                            style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP )
  
         self.ShowFullScreen( True )
-        self.alphaValue = 180
+        self.alphaValue = 255
         self.SetTransparent( self.alphaValue )
                 
     def OnCloseWindow( self, evt ) :
@@ -16,30 +16,30 @@ class OverlayFrame( wx.Frame )  :
     
 #end OverlayFrame class
     
-class RunProgram ():
+class RunProgram ( ):
     def __init__ (self):
-        config = ConfigParser.ConfigParser()
-        config.readfp(open(r'config.ini'))
-        path = config.get('Section', 'front_window')
-        p = subprocess.Popen(path)
-        time.sleep (2)
-        self.pid = p.pid
-        #print "self.pid", self.pid
+        self.openCoral()
         
-    def makeProgramInFront(self, pid):
+    def openCoral (self):
+        print 
+        # config = ConfigParser.ConfigParser()
+#         config.readfp(open(r'config.ini'))
+#         path = config.get('Section', 'front_window')
+#         subprocess.Popen(path)
+#         time.sleep (3)
+        
+    def makeProgramInFront(self):
         def callback(hwnd, _):
-            ctid, cpid = win32process.GetWindowThreadProcessId(hwnd)
-            #print ctid, cpid, hwnd
-            if cpid == pid:
-                win32gui.SetForegroundWindow(hwnd)
-                win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)    
+            if win32gui.GetWindowText(hwnd).find("Coral")!= -1 :
+                win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )    
                 return False
             return True
         try:
             win32gui.EnumWindows(callback, None)
-            return True
+            #return True
         except:
-            return False
+            pass
+            #return False
 
            
 #end RunProgram class
@@ -51,16 +51,15 @@ if __name__ == '__main__' :
     frm = OverlayFrame()
     frm.Show()
     runP = RunProgram()
-    runP.makeProgramInFront(runP.pid)
     windowList = []
     win32gui.EnumWindows(lambda hwnd, windowList: windowList.append((win32gui.GetWindowText(hwnd),hwnd)), windowList)
     for i in windowList:
         print i
-    cmdWindow = [i for i in windowList if "new tab - google chrome" in i[0].lower()]
+    cmdWindow = [i for i in windowList if i[0].find("Coral")!= -1]
     print len(cmdWindow)
     while True:
-        if runP.makeProgramInFront(runP.pid):
-            break
-        
+        runP.makeProgramInFront()
+        #if runP.makeProgramInFront():
+            #time.sleep(2)
     app.MainLoop()
     
