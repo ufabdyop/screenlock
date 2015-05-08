@@ -54,9 +54,10 @@ if __name__ == '__main__' :
     runP.makeProgramInFront(runP.pid)
     windowList = []
     win32gui.EnumWindows(lambda hwnd, windowList: windowList.append((win32gui.GetWindowText(hwnd),hwnd)), windowList)
-    print len(windowList)
     for i in windowList:
         print i
+    cmdWindow = [i for i in windowList if "new tab - google chrome" in i[0].lower()]
+    print len(cmdWindow)
     while True:
         if runP.makeProgramInFront(runP.pid):
             break
