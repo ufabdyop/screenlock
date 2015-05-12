@@ -16,22 +16,32 @@ class OverlayFrame( wx.Frame )  :
         self.Destroy()
     
 #end OverlayFrame class
-    
 
+    
 # a method to be invoked by ControlFrameThread    
 def makeProgramAtFront():
     def callback(hwnd, _):
-        if win32gui.GetWindowText(hwnd).find("Coral")!= -1 :
+        if win32gui.GetWindowText(hwnd).find("Warning")!= -1:
+            win32gui.SetWindowPos(hwnd,win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )    
+        elif win32gui.GetWindowText(hwnd).find("Coral")!= -1:
+            global checkCoralOpen
+            checkCoralOpen = True
             win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )    
-            return False
         return True
     try:
         win32gui.EnumWindows(callback, None)
-        #return True
+        global checkCoralOpen
+        if not checkCoralOpen:
+            openCoral()
     except:
         pass
-        #return False
                      
+def openCoral ():
+    config = ConfigParser.ConfigParser()
+    config.readfp(open(r'config.ini'))
+    path = config.get('Section', 'front_window')
+    subprocess.Popen(path)
+    time.sleep (5)
 
 # a thread class to do the infinite loop to make sure the
 # Coral window at the most front
@@ -42,7 +52,10 @@ class ControlFrameThread(Thread):
         
     def run(self):
         while True:
+            global checkCoralOpen
+            checkCoralOpen = False
             makeProgramAtFront()
+            time.sleep(1)
         
 #=======================================================
     
@@ -55,4 +68,3 @@ if __name__ == '__main__' :
     thread = ControlFrameThread()
 
     app.MainLoop()
-    

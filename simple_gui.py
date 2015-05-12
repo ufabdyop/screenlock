@@ -55,7 +55,7 @@ if __name__ == '__main__' :
     win32gui.EnumWindows(lambda hwnd, windowList: windowList.append((win32gui.GetWindowText(hwnd),hwnd)), windowList)
     for i in windowList:
         print i
-    cmdWindow = [i for i in windowList if i[0].find("Coral")!= -1]
+    cmdWindow = [i for i in windowList if i[0].find("Warning")!= -1]
     print len(cmdWindow)
     while True:
         runP.makeProgramInFront()
