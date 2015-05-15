@@ -1,13 +1,16 @@
 import wx, ConfigParser, win32gui, win32process, win32con, subprocess, time, thread
 from threading import *
-import base64 
+import base64
+from screenlockConfig import SLConfig
 
 ID_SUBMIT = wx.NewId()
 endFlag = False
 
-class OverlayFrame( wx.Frame )  :
+class PasswordChangeFrame( wx.Frame ):
  
-    def __init__( self )  :
+    def __init__( self ):
+
+        self.config = SLConfig()
  
         wx.Frame.__init__( self, None, title="Set Screenlock Password",
                            style=wx.DEFAULT_FRAME_STYLE )
@@ -59,14 +62,18 @@ class OverlayFrame( wx.Frame )  :
             pass
             
     def OnSubmit(self, event):
+        oldPassword = self.oldPasswordInputField.GetValue()
         newPassword = self.newPasswordInputField.GetValue()
         confirmPassword = self.confirmPasswordInputField.GetValue()
-        if newPassword.strip() == "":
-            self.errorMessage('Empty Password !')
+        print(oldPassword)
+        if self.config.passwordCheck(oldPassword) == False:
+            self.errorMessage('Wrong Password!')            
+        elif newPassword.strip() == "":
+            self.errorMessage('Empty Password!')
         elif newPassword != confirmPassword:
-            self.errorMessage('Password Mismatch !')
+            self.errorMessage('Password Mismatch!')
         else:
-            self.writePassword(newPassword)
+            self.config.writePassword(newPassword)
             self.message('Saved New Password')
 
     def errorMessage(self, message):
@@ -75,17 +82,6 @@ class OverlayFrame( wx.Frame )  :
     def message(self, message):
         self.status.SetLabel(message)
 
-    def writePassword(self, password):
-        fp = open(r'config.ini')
-        config = ConfigParser.ConfigParser()
-        config.readfp(fp)
-        fp.close()
-        #pw = str(config.get('Section', 'admin_override'))
-        config.set('Section', 'admin_override', password)
-        
-        with open(r'config.ini', 'wb') as configfile:
-            config.write(configfile)
-    
     def deleteLabel(self,status):
         global endFlag
         while not endFlag:
@@ -102,6 +98,6 @@ class OverlayFrame( wx.Frame )  :
     
 if __name__ == '__main__' :
     app = wx.App( False )
-    frm = OverlayFrame()
+    frm = PasswordChangeFrame()
     frm.Show()
     app.MainLoop()
