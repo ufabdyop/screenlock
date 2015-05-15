@@ -65,7 +65,6 @@ class PasswordChangeFrame( wx.Frame ):
         oldPassword = self.oldPasswordInputField.GetValue()
         newPassword = self.newPasswordInputField.GetValue()
         confirmPassword = self.confirmPasswordInputField.GetValue()
-        print(oldPassword)
         if self.config.passwordCheck(oldPassword) == False:
             self.errorMessage('Wrong Password!')            
         elif newPassword.strip() == "":
