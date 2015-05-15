@@ -33,3 +33,6 @@ class SLConfig(object):
     def writeConfig(self):
         with open(r'config.ini', 'wb') as configfile:
             self.config.write(configfile)
+
+    def get(self, value):
+        return self.config.get('Section', value)

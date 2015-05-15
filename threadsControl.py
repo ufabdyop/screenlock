@@ -1,6 +1,6 @@
 import wx, ConfigParser, win32gui, win32process, win32con, subprocess, time, thread
 from threading import *
-import base64 
+from screenlockConfig import SLConfig
 
 ID_SUBMIT = wx.NewId()
 endFlag = False
@@ -11,6 +11,8 @@ class OverlayFrame( wx.Frame )  :
  
         wx.Frame.__init__( self, None, title="Transparent Window",
                            style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP )
+
+        self.config = SLConfig()
         self.ShowFullScreen( True )
         self.alphaValue = 220
         self.SetTransparent( self.alphaValue )
@@ -40,13 +42,7 @@ class OverlayFrame( wx.Frame )  :
         
         self.input = self.inputField.GetValue()
         self.inputField.Clear()
-        encrypt = base64.encodestring(self.input).rstrip()
-        fp = open(r'config.ini')
-        config = ConfigParser.ConfigParser()
-        config.readfp(fp)
-        fp.close()
-        pw = str(config.get('Section', 'admin_override'))
-        if encrypt == pw:
+        if self.config.passwordCheck(self.input):
             global endFlag
             endFlag = True
             self.Destroy()
@@ -70,11 +66,12 @@ class OverlayFrame( wx.Frame )  :
 def makeProgramAtFront():
     def callback(hwnd, _):
         if win32gui.GetWindowText(hwnd).find("Warning")!= -1:
-            win32gui.SetWindowPos(hwnd,win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )    
+            win32gui.SetWindowPos(hwnd,win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
         elif win32gui.GetWindowText(hwnd).find("Coral")!= -1:
             global checkCoralOpen
             checkCoralOpen = True
-            win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )    
+            win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+            
         return True
     try:
         win32gui.EnumWindows(callback, None)
@@ -85,11 +82,9 @@ def makeProgramAtFront():
         pass
                      
 def openCoral ():
-    fp = open(r'config.ini')
-    config = ConfigParser.ConfigParser()
-    config.readfp(fp)
-    fp.close()
-    path = config.get('Section', 'front_window')
+    config = SLConfig()
+    path = config.get('front_window')
+    print ("opening %s" % path)
     subprocess.Popen(path)
     time.sleep (5)
 
