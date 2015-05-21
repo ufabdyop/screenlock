@@ -13,7 +13,11 @@ Currently, this requires:
 * pywin32 (http://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/pywin32-219.win32-py2.7.exe?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fpywin32%2Ffiles%2Fpywin32%2FBuild%2520219%2F&ts=1431713378&use_mirror=iweb)
 * wxpython (http://downloads.sourceforge.net/project/wxpython/wxPython/3.0.2.0/wxPython3.0-win32-3.0.2.0-py27.exe?r=http%3A%2F%2Fwxpython.org%2Fdownload.php&ts=1431713419&use_mirror=softlayer-dal)
 * java (for coral: http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-windows-i586.exe)
+* py2exe (download at http://sourceforge.net/projects/py2exe/files/py2exe/0.6.9/)
 
+Download All as Zip File:
+
+http://archiva.eng.utah.edu:4040/repository/internal/edu/utah/nanofab/screenlock/prerequisites/1.0.1/prerequisites-1.0.1.zip
 
 
 *************************************
