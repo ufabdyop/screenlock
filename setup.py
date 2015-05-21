@@ -21,7 +21,8 @@ setup (console=['source\setAdminPassword.py'])
 time.sleep(5)
 
 src = os.path.join(path, 'source', 'config.ini')
-dst =  os.path.join(path, 'dist')
+os.rename( os.path.join(path, 'dist'), os.path.join(path, 'screenlock') )
+dst =  os.path.join(path, 'screenlock')
 build = os.path.join(path, 'build')
 
 shutil.copy (src,dst)
