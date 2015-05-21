@@ -1,5 +1,4 @@
 import ConfigParser
-# from passwordCrypto import encrypt
 import passwordCrypto
 
 class SLConfig(object):

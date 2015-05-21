@@ -1,6 +1,5 @@
 import wx, ConfigParser, win32gui, win32process, win32con, subprocess, time, thread
 from threading import *
-#from screenlockConfig import SLConfig
 import screenlockConfig
 
 ID_SUBMIT = wx.NewId()
