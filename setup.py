@@ -1,5 +1,5 @@
 import sys, time, os, zipfile
-sys.path.insert(0, 'Z:\\screenlock\\source')
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "source"))
 import screenlockConfig
 from distutils.core import setup
 import py2exe
@@ -10,7 +10,7 @@ def zipdir(path, zipfile):
         for file in files:
             zipfile.write(os.path.join(root, file))
 
-path = 'Z:/screenlock/'
+path = os.path.dirname(__file__)
 version = sys.argv[2]
 del sys.argv[2:]
 
@@ -20,18 +20,21 @@ setup (console=['source\setAdminPassword.py'])
 
 time.sleep(5)
 
-src = path + 'source/config.ini'
-dst = path + 'dist/'
-build = path + 'build/'
+src = os.path.join(path, 'source', 'config.ini')
+dst =  os.path.join(path, 'dist')
+build = os.path.join(path, 'build')
+
 shutil.copy (src,dst)
 
-newFolder = path + 'Tags/' + version
+newFolder = os.path.join(path, 'Tags', version)
 if os.path.isdir(newFolder):
     shutil.rmtree(newFolder)
 os.makedirs(newFolder)
-zipf = zipfile.ZipFile(newFolder+'/screenlock-'+version +'.zip','w')
+zipname = os.path.join(newFolder, 'screenlock-'+version +'.zip')
+zipf = zipfile.ZipFile(zipname,'w')
 zipdir(dst, zipf)
 zipf.close()
 
 shutil.rmtree(dst)
 shutil.rmtree(build)
+
