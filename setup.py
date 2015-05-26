@@ -1,3 +1,4 @@
+import pythoncom, pyHook
 import sys, time, os, zipfile
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "source"))
 import screenlockConfig

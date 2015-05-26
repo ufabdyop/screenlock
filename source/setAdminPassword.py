@@ -1,6 +1,5 @@
-import wx, ConfigParser, win32gui, win32process, win32con, subprocess, time, thread
+import wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser
 from threading import *
-import base64
 import screenlockConfig
 
 ID_SUBMIT = wx.NewId()
