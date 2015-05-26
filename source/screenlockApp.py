@@ -1,9 +1,11 @@
-import wx, ConfigParser, win32gui, win32process, win32con, subprocess, time, thread
+import pythoncom, pyHook
+import wx, win32gui, win32con, time, thread, subprocess, win32process, ConfigParser
 from threading import *
 import screenlockConfig
 
 ID_SUBMIT = wx.NewId()
 endFlag = False
+keylist = {}
 
 class OverlayFrame( wx.Frame )  :
  
@@ -61,7 +63,6 @@ class OverlayFrame( wx.Frame )  :
         return
 #end OverlayFrame class
 
-    
 # a method to be invoked by ControlFrameThread    
 def makeProgramAtFront():
     def callback(hwnd, _):
@@ -70,8 +71,7 @@ def makeProgramAtFront():
         elif win32gui.GetWindowText(hwnd).find("Coral")!= -1:
             global checkCoralOpen
             checkCoralOpen = True
-            win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
-            
+            win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )   
         return True
     try:
         win32gui.EnumWindows(callback, None)
@@ -84,9 +84,23 @@ def makeProgramAtFront():
 def openCoral ():
     config = screenlockConfig.SLConfig()
     path = config.get('front_window')
-    print ("opening %s" % path)
+    # print ("opening %s" % path)
     subprocess.Popen(path)
     time.sleep (5)
+
+# create a keyboard hook
+def OnKeyboardEvent(event):
+    global keylist
+    if "down" in event.MessageName.lower():
+        keylist[event.Key.lower()] = event.Key
+    elif "up" in event.MessageName.lower():
+        if keylist.has_key(event.Key.lower()):
+            del keylist[event.Key.lower()]
+    if keylist.keys() in [['lcontrol', 'escape'],['lcontrol', 'lshift', 'escape'],['tab'],[]]:
+        return False    # block these keys
+    else:
+        return True    # return True to pass the event to other handlers  
+
 
 # a thread class to do the infinite loop to make sure the
 # Coral window at the most front
@@ -111,4 +125,10 @@ if __name__ == '__main__' :
     frm = OverlayFrame()
     frm.Show()
     newthread = ControlFrameThread()
+    hm = pyHook.HookManager()   # create a hook manager
+    hm.KeyAll = OnKeyboardEvent    # watch for all keyboard events
+    hm.HookKeyboard()         # set the hook
+    global endflag
+    while not endflag:
+        pythoncom.PumpWaitingMessages()
     app.MainLoop()
