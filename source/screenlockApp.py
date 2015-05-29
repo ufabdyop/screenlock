@@ -1,11 +1,11 @@
-import pythoncom, pyHook
-import wx, win32gui, win32con, time, thread, subprocess, win32process, ConfigParser
+global endFlag
+endFlag = False
+
+import wx, win32gui, win32con, time, thread, subprocess, win32process, ConfigParser, signal
+import screenlockConfig   
 from threading import *
-import screenlockConfig
 
 ID_SUBMIT = wx.NewId()
-endFlag = False
-keylist = {}
 
 class OverlayFrame( wx.Frame )  :
  
@@ -35,6 +35,8 @@ class OverlayFrame( wx.Frame )  :
         
         self.status = wx.StaticText(self, -1, '', pos=(10,80))
         self.status.SetFont(font)
+        
+        self.openKeysBlock ()
         try:
             thread.start_new_thread(self.deleteLabel, (self.status,))
         except:
@@ -47,6 +49,7 @@ class OverlayFrame( wx.Frame )  :
         if self.config.passwordCheck(self.input):
             global endFlag
             endFlag = True
+            self.p.send_signal(signal.SIGTERM)
             self.Destroy()
         else:
             self.status.SetLabel('You are not authorized.')
@@ -61,6 +64,12 @@ class OverlayFrame( wx.Frame )  :
                     if not endFlag:
                         status.SetLabel('')
         return
+        
+    def openKeysBlock (self):
+        config = screenlockConfig.SLConfig()
+        path = config.get('keysblock')
+        self.p = subprocess.Popen(path)
+        
 #end OverlayFrame class
 
 # a method to be invoked by ControlFrameThread    
@@ -86,21 +95,7 @@ def openCoral ():
     path = config.get('front_window')
     # print ("opening %s" % path)
     subprocess.Popen(path)
-    time.sleep (5)
-
-# create a keyboard hook
-def OnKeyboardEvent(event):
-    global keylist
-    if "down" in event.MessageName.lower():
-        keylist[event.Key.lower()] = event.Key
-    elif "up" in event.MessageName.lower():
-        if keylist.has_key(event.Key.lower()):
-            del keylist[event.Key.lower()]
-    if keylist.keys() in [['lcontrol', 'escape'],['lcontrol', 'lshift', 'escape'],['tab'],[]]:
-        return False    # block these keys
-    else:
-        return True    # return True to pass the event to other handlers  
-
+    time.sleep (10)
 
 # a thread class to do the infinite loop to make sure the
 # Coral window at the most front
@@ -125,10 +120,4 @@ if __name__ == '__main__' :
     frm = OverlayFrame()
     frm.Show()
     newthread = ControlFrameThread()
-    hm = pyHook.HookManager()   # create a hook manager
-    hm.KeyAll = OnKeyboardEvent    # watch for all keyboard events
-    hm.HookKeyboard()         # set the hook
-    global endflag
-    while not endflag:
-        pythoncom.PumpWaitingMessages()
     app.MainLoop()
