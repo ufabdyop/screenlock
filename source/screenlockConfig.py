@@ -10,13 +10,13 @@ class SLConfig(object):
         encryptedOldPassword = self.readPassword()
         if encryptedOldPassword.strip() == "":
             return True
-        elif encryptedOldPassword == encrypt(password):
+        elif encryptedOldPassword == passwordCrypto.encrypt(password):
             return True
         else:
             return False
 
     def writePassword(self, password):
-        encrypted_password = encrypt(password)
+        encrypted_password = passwordCrypto.encrypt(password)
         self.config.set('Section', 'admin_override', encrypted_password)
         self.writeConfig()
 
