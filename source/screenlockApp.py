@@ -75,6 +75,8 @@ class OverlayFrame( wx.Frame )  :
 # a method to be invoked by ControlFrameThread    
 def makeProgramAtFront():
     def callback(hwnd, _):
+        if win32gui.GetWindowText(hwnd).find("Windows Task Manager")!= -1:
+            win32gui.SetWindowPos(hwnd,win32con.HWND_BOTTOM,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
         if win32gui.GetWindowText(hwnd).find("Warning")!= -1:
             win32gui.SetWindowPos(hwnd,win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
         elif win32gui.GetWindowText(hwnd).find("Coral")!= -1:
@@ -95,7 +97,7 @@ def openCoral ():
     path = config.get('front_window')
     # print ("opening %s" % path)
     subprocess.Popen(path)
-    time.sleep (10)
+    time.sleep (6)
 
 # a thread class to do the infinite loop to make sure the
 # Coral window at the most front
