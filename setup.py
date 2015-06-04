@@ -16,8 +16,9 @@ version = sys.argv[2]
 del sys.argv[2:]
 
 print sys.path
-setup (console=['source\screenlockApp.py'])
-setup (console=['source\setAdminPassword.py'])
+setup (console=['source\\blockKeys.py'])
+setup (console=['source\\screenlockApp.py'])
+setup (console=['source\\setAdminPassword.py'])
 
 time.sleep(5)
 
