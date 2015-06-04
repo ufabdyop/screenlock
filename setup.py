@@ -1,21 +1,15 @@
-import pythoncom, pyHook
-import sys, time, os, zipfile
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "source"))
-import screenlockConfig
+import sys, time, os
+path = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(path, "source"))
+
 from distutils.core import setup
 import py2exe
 import shutil
+from buildtools import zipdir
 
-def zipdir(path, zipfile):
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            zipfile.write(os.path.join(root, file))
-
-path = os.path.dirname(__file__)
 version = sys.argv[2]
 del sys.argv[2:]
 
-print sys.path
 setup (console=['source\\blockKeys.py'])
 setup (console=['source\\screenlockApp.py'])
 setup (console=['source\\setAdminPassword.py'])
