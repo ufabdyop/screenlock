@@ -27,10 +27,9 @@ newFolder = os.path.join(path, 'Tags', version)
 if os.path.isdir(newFolder):
     shutil.rmtree(newFolder)
 os.makedirs(newFolder)
+
 zipname = os.path.join(newFolder, 'screenlock-'+version +'.zip')
-zipf = zipfile.ZipFile(zipname,'w')
-zipdir(dst, zipf)
-zipf.close()
+zipdir(dst, zipname)
 
 shutil.rmtree(dst)
 shutil.rmtree(build)
