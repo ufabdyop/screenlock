@@ -16,21 +16,29 @@ setup (console=['source\\setAdminPassword.py'])
 
 time.sleep(5)
 
-src = os.path.join(path, 'source', 'config.ini')
-os.rename( os.path.join(path, 'dist'), os.path.join(path, 'screenlock') )
-dst =  os.path.join(path, 'screenlock')
-build = os.path.join(path, 'build')
+defaultDistributionFolder = os.path.join(path, 'dist')
+distributionFolder = os.path.join(path, 'screenlock')
+buildFolder = os.path.join(path, 'build')
+sourceFolder = os.path.join(path, 'source')
+taggedFolder = os.path.join(path, 'Tags', version)
 
-shutil.copy (src,dst)
+#rename dist folder so zip file is nice
+os.rename( defaultDistributionFolder, distributionFolder )
 
-newFolder = os.path.join(path, 'Tags', version)
-if os.path.isdir(newFolder):
-    shutil.rmtree(newFolder)
-os.makedirs(newFolder)
+#copy config file to dist folder
+configFile = os.path.join(sourceFolder, 'config.ini')
+shutil.copy (configFile,distributionFolder)
 
-zipname = os.path.join(newFolder, 'screenlock-'+version +'.zip')
-zipdir(dst, zipname)
+#create tagged folder for zip storage (overwrite existing)
+if os.path.isdir(taggedFolder):
+    shutil.rmtree(taggedFolder)
+os.makedirs(taggedFolder)
 
-shutil.rmtree(dst)
-shutil.rmtree(build)
+#write distribution folder to tagged zip file
+zipname = os.path.join(taggedFolder, 'screenlock-'+version +'.zip')
+zipdir(distributionFolder, zipname)
+
+#clean up
+shutil.rmtree(distributionFolder)
+shutil.rmtree(buildFolder)
 
