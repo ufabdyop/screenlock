@@ -6,11 +6,6 @@ from distutils.core import setup
 import py2exe
 import shutil
 
-# def zipdir(path, zipfile):
-#     for root, dirs, files in os.walk(path):
-#         for file in files:
-#             zipfile.write(os.path.join(root, file))
-
 def zipdir(foldersToZip, zipfile):
     for folder in foldersToZip:
         for root, dirs, files in os.walk(folder):
@@ -30,17 +25,19 @@ setup (console=['source\setAdminPassword.py'])
 time.sleep(5)
 
 src = os.path.join(path, 'source', 'config.ini')
+post_install = os.path.join(path, 'source', 'post-install.txt')
 os.rename( os.path.join(path, 'dist'), os.path.join(path, 'screenlock') )
 dst =  os.path.join(path, 'screenlock')
 build = os.path.join(path, 'build')
 keysblock = os.path.join(path,'keysblock')
 
 shutil.copy (src,dst)
+shutil.copy (post_install,dst)
 
 zipname = os.path.join(newFolder, 'screenlock-'+version +'.zip')
 zipf = zipfile.ZipFile(zipname,'w')
 foldersToZip = [dst, keysblock]
-#zipdir(dst, zipf)
+
 zipdir(foldersToZip, zipf)
 zipf.close()
 
