@@ -1,8 +1,9 @@
-import wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser
+import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser
 from threading import *
 import screenlockConfig
 
 ID_SUBMIT = wx.NewId()
+global endFlag
 endFlag = False
 
 class PasswordChangeFrame( wx.Frame ):
@@ -98,4 +99,9 @@ if __name__ == '__main__' :
     app = wx.App( False )
     frm = PasswordChangeFrame()
     frm.Show()
+    config = screenlockConfig.SLConfig()
+    path = config.get('post-install')
+    os.startfile(path)
     app.MainLoop()
+    endFlag = True
+    
