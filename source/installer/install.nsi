@@ -27,6 +27,7 @@
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
 ;!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\post-install.txt"
+!define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_TEXT "Run configuration Script"
 !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchLink"
 !insertmacro MUI_PAGE_FINISH
@@ -45,7 +46,7 @@ FunctionEnd
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "Setup.exe"
+OutFile "ScreenLock-Setup.exe"
 InstallDir "$PROGRAMFILES\ScreenLock"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show

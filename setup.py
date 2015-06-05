@@ -13,6 +13,7 @@ def main():
     create_tagged_folder()
     write_zip_file()
     clean_up()
+    print_message()
 
 def run_setups():
     setup (console=['source\\blockKeys.py'])
@@ -53,6 +54,17 @@ def write_zip_file():
 def clean_up():
     shutil.move(NEW_DISTRIBUTION_FOLDER, TAGGED_FOLDER)
     shutil.rmtree(BUILD_FOLDER)
+
+def print_message():
+    message = """
+    Finished building EXE files for Nanofab Screenlock.  The files
+    are located in the Tag folder (%s).  
+    You may want to package
+    them all up into an installer.  To do so, run the make NSI
+    application using the build file located in the Tagged folder's
+    subdirectory "installer"
+    """
+    print(message % TAGGED_FOLDER)
 
 #constants
 DEFAULT_DISTRIBUTION_FOLDER = os.path.join(PATH, 'dist')
