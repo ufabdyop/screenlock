@@ -1,4 +1,4 @@
-import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser
+import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, signal, threading
 from threading import *
 import screenlockConfig
 

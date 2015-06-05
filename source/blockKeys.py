@@ -1,4 +1,5 @@
-import  pythoncom, pyHook, signal
+import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, signal, threading
+import screenlockConfig
 
 class BlockKeys(object):
     def __init__ (self):
