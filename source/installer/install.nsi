@@ -87,6 +87,8 @@ Section "ScreenLock" SEC01
   File "..\README.md"
   File "..\startup.bat"
   File "..\shutdown.bat"
+  File "..\startup.vbs"
+  File "..\shutdown.vbs"
 SectionEnd
 
 Section -AdditionalIcons
@@ -154,6 +156,8 @@ Section Uninstall
   Delete "$INSTDIR\license.txt"
   Delete "$INSTDIR\startup.bat"
   Delete "$INSTDIR\shutdown.bat"
+  Delete "$INSTDIR\startup.vbs"
+  Delete "$INSTDIR\shutdown.vbs"
 
   Delete "$SMPROGRAMS\ScreenLock\Uninstall.lnk"
   Delete "$SMPROGRAMS\ScreenLock\Website.lnk"
