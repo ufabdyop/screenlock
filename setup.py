@@ -25,6 +25,7 @@ def rename_dist_folder():
 
 def copy_support_files_to_dist_folder():
     copy_config_and_text_files_to_dist_folder()
+    write_version_to_text_file()
     copy_nsis_file_to_dist_folder()
 
 def copy_config_and_text_files_to_dist_folder():
@@ -35,6 +36,11 @@ def copy_config_and_text_files_to_dist_folder():
 
     for f in files:
         shutil.copy (f,NEW_DISTRIBUTION_FOLDER)
+
+def write_version_to_text_file():
+    version_filename = os.path.join(NEW_DISTRIBUTION_FOLDER, 'releaseVersion.txt')
+    with open(version_filename, "w") as text_file:
+        text_file.write( VERSION )
 
 def copy_nsis_file_to_dist_folder():
     nsis_file = os.path.join(SOURCE_FOLDER, 'installer', 'install.nsi')
@@ -56,6 +62,8 @@ def clean_up():
     shutil.rmtree(BUILD_FOLDER)
 
 def print_message():
+    make_nsis_command_example = '"c:\\Program Files\\NSIS\\makensis.exe" %s' % (os.path.join(TAGGED_FOLDER, 'screenlock','installer', 'install.nsi'))
+
     message = """
     Finished building EXE files for Nanofab Screenlock.  The files
     are located in the Tag folder (%s).  
@@ -63,8 +71,11 @@ def print_message():
     them all up into an installer.  To do so, run the make NSI
     application using the build file located in the Tagged folder's
     subdirectory "installer"
+
+    For example, you might run:
+    %s
     """
-    print(message % TAGGED_FOLDER)
+    print(message % (TAGGED_FOLDER, make_nsis_command_example))
 
 #constants
 DEFAULT_DISTRIBUTION_FOLDER = os.path.join(PATH, 'dist')
