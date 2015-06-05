@@ -1,8 +1,8 @@
 global endFlag
 endFlag = False
 
-import wx, win32gui, win32con, time, thread, subprocess, win32process, ConfigParser, signal
-import screenlockConfig   
+import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, signal, threading
+import screenlockConfig
 from threading import *
 
 ID_SUBMIT = wx.NewId()
