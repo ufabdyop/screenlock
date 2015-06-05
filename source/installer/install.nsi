@@ -66,10 +66,8 @@ Section "ScreenLock" SEC01
   File "..\pythoncom27.dll"
   File "..\pywintypes27.dll"
   File "..\screenlockApp.exe"
-  CreateShortCut "$STARTMENU.lnk" "$INSTDIR\screenlockApp.exe"
   File "..\select.pyd"
   File "..\setAdminPassword.exe"
-  CreateShortCut "$STARTMENU.lnk" "$INSTDIR\setAdminPassword.exe"
   File "..\unicodedata.pyd"
   File "..\w9xpopen.exe"
   File "..\win32gui.pyd"
@@ -84,10 +82,11 @@ Section "ScreenLock" SEC01
   File "..\wxmsw30u_adv_vc90.dll"
   File "..\wxmsw30u_core_vc90.dll"
   File "..\wxmsw30u_html_vc90.dll"
-  SetOverwrite ifnewer
   File "..\post-install.txt"
   File "..\license.txt"
   File "..\README.md"
+  File "..\startup.bat"
+  File "..\shutdown.bat"
 SectionEnd
 
 Section -AdditionalIcons
@@ -152,6 +151,9 @@ Section Uninstall
   Delete "$INSTDIR\blockKeys.exe"
   Delete "$INSTDIR\_win32sysloader.pyd"
   Delete "$INSTDIR\_hashlib.pyd"
+  Delete "$INSTDIR\license.txt"
+  Delete "$INSTDIR\startup.bat"
+  Delete "$INSTDIR\shutdown.bat"
 
   Delete "$SMPROGRAMS\ScreenLock\Uninstall.lnk"
   Delete "$SMPROGRAMS\ScreenLock\Website.lnk"
