@@ -9,6 +9,7 @@ def main():
     run_setups()
     rename_dist_folder()
     copy_config_file_to_dist_folder()
+    copy_nsis_file_to_dist_folder()
     time.sleep(5)
     create_tagged_folder()
     write_zip_file()
@@ -23,8 +24,14 @@ def rename_dist_folder():
     os.rename(DEFAULT_DISTRIBUTION_FOLDER, NEW_DISTRIBUTION_FOLDER)
 
 def copy_config_file_to_dist_folder():
-    configFile = os.path.join(SOURCE_FOLDER, 'config.ini')
-    shutil.copy (configFile,NEW_DISTRIBUTION_FOLDER)
+    config_file = os.path.join(SOURCE_FOLDER, 'config.ini')
+    shutil.copy (config_file,NEW_DISTRIBUTION_FOLDER)
+
+def copy_nsis_file_to_dist_folder():
+    nsis_file = os.path.join(SOURCE_FOLDER, 'installer', 'install.nsi')
+    new_installer_folder = os.path.join(NEW_DISTRIBUTION_FOLDER, 'installer')
+    os.makedirs(new_installer_folder)
+    shutil.copy (nsis_file,new_installer_folder)
 
 def create_tagged_folder():
     if os.path.isdir(TAGGED_FOLDER):
@@ -36,7 +43,7 @@ def write_zip_file():
     zipdir(NEW_DISTRIBUTION_FOLDER, zipname)
 
 def clean_up():
-    shutil.rmtree(NEW_DISTRIBUTION_FOLDER)
+    shutil.move(NEW_DISTRIBUTION_FOLDER, TAGGED_FOLDER)
     shutil.rmtree(BUILD_FOLDER)
 
 #constants
