@@ -12,9 +12,10 @@ def main():
     time.sleep(5)
     create_tagged_folder()
     write_zip_file()
-    clean_up()
+    move_assets_to_tagged_folder()
     print_message()
     try_running_nsis()
+    clean_up()
 
 def run_setups():
     setup (console=['source\\blockKeys.py'])
@@ -58,9 +59,8 @@ def write_zip_file():
     zipname = os.path.join(TAGGED_FOLDER, 'screenlock-' + VERSION + '.zip')
     zipdir(NEW_DISTRIBUTION_FOLDER, zipname)
 
-def clean_up():
+def move_assets_to_tagged_folder():
     shutil.move(NEW_DISTRIBUTION_FOLDER, TAGGED_FOLDER)
-    shutil.rmtree(BUILD_FOLDER)
 
 def print_message():
     make_nsis_command_example = '"c:\\Program Files\\NSIS\\makensis.exe" %s' % (os.path.join(TAGGED_FOLDER, 'screenlock','installer', 'install.nsi'))
@@ -87,11 +87,22 @@ def try_running_nsis():
     except:
         print( "Failed to automatically run nsis\n")
 
+def clean_up():
+    shutil.rmtree(BUILD_FOLDER)
+    clean_up_temporary_assets_if_nsis_succeeded()
+
+def clean_up_temporary_assets_if_nsis_succeeded():
+    nsis_setup_file = os.path.join(TAGGED_FOLDER, 'screenlock','installer', 'ScreenLock-' + VERSION + '-Setup.exe')
+    if os.path.isfile(nsis_setup_file):
+        shutil.copy(nsis_setup_file, TAGS_BASE_FOLDER )
+        shutil.rmtree(TAGGED_FOLDER)
+
 #constants
 DEFAULT_DISTRIBUTION_FOLDER = os.path.join(PATH, 'dist')
 NEW_DISTRIBUTION_FOLDER = os.path.join(PATH, 'screenlock')
 BUILD_FOLDER = os.path.join(PATH, 'build')
 SOURCE_FOLDER = os.path.join(PATH, 'source')
-TAGGED_FOLDER = os.path.join(PATH, 'Tags', VERSION)
+TAGS_BASE_FOLDER = os.path.join(PATH, 'Tags')
+TAGGED_FOLDER = os.path.join(TAGS_BASE_FOLDER, VERSION)
 
 main()
