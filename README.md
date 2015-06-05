@@ -32,7 +32,7 @@ To build, follow these steps in a cmd window (We are assuming this directory is 
 
     z:
     cd \screenlock
-    python.exe py2exe
+    python.exe setup.py py2exe
 
 Once built, you should have a directory matching the current version in Tags with a zip file containing the exe and all
 prerequisites (excluding DLLs that are included in windows)
