@@ -1,4 +1,4 @@
-import sys, time, os, py2exe, shutil, pprint
+import sys, time, os, py2exe, shutil, pprint, subprocess
 from distutils.core import setup
 PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(PATH, "source"))
@@ -14,6 +14,7 @@ def main():
     write_zip_file()
     clean_up()
     print_message()
+    try_running_nsis()
 
 def run_setups():
     setup (console=['source\\blockKeys.py'])
@@ -76,6 +77,15 @@ def print_message():
     %s
     """
     print(message % (TAGGED_FOLDER, make_nsis_command_example))
+
+def try_running_nsis():
+    try:
+        print( "Trying to automatically run nsis make for you\n")
+        make_nsis_command = ["c:\\Program Files\\NSIS\\makensis.exe", os.path.join(TAGGED_FOLDER, 'screenlock','installer', 'install.nsi')]
+        subprocess.call(make_nsis_command)
+        print( "Successfully Ran NSIS.\n Check the folder %s for installer exe file" % (os.path.join(TAGGED_FOLDER, 'screenlock','installer')))
+    except:
+        print( "Failed to automatically run nsis\n")
 
 #constants
 DEFAULT_DISTRIBUTION_FOLDER = os.path.join(PATH, 'dist')
