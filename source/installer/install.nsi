@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "ScreenLock"
-!define PRODUCT_VERSION "1.0.14"
+!define /file PRODUCT_VERSION "..\releaseVersion.txt"
 !define PRODUCT_PUBLISHER "Utah Nanofab"
 !define PRODUCT_WEB_SITE "http://www.nanofab.utah.edu"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\screenlockApp.exe"
@@ -46,7 +46,7 @@ FunctionEnd
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "ScreenLock-Setup.exe"
+OutFile "ScreenLock-${PRODUCT_VERSION}-Setup.exe"
 InstallDir "$PROGRAMFILES\ScreenLock"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
