@@ -1,44 +1,49 @@
-import sys, time, os
+import sys, time, os, py2exe, shutil, pprint
+from distutils.core import setup
 path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(path, "source"))
-
-from distutils.core import setup
-import py2exe
-import shutil
 from buildtools import zipdir
+from version import VERSION
 
-version = sys.argv[2]
-del sys.argv[2:]
+def main():
+    run_setups()
+    rename_dist_folder()
+    copy_config_file_to_dist_folder()
+    time.sleep(5)
+    create_tagged_folder()
+    write_zip_file()
+    clean_up()
 
-setup (console=['source\\blockKeys.py'])
-setup (console=['source\\screenlockApp.py'])
-setup (console=['source\\setAdminPassword.py'])
+def run_setups():
+    setup (console=['source\\blockKeys.py'])
+    setup (console=['source\\screenlockApp.py'])
+    setup (console=['source\\setAdminPassword.py'])
 
-time.sleep(5)
+def rename_dist_folder():
+    os.rename(DEFAULT_DISTRIBUTION_FOLDER, NEW_DISTRIBUTION_FOLDER)
 
-defaultDistributionFolder = os.path.join(path, 'dist')
-distributionFolder = os.path.join(path, 'screenlock')
-buildFolder = os.path.join(path, 'build')
-sourceFolder = os.path.join(path, 'source')
-taggedFolder = os.path.join(path, 'Tags', version)
+def copy_config_file_to_dist_folder():
+    configFile = os.path.join(SOURCE_FOLDER, 'config.ini')
+    shutil.copy (configFile,NEW_DISTRIBUTION_FOLDER)
 
-#rename dist folder so zip file is nice
-os.rename( defaultDistributionFolder, distributionFolder )
+def create_tagged_folder():
+    if os.path.isdir(TAGGED_FOLDER):
+        shutil.rmtree(TAGGED_FOLDER)
+    os.makedirs(TAGGED_FOLDER)
 
-#copy config file to dist folder
-configFile = os.path.join(sourceFolder, 'config.ini')
-shutil.copy (configFile,distributionFolder)
+def write_zip_file():
+    zipname = os.path.join(TAGGED_FOLDER, 'screenlock-' + VERSION + '.zip')
+    zipdir(NEW_DISTRIBUTION_FOLDER, zipname)
 
-#create tagged folder for zip storage (overwrite existing)
-if os.path.isdir(taggedFolder):
-    shutil.rmtree(taggedFolder)
-os.makedirs(taggedFolder)
+def clean_up():
+    shutil.rmtree(NEW_DISTRIBUTION_FOLDER)
+    shutil.rmtree(BUILD_FOLDER)
 
-#write distribution folder to tagged zip file
-zipname = os.path.join(taggedFolder, 'screenlock-'+version +'.zip')
-zipdir(distributionFolder, zipname)
+#constants
+DEFAULT_DISTRIBUTION_FOLDER = os.path.join(path, 'dist')
+NEW_DISTRIBUTION_FOLDER = os.path.join(path, 'screenlock')
+BUILD_FOLDER = os.path.join(path, 'build')
+SOURCE_FOLDER = os.path.join(path, 'source')
+TAGGED_FOLDER = os.path.join(path, 'Tags', VERSION)
 
-#clean up
-shutil.rmtree(distributionFolder)
-shutil.rmtree(buildFolder)
-
+main()
