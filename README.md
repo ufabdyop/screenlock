@@ -15,7 +15,7 @@ Currently, this requires:
 * java (for coral: http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-windows-i586.exe)
 * py2exe (download at http://sourceforge.net/projects/py2exe/files/py2exe/0.6.9/)
 * Visual Studio C++ Redistributable (for running py2exe) https://www.microsoft.com/en-us/download/details.aspx?id=29
-* pyhook
+* pyhook (http://downloads.sourceforge.net/project/pyhook/pyhook/1.5.1/pyHook-1.5.1.zip) or whl file for use with pip: http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyhook
 
 Download All as Zip File:
 
