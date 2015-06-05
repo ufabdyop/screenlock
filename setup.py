@@ -83,7 +83,7 @@ def try_running_nsis():
         print( "Trying to automatically run nsis make for you\n")
         make_nsis_command = ["c:\\Program Files\\NSIS\\makensis.exe", os.path.join(TAGGED_FOLDER, 'screenlock','installer', 'install.nsi')]
         subprocess.call(make_nsis_command)
-        print( "Successfully Ran NSIS.\n Check the folder %s for installer exe file" % (os.path.join(TAGGED_FOLDER, 'screenlock','installer')))
+        print( "Successfully Ran NSIS.\n Check the folder %s for installer exe file" % (os.path.join(TAGS_BASE_FOLDER)))
     except:
         print( "Failed to automatically run nsis\n")
 
