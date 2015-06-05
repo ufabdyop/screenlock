@@ -20,7 +20,7 @@
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME
 ; License page
-!insertmacro MUI_PAGE_LICENSE "..\..\..\..\source\license.txt"
+!insertmacro MUI_PAGE_LICENSE "..\license.txt"
 ; Directory page
 !insertmacro MUI_PAGE_DIRECTORY
 ; Instfiles page
@@ -84,8 +84,9 @@ Section "ScreenLock" SEC01
   File "..\wxmsw30u_core_vc90.dll"
   File "..\wxmsw30u_html_vc90.dll"
   SetOverwrite ifnewer
-  File "..\..\..\..\source\post-install.txt"
-  File "..\..\..\..\README.md"
+  File "..\post-install.txt"
+  File "..\license.txt"
+  File "..\README.md"
 SectionEnd
 
 Section -AdditionalIcons
