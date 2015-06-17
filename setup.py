@@ -2,7 +2,6 @@ import sys, time, os, py2exe, shutil, pprint, subprocess
 from distutils.core import setup
 PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(PATH, "source"))
-from buildtools import zipdir
 from version import VERSION
 
 def main():
@@ -11,13 +10,13 @@ def main():
     copy_support_files_to_dist_folder()
     time.sleep(5)
     create_tagged_folder()
-    write_zip_file()
     move_assets_to_tagged_folder()
     print_message()
     try_running_nsis()
     clean_up()
 
 def run_setups():
+    setup (console=['source\\screenlockServer.py'])
     setup (console=['source\\blockKeys.py'])
     setup (console=['source\\screenlockApp.py'])
     setup (console=['source\\setAdminPassword.py'])
@@ -58,10 +57,6 @@ def create_tagged_folder():
     if os.path.isdir(TAGGED_FOLDER):
         shutil.rmtree(TAGGED_FOLDER)
     os.makedirs(TAGGED_FOLDER)
-
-def write_zip_file():
-    zipname = os.path.join(TAGGED_FOLDER, 'screenlock-' + VERSION + '.zip')
-    zipdir(NEW_DISTRIBUTION_FOLDER, zipname)
 
 def move_assets_to_tagged_folder():
     shutil.move(NEW_DISTRIBUTION_FOLDER, TAGGED_FOLDER)
