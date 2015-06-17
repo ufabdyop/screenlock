@@ -1,11 +1,15 @@
 global endFlag
 endFlag = False
 
-import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, signal, threading
+import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil
 import screenlockConfig
 from threading import *
+from flask import Flask, request, Response
+from functools import wraps
 
 ID_SUBMIT = wx.NewId()
+global config
+config = screenlockConfig.SLConfig()
 
 class OverlayFrame( wx.Frame )  :
  
@@ -14,7 +18,6 @@ class OverlayFrame( wx.Frame )  :
         wx.Frame.__init__( self, None, title="Transparent Window",
                            style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP )
 
-        self.config = screenlockConfig.SLConfig()
         self.ShowFullScreen( True )
         self.alphaValue = 220
         self.SetTransparent( self.alphaValue )
@@ -46,7 +49,8 @@ class OverlayFrame( wx.Frame )  :
         
         self.input = self.inputField.GetValue()
         self.inputField.Clear()
-        if self.config.passwordCheck(self.input):
+        global config
+        if config.passwordCheck(self.input):
             global endFlag
             endFlag = True
             self.p.send_signal(signal.SIGTERM)
@@ -66,7 +70,7 @@ class OverlayFrame( wx.Frame )  :
         return
         
     def openKeysBlock (self):
-        config = screenlockConfig.SLConfig()
+        global config
         path = config.get('keysblock')
         self.p = subprocess.Popen(path)
         
@@ -78,6 +82,8 @@ def makeProgramAtFront():
         if win32gui.GetWindowText(hwnd).find("Windows Task Manager")!= -1:
             win32gui.SetWindowPos(hwnd,win32con.HWND_BOTTOM,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
         if win32gui.GetWindowText(hwnd).find("Warning")!= -1:
+            win32gui.SetWindowPos(hwnd,win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+        if win32gui.GetWindowText(hwnd).find("Run Data Collector")!= -1:
             win32gui.SetWindowPos(hwnd,win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
         elif win32gui.GetWindowText(hwnd).find("Coral")!= -1:
             global checkCoralOpen
@@ -93,7 +99,7 @@ def makeProgramAtFront():
         pass
                      
 def openCoral ():
-    config = screenlockConfig.SLConfig()
+    global config
     path = config.get('front_window')
     # print ("opening %s" % path)
     subprocess.Popen(path)

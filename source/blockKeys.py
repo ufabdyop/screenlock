@@ -1,5 +1,7 @@
-import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, signal, threading
+import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, psutil
 import screenlockConfig
+from flask import Flask, request, Response
+from functools import wraps
 
 class BlockKeys(object):
     def __init__ (self):
@@ -49,7 +51,6 @@ class BlockKeys(object):
 
     def signal_handler(self, signal, frame):
       print 'catcher: signal %d received!' % signal
-      raise Exception('catcher: i am done')
   
-bk = BlockKeys()
+BlockKeys()
       
