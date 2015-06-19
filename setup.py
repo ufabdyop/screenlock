@@ -113,9 +113,9 @@ def dynamically_add_file_list_to_nsis():
     file = open(nsis_file)
     contents = file.read()
     file.close()
-    contents.replace(';DYNAMIC_ADD_OF_PY2EXE_FILES', buff)
+    new_contents = contents.replace(';DYNAMIC_ADD_OF_PY2EXE_FILES', buff)
     file = open(nsis_file, 'w')
-    file.write(contents)
+    file.write(new_contents)
     file.close()
 
 #constants
