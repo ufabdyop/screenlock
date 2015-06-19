@@ -28,6 +28,7 @@ def copy_support_files_to_dist_folder():
     copy_config_and_text_files_to_dist_folder()
     write_version_to_text_file()
     copy_nsis_file_to_dist_folder()
+    dynamically_add_file_list_to_nsis()
 
 def copy_config_and_text_files_to_dist_folder():
     files = [os.path.join(SOURCE_FOLDER, 'config.ini'),
@@ -95,6 +96,27 @@ def clean_up_temporary_assets_if_nsis_succeeded():
     if os.path.isfile(nsis_setup_file):
         shutil.copy(nsis_setup_file, TAGS_BASE_FOLDER )
         shutil.rmtree(TAGGED_FOLDER)
+
+def create_nsis_file_instructions():
+    path = NEW_DISTRIBUTION_FOLDER
+    filenames = next(os.walk(path))[2]
+
+    buff = ''
+    for f in filenames:
+        buff += 'File "..\\%s"' % f
+        buff += "\n"
+    return buff
+
+def dynamically_add_file_list_to_nsis():
+    nsis_file = os.path.join(NEW_DISTRIBUTION_FOLDER, 'installer', 'install.nsi')
+    buff = create_nsis_file_instructions()
+    file = open(nsis_file)
+    contents = file.read()
+    file.close()
+    contents.replace(';DYNAMIC_ADD_OF_PY2EXE_FILES', buff)
+    file = open(nsis_file, 'w')
+    file.write(contents)
+    file.close()
 
 #constants
 DEFAULT_DISTRIBUTION_FOLDER = os.path.join(PATH, 'dist')
