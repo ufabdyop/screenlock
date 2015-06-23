@@ -1,7 +1,7 @@
 global endFlag
 endFlag = False
 
-import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil
+import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil, threading,  win32api
 import screenlockConfig
 from threading import *
 from flask import Flask, request, Response
@@ -37,13 +37,21 @@ class OverlayFrame( wx.Frame ):
         
         self.status = wx.StaticText(self, -1, '', pos=(10,80))
         self.status.SetFont(font)
+
+        win32api.SetConsoleCtrlHandler(self.signal_handler, True)
         
         self.openKeysBlock ()
         try:
             thread.start_new_thread(self.deleteLabel, (self.status,))
         except:
             pass
-            
+
+    def signal_handler(self, signalNumber):
+        self.p.send_signal(signal.SIGTERM)
+        global endFlag
+        endFlag = True
+        self.Destroy()
+
     def OnSubmit(self, event):
         self.input = self.inputField.GetValue()
         self.inputField.Clear()

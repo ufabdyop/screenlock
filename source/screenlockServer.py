@@ -1,10 +1,12 @@
-import os, psutil, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading
+import os, psutil, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, win32api
+
 import screenlockConfig
 from flask import Flask, request, Response
 from functools import wraps
 
 app = Flask(__name__)
 config = screenlockConfig.SLConfig()
+lockerProc = None
 
 def check_auth(username, password):
     """This function is called to check if a username /
@@ -48,28 +50,37 @@ def IsRunning(appname):
         except psutil.Error:
             pass
     return False
-      
-                 
+
+def lock_screen():
+    global lockerProc
+    lockerProc = subprocess.Popen(["screenlockApp.exe"],  creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+
+def unlock_screen():
+    global lockerProc
+    os.kill(lockerProc.pid, signal.CTRL_BREAK_EVENT)
+
 @app.route('/status', methods=['GET', 'POST'])
 @requires_auth
 def lock_or_unlock_Screen():
     url = request.url
-    str =''
+    html =''
     if request.method == 'POST':
         if request.form['submit'] == 'Unlock the Screen':
-            path = config.get('unlock')
-            os.startfile(path)
-            return 'Screen is unlocked.'
+            unlock_screen()
+            status = 'Screen is unlocked.' 
         elif request.form['submit'] == 'Lock the Screen':
-            path = config.get('lock')
-            os.startfile(path)
-            return 'Screen is locked.'
+            lock_screen()
+            status = 'Screen is locked.'
     else:
         if IsRunning('screenlockApp.exe'):
-            str = 'Screen is locked. <form action="'+url+'" method="POST"><input type="submit" name="submit" value="Unlock the Screen"></form>'
+            status = 'Screen is locked.'
         else:
-            str = 'Screen is unlocked. <form action="' +url +'" method="POST"><input type="submit" name="submit" value="Lock the Screen"></form>'
-        return str
+            status = 'Screen is unlocked.' 
+    print(status)
+    html = status
+    html += '<br/><form action="'+url+'" method="POST"><input type="submit" name="submit" value="Unlock the Screen"></form>' + "\n"
+    html += '<br/><form action="' +url +'" method="POST"><input type="submit" name="submit" value="Lock the Screen"></form>' + "\n"
+    return html
 
 if __name__ == '__main__':
     portNumber = config.get('port')
