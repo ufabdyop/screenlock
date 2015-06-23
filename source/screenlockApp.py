@@ -50,6 +50,7 @@ class OverlayFrame( wx.Frame ):
         self.p.send_signal(signal.SIGTERM)
         global endFlag
         endFlag = True
+        makeCoralNotTopMost()
         self.Destroy()
 
     def OnSubmit(self, event):
@@ -60,6 +61,7 @@ class OverlayFrame( wx.Frame ):
             global endFlag
             endFlag = True
             self.p.send_signal(signal.SIGTERM)
+            makeCoralNotTopMost()
             self.Destroy()
         else:
             self.status.SetLabel('You are not authorized.')
@@ -123,6 +125,30 @@ def makeProgramAtFront():
             openCoral()
     except:
         pass
+
+def getCoralWindow():
+    coralWindow = []
+    def callback(hwnd, _):
+        if win32gui.GetWindowText(hwnd).find("Coral")!= -1:
+            print("found coral window match")
+            coralWindow.append(hwnd)
+        return True
+
+    try:
+        win32gui.EnumWindows(callback, None)
+    except:
+        pass
+
+    if coralWindow:
+        return coralWindow[0]
+    return None
+
+def makeCoralNotTopMost():
+    coralWindow = getCoralWindow()
+    print("coralWindow: %s" % coralWindow)
+    if coralWindow:
+        win32gui.SetWindowPos(coralWindow,win32con.HWND_NOTOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+
                      
 def openCoral ():
     global config
