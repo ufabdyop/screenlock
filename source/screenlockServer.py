@@ -1,12 +1,11 @@
 import os, psutil, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, win32api
-
-import screenlockConfig
+import screenlockConfig, screenlockController
 from flask import Flask, request, Response
 from functools import wraps
 
 app = Flask(__name__)
 config = screenlockConfig.SLConfig()
-lockerProc = None
+lockController = screenlockController.SLController()
 
 def check_auth(username, password):
     """This function is called to check if a username /
@@ -42,24 +41,6 @@ def requires_auth(f):
         return f(*args, **kwargs)
     return decorated
     
-def IsRunning(appname):    
-    for p in psutil.process_iter():
-        try:
-            if p.name == appname:
-                return True
-        except psutil.Error:
-            pass
-    return False
-
-def lock_screen():
-    global lockerProc
-    #lockerProc = subprocess.Popen(["python", "screenlockApp.py"],  creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
-    lockerProc = subprocess.Popen(["screenlockApp.exe"],  creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
-
-def unlock_screen():
-    global lockerProc
-    os.kill(lockerProc.pid, signal.CTRL_BREAK_EVENT)
-
 @app.route('/status', methods=['GET', 'POST'])
 @requires_auth
 def lock_or_unlock_Screen():
@@ -67,13 +48,13 @@ def lock_or_unlock_Screen():
     html =''
     if request.method == 'POST':
         if request.form['submit'] == 'Unlock the Screen':
-            unlock_screen()
+            lockController.unlock_screen()
             status = 'Screen is unlocked.' 
         elif request.form['submit'] == 'Lock the Screen':
-            lock_screen()
+            lockController.lock_screen()
             status = 'Screen is locked.'
     else:
-        if IsRunning('screenlockApp.exe'):
+        if lockController.is_running():
             status = 'Screen is locked.'
         else:
             status = 'Screen is unlocked.' 
