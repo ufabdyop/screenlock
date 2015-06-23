@@ -11,10 +11,9 @@ ID_SUBMIT = wx.NewId()
 global config
 config = screenlockConfig.SLConfig()
 
-class OverlayFrame( wx.Frame )  :
+class OverlayFrame( wx.Frame ):
  
     def __init__( self )  :
- 
         wx.Frame.__init__( self, None, title="Transparent Window",
                            style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP )
 
@@ -46,7 +45,6 @@ class OverlayFrame( wx.Frame )  :
             pass
             
     def OnSubmit(self, event):
-        
         self.input = self.inputField.GetValue()
         self.inputField.Clear()
         global config
@@ -73,25 +71,45 @@ class OverlayFrame( wx.Frame )  :
         global config
         path = config.get('keysblock')
         self.p = subprocess.Popen(path)
-        
-#end OverlayFrame class
+
+
+#end OverlayFrame class        
+
+
+def bottomTaskManageWindow():
+    global endFlag
+    while not endFlag:
+        time.sleep(0.1)
+        def callback2(hwnd, _):
+            if win32gui.GetWindowText(hwnd).find("Windows Task Manager")!= -1:
+                win32gui.SetWindowPos(hwnd,win32con.HWND_BOTTOM,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+            return True
+        try:
+            win32gui.EnumWindows(callback2, None)
+        except:
+            pass
+    return
+            
 
 # a method to be invoked by ControlFrameThread    
 def makeProgramAtFront():
+    windows = {}
     def callback(hwnd, _):
-        if win32gui.GetWindowText(hwnd).find("Windows Task Manager")!= -1:
-            win32gui.SetWindowPos(hwnd,win32con.HWND_BOTTOM,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
-        if win32gui.GetWindowText(hwnd).find("Warning")!= -1:
-            win32gui.SetWindowPos(hwnd,win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
         if win32gui.GetWindowText(hwnd).find("Run Data Collector")!= -1:
+            windows['Run Data'] = hwnd
+        elif win32gui.GetWindowText(hwnd).find("Warning")!= -1:
             win32gui.SetWindowPos(hwnd,win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
         elif win32gui.GetWindowText(hwnd).find("Coral")!= -1:
             global checkCoralOpen
             checkCoralOpen = True
-            win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )   
+            windows['Coral'] = hwnd
         return True
     try:
         win32gui.EnumWindows(callback, None)
+        if len(windows) >= 1:
+            win32gui.SetWindowPos(windows['Coral'],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+        if len(windows) == 2:
+            win32gui.SetWindowPos(windows['Run Data'],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
         global checkCoralOpen
         if not checkCoralOpen:
             openCoral()
@@ -101,7 +119,6 @@ def makeProgramAtFront():
 def openCoral ():
     global config
     path = config.get('front_window')
-    # print ("opening %s" % path)
     subprocess.Popen(path)
     time.sleep (6)
 
@@ -128,4 +145,5 @@ if __name__ == '__main__' :
     frm = OverlayFrame()
     frm.Show()
     newthread = ControlFrameThread()
+    thread.start_new_thread(bottomTaskManageWindow, ())
     app.MainLoop()
