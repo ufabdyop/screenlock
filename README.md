@@ -16,6 +16,8 @@ Currently, this requires:
 * py2exe (download at http://sourceforge.net/projects/py2exe/files/py2exe/0.6.9/)
 * Visual Studio C++ Redistributable (for running py2exe) https://www.microsoft.com/en-us/download/details.aspx?id=29
 * pyhook (http://downloads.sourceforge.net/project/pyhook/pyhook/1.5.1/pyHook-1.5.1.zip) or whl file for use with pip: http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyhook
+* flask (pip install flask)
+* psutil v1.2.1 (https://pypi.python.org/packages/2.7/p/psutil/psutil-1.2.1.win32-py2.7.exe#md5=c4264532a64414cf3aa0d8b17d17e015)
 
 Download All as Zip File:
 
