@@ -2,7 +2,7 @@ global endFlag
 endFlag = False
 
 import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil, threading,  win32api
-import screenlockConfig
+import screenlockConfig, screenlockController
 from threading import *
 from flask import Flask, request, Response
 from functools import wraps
