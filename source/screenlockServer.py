@@ -53,6 +53,7 @@ def IsRunning(appname):
 
 def lock_screen():
     global lockerProc
+    #lockerProc = subprocess.Popen(["python", "screenlockApp.py"],  creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
     lockerProc = subprocess.Popen(["screenlockApp.exe"],  creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
 
 def unlock_screen():
