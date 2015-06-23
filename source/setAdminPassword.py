@@ -29,6 +29,8 @@ class PasswordChangeFrame( wx.Frame ):
         yPos += 35
         self.oldPasswordInputField = wx.TextCtrl(self, value="", size=(140, 30), pos=(xPos,yPos), name="input", style=wx.TE_PASSWORD)
         self.oldPasswordInputField.SetFont(font)
+        self.oldPasswordInputField.Bind(wx.EVT_KEY_DOWN, self.OnTab)
+
         yPos += 55
 
         #New Password
@@ -37,6 +39,8 @@ class PasswordChangeFrame( wx.Frame ):
         yPos += 35
         self.newPasswordInputField = wx.TextCtrl(self, value="", size=(140, 30),  pos=(xPos,yPos), name="input", style=wx.TE_PASSWORD)
         self.newPasswordInputField.SetFont(font)
+        self.newPasswordInputField.Bind(wx.EVT_KEY_DOWN, self.OnTab)
+
         yPos += 35
         
         #Confirm New Password
@@ -45,6 +49,8 @@ class PasswordChangeFrame( wx.Frame ):
         yPos += 35
         self.confirmPasswordInputField = wx.TextCtrl(self, value="", size=(140, 30),  pos=(xPos,yPos), name="input", style=wx.TE_PASSWORD)
         self.confirmPasswordInputField.SetFont(font)
+        self.confirmPasswordInputField.Bind(wx.EVT_KEY_DOWN, self.OnTab)
+
         yPos += 35        
         
         self.submitbutton = wx.Button(self, ID_SUBMIT, 'Submit', pos=(xPos,yPos))
@@ -62,6 +68,21 @@ class PasswordChangeFrame( wx.Frame ):
             thread.start_new_thread(self.deleteLabel, (self.status,))
         except:
             pass
+
+    def OnTab(self, event):
+        keycode = event.GetKeyCode()
+        if keycode == wx.WXK_TAB:
+            self.NextFocus()
+        event.Skip()
+
+    def NextFocus(self):
+        currentFocus = wx.Window.FindFocus()
+        if currentFocus == self.oldPasswordInputField:
+            self.newPasswordInputField.SetFocus()
+        elif currentFocus == self.newPasswordInputField:
+            self.confirmPasswordInputField.SetFocus()
+        elif currentFocus == self.confirmPasswordInputField:
+            self.oldPasswordInputField.SetFocus()
             
     def OnSubmit(self, event):
         oldPassword = self.oldPasswordInputField.GetValue()
