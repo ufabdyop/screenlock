@@ -49,29 +49,27 @@ def IsRunning(appname):
             pass
     return False
       
-@app.route('/lockScreen')
-@app.route('/unlockScreen')                         
-@app.route('/status')
+                 
+@app.route('/status', methods=['GET', 'POST'])
 @requires_auth
 def lock_or_unlock_Screen():
-    urlArray = request.url.split('/')
-    query = urlArray[len(urlArray)-1]
+    url = request.url
     str =''
-    if query == 'lockScreen':
-        str = 'locked'
-        path = config.get('lock')
-        os.startfile(path)
-    elif query == 'unlockScreen':
-        path = config.get('unlock')
-        os.startfile(path)
-        str = 'unlocked'
-    elif query == 'status':
+    if request.method == 'POST':
+        if request.form['submit'] == 'Unlock the Screen':
+            path = config.get('unlock')
+            os.startfile(path)
+            return 'Screen is unlocked.'
+        elif request.form['submit'] == 'Lock the Screen':
+            path = config.get('lock')
+            os.startfile(path)
+            return 'Screen is locked.'
+    else:
         if IsRunning('screenlockApp.exe'):
-            str = 'locked'
+            str = 'Screen is locked. <form action="'+url+'" method="POST"><input type="submit" name="submit" value="Unlock the Screen"></form>'
         else:
-            str = 'unlocked'
-    return  "Screen is " + str
-
+            str = 'Screen is unlocked. <form action="' +url +'" method="POST"><input type="submit" name="submit" value="Lock the Screen"></form>'
+        return str
 
 if __name__ == '__main__':
     portNumber = config.get('port')
