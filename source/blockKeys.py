@@ -1,4 +1,4 @@
-import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, psutil
+import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, psutil, win32api
 import screenlockConfig
 from flask import Flask, request, Response
 from functools import wraps
