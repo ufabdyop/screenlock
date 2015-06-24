@@ -8,7 +8,5 @@ Set objFileSys = CreateObject("Scripting.FileSystemObject")
 ' Change to working directory
 objShell.currentdirectory = strWorkingDir
 
-' Stop screen lock
-strReturn = objShell.Run( "taskkill /f /im blockKeys.exe", 0, true)
-strReturn = objShell.Run( "taskkill /f /im screenlockApp.exe", 0, true)
-
+' Start screen lock
+strReturn = objShell.Run( "screenlockServerNCD.exe", 0, true)
