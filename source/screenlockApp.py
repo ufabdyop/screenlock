@@ -91,66 +91,53 @@ def bottomTaskManageWindow():
     global endFlag
     while not endFlag:
         time.sleep(0.1)
-        def callback2(hwnd, _):
-            if win32gui.GetWindowText(hwnd).find("Windows Task Manager")!= -1:
-                win32gui.SetWindowPos(hwnd,win32con.HWND_BOTTOM,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
-            return True
-        try:
-            win32gui.EnumWindows(callback2, None)
-        except:
-            pass
+        taskwindow = getWindow("Windows Task Manager")
+        if taskwindow:
+            win32gui.SetWindowPos(taskwindow["Windows Task Manager"],win32con.HWND_BOTTOM,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
     return
             
 
-# a method to be invoked by ControlFrameThread    
-def makeProgramAtFront():
+def getWindow(*args):
     windows = {}
     def callback(hwnd, _):
-        if win32gui.GetWindowText(hwnd).find("Run Data Collector")!= -1:
-            windows['Run Data'] = hwnd
-        elif win32gui.GetWindowText(hwnd).find("Warning")!= -1:
-            win32gui.SetWindowPos(hwnd,win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
-        elif win32gui.GetWindowText(hwnd).find("Coral")!= -1:
+        for windowtext in args:
+            if win32gui.GetWindowText(hwnd).find(windowtext)!= -1:
+                if windowtext in windows:
+                    continue
+                windows[windowtext] = hwnd
+        return True
+        
+    try:
+        win32gui.EnumWindows(callback, None)
+    except:
+        pass
+    if len(windows) > 0 :
+        return windows
+    return None
+    
+def makeCoralNotTopMost():
+    coralWindow = getWindow("Coral")
+    if coralWindow:
+        win32gui.SetWindowPos(coralWindow["Coral"],win32con.HWND_NOTOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+
+                  
+# a method to be invoked by ControlFrameThread    
+def makeProgramAtFront():
+    windows = getWindow("Run Data Collector", "Warning", "Coral")
+    if windows:
+        if "Warning" in windows:
+            win32gui.SetWindowPos(windows["Warning"],win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+        if "Coral" in windows:
             global checkCoralOpen
             checkCoralOpen = True
-            windows['Coral'] = hwnd
-        return True
-    try:
-        win32gui.EnumWindows(callback, None)
-        if len(windows) >= 1:
-            win32gui.SetWindowPos(windows['Coral'],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
-        if len(windows) == 2:
-            win32gui.SetWindowPos(windows['Run Data'],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
-        global checkCoralOpen
-        if not checkCoralOpen:
-            openCoral()
-    except:
-        pass
+            win32gui.SetWindowPos(windows["Coral"],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+        if "Run Data Collector" in windows:
+            win32gui.SetWindowPos(windows["Run Data Collector"],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+    global checkCoralOpen
+    if not checkCoralOpen:
+        openCoral()
 
-def getCoralWindow():
-    coralWindow = []
-    def callback(hwnd, _):
-        if win32gui.GetWindowText(hwnd).find("Coral")!= -1:
-            print("found coral window match")
-            coralWindow.append(hwnd)
-        return True
-
-    try:
-        win32gui.EnumWindows(callback, None)
-    except:
-        pass
-
-    if coralWindow:
-        return coralWindow[0]
-    return None
-
-def makeCoralNotTopMost():
-    coralWindow = getCoralWindow()
-    print("coralWindow: %s" % coralWindow)
-    if coralWindow:
-        win32gui.SetWindowPos(coralWindow,win32con.HWND_NOTOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
-
-                     
+   
 def openCoral ():
     global config
     path = config.get('front_window')
