@@ -19,7 +19,6 @@ class OptimisticCoralResponse(protocol.Protocol):
         global lockControl
         print("got a command! first byte: %s, second byte: %s" % (ord(data[0]), ord(data[1])))
         response = 0
-        pprint.pprint(lockControl)
 
         if ord(data[1]) == 17: #SENSE COMMAND
             print("sense command")
