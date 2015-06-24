@@ -23,9 +23,9 @@ class OptimisticCoralResponse(protocol.Protocol):
         if ord(data[1]) == 17: #SENSE COMMAND
             print("sense command")
             if lockControl.is_running():
-                response = chr(1)
-            else:
                 response = chr(0)
+            else:
+                response = chr(1)
         elif ord(data[1]) == 1: #TURN OFF COMMAND
             print("disable command")
             lockControl.lock_screen()
