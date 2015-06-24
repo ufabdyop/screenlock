@@ -67,4 +67,5 @@ def lock_or_unlock_Screen():
 
 if __name__ == '__main__':
     portNumber = config.get('port')
+    lockController.lock_screen()
     app.run(host='0.0.0.0', port = int(portNumber))
