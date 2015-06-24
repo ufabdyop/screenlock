@@ -5,6 +5,7 @@ sys.path.insert(0, os.path.join(PATH, "source"))
 from version import VERSION
 
 def main():
+    create_zope_init_fix()
     run_setups()
     rename_dist_folder()
     copy_support_files_to_dist_folder()
@@ -17,6 +18,7 @@ def main():
 
 def run_setups():
     setup (console=['source\\screenlockServer.py'])
+    setup (console=['source\\screenlockServerNCD.py'])
     setup (console=['source\\blockKeys.py'])
     setup (console=['source\\screenlockApp.py'])
     setup (console=['source\\setAdminPassword.py'])
@@ -117,6 +119,19 @@ def dynamically_add_file_list_to_nsis():
     file = open(nsis_file, 'w')
     file.write(new_contents)
     file.close()
+
+def touch(filename):
+    if not os.path.exists(filename):
+        print("Creating file")
+        open(filename, 'w').close() 
+    else:
+        print("file exists, skipping")
+
+def create_zope_init_fix():
+    #See : http://stackoverflow.com/a/11632115/1243508
+    pythondir = sys.exec_prefix
+    zope_init_file = os.path.join(pythondir, 'Lib', 'site-packages', 'zope', '__init__.py')
+    touch(zope_init_file)
 
 #constants
 DEFAULT_DISTRIBUTION_FOLDER = os.path.join(PATH, 'dist')

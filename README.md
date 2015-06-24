@@ -39,7 +39,25 @@ To build, follow these steps in a cmd window (We are assuming this directory is 
 Once built, you should have a directory matching the current version in Tags with a zip file containing the exe and all
 prerequisites (excluding DLLs that are included in windows)
 
+
 Notes:
 ---
 Building exe requires msvcp90.dll (similar issue: http://stackoverflow.com/questions/323424/py2exe-fails-to-generate-an-executable)
 
+Emulating NCD Device:
+---
+The screenlockServerNCD.py and .exe files emulate the commands that the NCD network interlock devices use.  These are:
+
+To enable, you can send an NCD device two bytes (250, 1, in decimal notation, or 0xfa, 0x01 in hex).  On the command line, you can send this with (assuming port 2101):
+
+  echo 'fa01' | xxd -r -p | nc ncd-device.example.com 2101
+
+To disable, you can send an NCD device two bytes (250, 9, in decimal notation, or 0xfa, 0x09 in hex).  On the command line, you can send this with (assuming port 2101):
+
+  echo 'fa09' | xxd -r -p | nc ncd-device.example.com 2101
+
+To detect status, you can send an NCD device two bytes (250, 17, in decimal notation, or 0xfa, 0x11 in hex).  On the command line, you can send this with (assuming port 2101):
+
+  echo 'fa11' | xxd -r -p | nc ncd-device.example.com 2101
+
+The device will respond with a 1 or a 0 byte to show it is enabled or disabled respectively.
