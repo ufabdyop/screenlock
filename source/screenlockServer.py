@@ -1,4 +1,5 @@
-import os, psutil, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, win32api
+import os, psutil, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, win32api, zope.interface
+from twisted.internet import protocol, reactor, endpoints
 import screenlockConfig, screenlockController
 from flask import Flask, request, Response
 from functools import wraps
