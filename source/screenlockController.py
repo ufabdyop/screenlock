@@ -19,5 +19,11 @@ class SLController(object):
         self.lockerProc = subprocess.Popen(["screenlockApp.exe"],  creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
 
     def unlock_screen(self):
-        os.kill(self.lockerProc.pid, signal.CTRL_BREAK_EVENT)
+        if self.lockerProc is not None:
+            if self.lockerProc.pid:
+                print("Killing PID: %d" % self.lockerProc.pid)
+                os.kill(self.lockerProc.pid, signal.CTRL_BREAK_EVENT)
+        else:
+            print("ignoring unlock, no lock found")
+
 
