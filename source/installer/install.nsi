@@ -111,10 +111,10 @@ SectionEnd
 Section -AdditionalIcons
   WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
   CreateDirectory "$SMPROGRAMS\ScreenLock"
-  CreateShortCut "$SMPROGRAMS\ScreenLock\ScreenLock.lnk" "$INSTDIR\screenlockApp.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\ScreenLock Server.lnk" "$INSTDIR\screenlockServer.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\ScreenLock NCD Server.lnk" "$INSTDIR\screenlockServerNCD.exe"
-  CreateShortCut "$SMPROGRAMS\ScreenLock\SetPassword.lnk" "$INSTDIR\setAdminPassword.exe"
+  CreateShortCut "$SMPROGRAMS\ScreenLock\ScreenLock.lnk" "$INSTDIR\screenlockApp.exe"
+  CreateShortCut "$SMPROGRAMS\ScreenLock\Set Password.lnk" "$INSTDIR\setAdminPassword.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\Uninstall.lnk" "$INSTDIR\uninst.exe"
 SectionEnd
 

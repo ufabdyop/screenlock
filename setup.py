@@ -37,9 +37,9 @@ def copy_config_and_text_files_to_dist_folder():
             os.path.join(SOURCE_FOLDER, 'license.txt'),
             os.path.join(SOURCE_FOLDER, 'post-install.txt'),
             os.path.join(SOURCE_FOLDER, 'startup.bat'),
-            os.path.join(SOURCE_FOLDER, 'shutdown.bat'),
             os.path.join(SOURCE_FOLDER, 'startup.vbs'),
-            os.path.join(SOURCE_FOLDER, 'shutdown.vbs'),
+            os.path.join(SOURCE_FOLDER, 'startupNCD.bat'),
+            os.path.join(SOURCE_FOLDER, 'startupNCD.vbs'),
             os.path.join(PATH, 'README.md')]
 
     for f in files:
