@@ -4,7 +4,29 @@ ScreenLock
 This program locks the screen of a windows computer and only allows coral to run in the foreground.  
 All other programs are blocked by a large, transparent window
 
-Prerequisites:
+Installing
+---
+Use the installer (ScreenLock-VERSION-Setup.exe).  This will guide you through installing all the EXE files.
+
+Running
+---
+Start the screen lock by running the Screenlock Server item from the start menu.  This locks the screen
+(which can be overridden by a password) and starts a server (http://YOURCOMPUTERIP:PORT/status).  You
+can visit the server URL in a browser and use the web interface to lock or unlock the screen.  The port
+and password can be configured.
+
+You may alternatively use Screenlock Server NCD to run an NCD-like server to accept commands as though
+an NCD device.
+
+Running on Startup or Login
+---
+The working directory must be set correctly to run the executables for this application.  There are
+some startup batch files in the install directory that will do this for you (startup.bat, startupNCD.bat).
+Configure your windows machine to run one of those startup scripts on login and it should run the 
+application automatically.  In addition to batch files, there are some vbs files that are provided to 
+do the same thing, but should hide the command prompt window.
+
+Prerequisites for Developing on Python Source Code :
 ---
 
 Currently, this requires:
@@ -23,7 +45,7 @@ Currently, this requires:
 
 Download All as Zip File:
 
-http://archiva.eng.utah.edu:4040/repository/internal/edu/utah/nanofab/screenlock/prerequisites/1.0.3/prerequisites-1.0.3.zip
+http://archiva.eng.utah.edu:4040/repository/internal/edu/utah/nanofab/screenlock/prerequisites/1.0.5/prerequisites-1.0.5.zip
 
 
 Building EXE File
@@ -40,7 +62,6 @@ To build, follow these steps in a cmd window (We are assuming this directory is 
 
 Once built, you should have a directory matching the current version in Tags with a zip file containing the exe and all
 prerequisites (excluding DLLs that are included in windows)
-
 
 Notes:
 ---
