@@ -6,6 +6,7 @@ from version import VERSION
 
 def main():
     create_zope_init_fix()
+    delete_old_build()
     run_setups()
     rename_dist_folder()
     copy_support_files_to_dist_folder()
@@ -55,6 +56,14 @@ def copy_nsis_file_to_dist_folder():
     new_installer_folder = os.path.join(NEW_DISTRIBUTION_FOLDER, 'installer')
     os.makedirs(new_installer_folder)
     shutil.copy (nsis_file,new_installer_folder)
+
+def delete_old_build():
+    if os.path.isdir(DEFAULT_DISTRIBUTION_FOLDER):
+        shutil.rmtree(DEFAULT_DISTRIBUTION_FOLDER)
+    if os.path.isdir(NEW_DISTRIBUTION_FOLDER):
+        shutil.rmtree(NEW_DISTRIBUTION_FOLDER)
+    if os.path.isdir(BUILD_FOLDER):
+        shutil.rmtree(BUILD_FOLDER)
 
 def create_tagged_folder():
     if os.path.isdir(TAGGED_FOLDER):

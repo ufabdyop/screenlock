@@ -71,13 +71,13 @@ Emulating NCD Device:
 ---
 The screenlockServerNCD.py and .exe files emulate the commands that the NCD network interlock devices use.  These are:
 
-To enable, you can send an NCD device two bytes (250, 1, in decimal notation, or 0xfa, 0x01 in hex).  On the command line, you can send this with (assuming port 2101):
-
-  echo 'fa01' | xxd -r -p | nc ncd-device.example.com 2101
-
-To disable, you can send an NCD device two bytes (250, 9, in decimal notation, or 0xfa, 0x09 in hex).  On the command line, you can send this with (assuming port 2101):
+To enable (unlock screen), you can send an NCD device two bytes (250, 1, in decimal notation, or 0xfa, 0x01 in hex).  On the command line, you can send this with (assuming port 2101):
 
   echo 'fa09' | xxd -r -p | nc ncd-device.example.com 2101
+
+To disable (lock screen), you can send an NCD device two bytes (250, 9, in decimal notation, or 0xfa, 0x09 in hex).  On the command line, you can send this with (assuming port 2101):
+
+  echo 'fa01' | xxd -r -p | nc ncd-device.example.com 2101
 
 To detect status, you can send an NCD device two bytes (250, 17, in decimal notation, or 0xfa, 0x11 in hex).  On the command line, you can send this with (assuming port 2101):
 

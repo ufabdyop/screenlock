@@ -33,7 +33,15 @@ class SLConfig(object):
     def writeConfig(self):
         with open(r'config.ini', 'wb') as configfile:
             self.config.write(configfile)
-        
+        self.convert_unix_line_endings_to_win(r'config.ini')
+
     def get(self, key):
         return self.config.get('Section', key)
+        
+    def convert_unix_line_endings_to_win(self, filename):
+        text = open(filename, "U").read()
+        text = text.replace("\n", "\r\n")
+        filehandle = open(filename, "wb")
+        filehandle.write(text)
+        filehandle.close()
         
