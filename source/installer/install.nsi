@@ -115,6 +115,7 @@ Section -AdditionalIcons
   CreateShortCut "$SMPROGRAMS\ScreenLock\ScreenLock NCD Server.lnk" "$INSTDIR\screenlockServerNCD.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\ScreenLock.lnk" "$INSTDIR\screenlockApp.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\Set Password.lnk" "$INSTDIR\setAdminPassword.exe"
+  CreateShortCut "$SMPROGRAMS\ScreenLock\Config File.lnk" "$INSTDIR\config.ini"
   CreateShortCut "$SMPROGRAMS\ScreenLock\Uninstall.lnk" "$INSTDIR\uninst.exe"
 SectionEnd
 
