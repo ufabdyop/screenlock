@@ -44,6 +44,7 @@ class OptimistFactory(protocol.Factory):
     def buildProtocol(self, addr):
         return OptimisticCoralResponse()
 
+lockControl.lock_screen()
 print("starting listening on %s" % PORT)
 endpoints.serverFromString(reactor, "tcp:" + str(PORT)).listen(OptimistFactory())
 reactor.run()
