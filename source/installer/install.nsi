@@ -147,7 +147,7 @@ Section Uninstall
   Delete "$STARTMENU.lnk"
   Delete "$STARTMENU.lnk"
 
-  RMDir "$SMPROGRAMS\ScreenLock"
+  RMDir /r /REBOOTOK "$SMPROGRAMS\ScreenLock"
   RMDir /r /REBOOTOK $INSTDIR
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
