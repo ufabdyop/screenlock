@@ -103,9 +103,9 @@ Section "ScreenLock" SEC01
   File "..\license.txt"
   File "..\README.md"
   File "..\startup.bat"
-  File "..\shutdown.bat"
   File "..\startup.vbs"
-  File "..\shutdown.vbs"
+  File "..\startupNCD.bat"
+  File "..\startupNCD.vbs"
 SectionEnd
 
 Section -AdditionalIcons

@@ -9,4 +9,4 @@ Set objFileSys = CreateObject("Scripting.FileSystemObject")
 objShell.currentdirectory = strWorkingDir
 
 ' Start screen lock
-strReturn = objShell.Run( "screenlockApp.exe", 0, true)
+strReturn = objShell.Run( "screenlockServer.exe", 0, true)
