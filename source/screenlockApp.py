@@ -8,9 +8,10 @@ from functools import wraps
 global endFlag
 endFlag = False
 
-ID_SUBMIT = wx.NewId()
 global config
 config = screenlockConfig.SLConfig()
+
+ID_SUBMIT = wx.NewId()
 
 class OverlayFrame( wx.Frame ):
  
@@ -45,7 +46,7 @@ class OverlayFrame( wx.Frame ):
         try:
             thread.start_new_thread(self.deleteLabel, (self.status,))
         except:
-            pass
+            print ("Can not start a new thread.")
 
     def signal_handler(self, signalNumber):
         self.p.send_signal(signal.SIGTERM)
@@ -93,7 +94,10 @@ def bottomTaskManageWindow():
         time.sleep(0.1)
         taskwindow = getWindow("Windows Task Manager")
         if taskwindow:
-            win32gui.SetWindowPos(taskwindow["Windows Task Manager"],win32con.HWND_BOTTOM,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+            try:
+                win32gui.SetWindowPos(taskwindow["Windows Task Manager"],win32con.HWND_BOTTOM,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+            except:
+                print ("Error: window may not exist.")
     return
             
 
@@ -106,7 +110,6 @@ def getWindow(*args):
                     continue
                 windows[windowtext] = hwnd
         return True
-        
     try:
         win32gui.EnumWindows(callback, None)
     except:
@@ -118,21 +121,26 @@ def getWindow(*args):
 def makeCoralNotTopMost():
     coralWindow = getWindow("Coral")
     if coralWindow:
-        win32gui.SetWindowPos(coralWindow["Coral"],win32con.HWND_NOTOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
-
+        try:
+            win32gui.SetWindowPos(coralWindow["Coral"],win32con.HWND_NOTOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+        except:
+            print ("Error: Window may not exist.")
                   
 # a method to be invoked by ControlFrameThread    
 def makeProgramAtFront():
     windows = getWindow("Run Data Collector", "Warning", "Coral")
-    if windows:
-        if "Warning" in windows:
-            win32gui.SetWindowPos(windows["Warning"],win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
-        if "Coral" in windows:
-            global checkCoralOpen
-            checkCoralOpen = True
-            win32gui.SetWindowPos(windows["Coral"],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
-        if "Run Data Collector" in windows:
-            win32gui.SetWindowPos(windows["Run Data Collector"],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+    try:
+        if windows:
+            if "Warning" in windows:
+                win32gui.SetWindowPos(windows["Warning"],win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+            if "Coral" in windows:
+                global checkCoralOpen
+                checkCoralOpen = True
+                win32gui.SetWindowPos(windows["Coral"],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+            if "Run Data Collector" in windows:
+                win32gui.SetWindowPos(windows["Run Data Collector"],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+    except:
+        print "Error: window may not exist."
     global checkCoralOpen
     if not checkCoralOpen:
         openCoral()
