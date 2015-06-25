@@ -69,18 +69,20 @@ Building exe requires msvcp90.dll (similar issue: http://stackoverflow.com/quest
 
 Emulating NCD Device:
 ---
-The screenlockServerNCD.py and .exe files emulate the commands that the NCD network interlock devices use.  These are:
+The screenlockServerNCD.py and .exe files emulate the commands that the NCD network interlock devices use.  Some examples
+follow.  This is assuming coral is set to use channel 1 (operating NCD relay at index 1).  Also, we assume the ncd device
+is using port 2101.
 
-To enable (unlock screen), you can send an NCD device two bytes (250, 1, in decimal notation, or 0xfa, 0x01 in hex).  On the command line, you can send this with (assuming port 2101):
+To enable (unlock screen), you can send an NCD device two bytes (254, 9, in decimal notation, or 0xfe, 0x09 in hex).  On the command line, you can send this with (assuming port 2101):
 
-  echo 'fa09' | xxd -r -p | nc ncd-device.example.com 2101
+  echo 'fe09' | xxd -r -p | nc ncd-device.example.com 2101
 
-To disable (lock screen), you can send an NCD device two bytes (250, 9, in decimal notation, or 0xfa, 0x09 in hex).  On the command line, you can send this with (assuming port 2101):
+To disable (lock screen), you can send an NCD device two bytes (254, 1, in decimal notation, or 0xfe, 0x01 in hex).  On the command line, you can send this with (assuming port 2101):
 
-  echo 'fa01' | xxd -r -p | nc ncd-device.example.com 2101
+  echo 'fe01' | xxd -r -p | nc ncd-device.example.com 2101
 
-To detect status, you can send an NCD device two bytes (250, 17, in decimal notation, or 0xfa, 0x11 in hex).  On the command line, you can send this with (assuming port 2101):
+To detect status, you can send an NCD device two bytes (254, 17, in decimal notation, or 0xfe, 0x11 in hex).  On the command line, you can send this with (assuming port 2101):
 
-  echo 'fa11' | xxd -r -p | nc ncd-device.example.com 2101
+  echo 'fe11' | xxd -r -p | nc ncd-device.example.com 2101
 
 The device will respond with a 1 or a 0 byte to show it is enabled or disabled respectively.
