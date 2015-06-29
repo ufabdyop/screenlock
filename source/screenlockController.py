@@ -2,7 +2,8 @@ import os, subprocess, signal, psutil
 
 class SLController(object):
     def __init__(self):
-        self.lockerProc = None
+        self.lockerProc = {}
+        self.count = 0
         self.appname = "screenlockApp.exe"
 
     def is_running(self):
@@ -15,19 +16,22 @@ class SLController(object):
         return False
 
     def lock_screen(self):
-        self.lockerProc = subprocess.Popen(["screenlockApp.exe"],  creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+        self.count += 1
+        self.lockerProc[self.count] = subprocess.Popen(["screenlockApp.exe"],  creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
 
     def unlock_screen(self):
-        if self.lockerProc is None:
+        if self.count == 0:
             print("ignoring unlock, no lock found")
         else:
-            if self.lockerProc.pid:
-                print("Killing PID: %d" % self.lockerProc.pid)
-                try:
-                    os.kill(self.lockerProc.pid, signal.CTRL_BREAK_EVENT)
-                except:
-                    print ("Error: The Screenlock app is not running.")
-                finally:
-                    self.lockerProc = None
+            for number in range (1, self.count+1):
+                if self.lockerProc[number].pid:
+                    print("Killing PID: %d" % self.lockerProc[number].pid)
+                    try:
+                        os.kill(self.lockerProc[number].pid, signal.CTRL_BREAK_EVENT)
+                    except:
+                        print ("Error: The Screenlock app is not running.")
+                        continue
+            self.count = 0
+                
 
 
