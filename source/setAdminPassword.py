@@ -1,9 +1,12 @@
 import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil, zope.interface
 from twisted.internet import protocol, reactor, endpoints
 from threading import *
-import screenlockConfig, screenlockController
+import screenlockConfig, screenlockController, version
 from flask import Flask, request, Response
 from functools import wraps
+from urlparse import urlparse
+from OpenSSL import SSL
+import json
 
 ID_SUBMIT = wx.NewId()
 global endFlag
@@ -89,14 +92,14 @@ class PasswordChangeFrame( wx.Frame ):
         oldPassword = self.oldPasswordInputField.GetValue()
         newPassword = self.newPasswordInputField.GetValue()
         confirmPassword = self.confirmPasswordInputField.GetValue()
-        if self.config.passwordCheck(oldPassword) == False:
+        if self.config.passwordCheck(oldPassword, 'admin_override') == False:
             self.errorMessage('Wrong Password!')            
         elif newPassword.strip() == "":
             self.errorMessage('Empty Password!')
         elif newPassword != confirmPassword:
             self.errorMessage('Password Mismatch!')
         else:
-            self.config.writePassword(newPassword)
+            self.config.writePassword(newPassword, 'admin_override')
             self.message('Saved New Password')
 
     def errorMessage(self, message):
