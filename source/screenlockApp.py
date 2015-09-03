@@ -1,9 +1,12 @@
 import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil, threading,  win32api, zope.interface
 from twisted.internet import protocol, reactor, endpoints
-import screenlockConfig, screenlockController
+import screenlockConfig, screenlockController, version
 from threading import *
 from flask import Flask, request, Response
 from functools import wraps
+from urlparse import urlparse
+from OpenSSL import SSL
+import json
 
 global endFlag
 endFlag = False
@@ -59,7 +62,7 @@ class OverlayFrame( wx.Frame ):
         self.input = self.inputField.GetValue()
         self.inputField.Clear()
         global config
-        if config.passwordCheck(self.input):
+        if config.passwordCheck(self.input, 'admin_override'):
             global endFlag
             endFlag = True
             self.p.send_signal(signal.SIGTERM)

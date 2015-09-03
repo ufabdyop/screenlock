@@ -2,7 +2,10 @@ import os, wx, win32gui, win32con, time, thread, win32process, subprocess, Confi
 from twisted.internet import protocol, reactor, endpoints
 from flask import Flask, request, Response
 from functools import wraps
-import screenlockConfig, screenlockController
+import screenlockConfig, screenlockController, version
+from urlparse import urlparse
+from OpenSSL import SSL
+import json
 
 config = screenlockConfig.SLConfig()
 PORT=config.get('port')

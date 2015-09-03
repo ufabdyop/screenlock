@@ -6,8 +6,8 @@ class SLConfig(object):
         self.config = None
         self.readConfig()
 
-    def passwordCheck(self, password):
-        encryptedOldPassword = self.readPassword()
+    def passwordCheck(self, password, item):
+        encryptedOldPassword = self.readPassword(item)
         if encryptedOldPassword.strip() == "":
             return True
         elif encryptedOldPassword == passwordCrypto.encrypt(password):
@@ -15,14 +15,14 @@ class SLConfig(object):
         else:
             return False
 
-    def writePassword(self, password):
+    def writePassword(self, password, item):
         encrypted_password = passwordCrypto.encrypt(password)
-        self.config.set('Section', 'admin_override', encrypted_password)
+        self.config.set('Section', item, encrypted_password)
         self.writeConfig()
 
-    def readPassword(self):
+    def readPassword(self, item):
         self.readConfig()
-        encrypted_password = self.config.get('Section', 'admin_override')
+        encrypted_password = self.config.get('Section', item)
         return encrypted_password
 
     def readConfig(self):
