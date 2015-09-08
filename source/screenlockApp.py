@@ -14,6 +14,9 @@ endFlag = False
 global config
 config = screenlockConfig.SLConfig()
 
+global starttime
+starttime = None
+
 ID_SUBMIT = wx.NewId()
 
 class OverlayFrame( wx.Frame ):
@@ -132,21 +135,27 @@ def makeCoralNotTopMost():
 # a method to be invoked by ControlFrameThread    
 def makeProgramAtFront():
     windows = getWindow("Run Data Collector", "Warning", "Coral")
+    global checkCoralOpen, starttime
     try:
         if windows:
             if "Warning" in windows:
                 win32gui.SetWindowPos(windows["Warning"],win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
             if "Coral" in windows:
-                global checkCoralOpen
                 checkCoralOpen = True
                 win32gui.SetWindowPos(windows["Coral"],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
             if "Run Data Collector" in windows:
                 win32gui.SetWindowPos(windows["Run Data Collector"],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
     except:
         print "Error: window may not exist."
-    global checkCoralOpen
     if not checkCoralOpen:
+        if starttime is None:
+            openCoral()
+            starttime = time.clock()
+            time.sleep(20)
+            return   
         openCoral()
+        
+                
 
    
 def openCoral ():
