@@ -1,4 +1,4 @@
-import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, psutil, win32api, zope.interface
+import os, sys, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, psutil, win32api, zope.interface
 from twisted.internet import protocol, reactor, endpoints
 import screenlockConfig, screenlockController, version
 from flask import Flask, request, Response
@@ -54,7 +54,8 @@ class BlockKeys(object):
         return True
 
     def signal_handler(self, signal, frame):
-      print 'catcher: signal %d received!' % signal
-  
+        print 'catcher: signal %d received!' % signal
+        sys.exit(0)
+      
 BlockKeys()
       

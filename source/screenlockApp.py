@@ -1,4 +1,4 @@
-import os, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil, threading,  win32api, zope.interface
+import os, sys,wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil, threading,  win32api, zope.interface
 from twisted.internet import protocol, reactor, endpoints
 import screenlockConfig, screenlockController, version
 from threading import *
@@ -13,9 +13,6 @@ endFlag = False
 
 global config
 config = screenlockConfig.SLConfig()
-
-global starttime
-starttime = None
 
 ID_SUBMIT = wx.NewId()
 
@@ -55,11 +52,12 @@ class OverlayFrame( wx.Frame ):
             print ("Can not start a new thread.")
 
     def signal_handler(self, signalNumber):
-        self.p.send_signal(signal.SIGTERM)
+        if self.p.pid:
+            self.p.send_signal(signal.SIGTERM)
         global endFlag
         endFlag = True
         makeCoralNotTopMost()
-        self.Destroy()
+        sys.exit(0)
 
     def OnSubmit(self, event):
         self.input = self.inputField.GetValue()
@@ -70,7 +68,7 @@ class OverlayFrame( wx.Frame ):
             endFlag = True
             self.p.send_signal(signal.SIGTERM)
             makeCoralNotTopMost()
-            self.Destroy()
+            sys.exit(0)
         else:
             self.status.SetLabel('You are not authorized.')
     
@@ -96,7 +94,7 @@ class OverlayFrame( wx.Frame ):
 
 def bottomTaskManageWindow():
     global endFlag
-    while not endFlag:
+    while not endFlag:   
         time.sleep(0.1)
         taskwindow = getWindow("Windows Task Manager")
         if taskwindow:
@@ -135,11 +133,11 @@ def makeCoralNotTopMost():
 # a method to be invoked by ControlFrameThread    
 def makeProgramAtFront():
     windows = getWindow("Run Data Collector", "Warning", "Coral")
-    global checkCoralOpen, starttime
+    global checkCoralOpen
     try:
         if windows:
             if "Warning" in windows:
-                win32gui.SetWindowPos(windows["Warning"],win32con.HWND_TOP,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+                win32gui.SetWindowPos(windows["Warning"],win32con.HWND_TOPMOST,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
             if "Coral" in windows:
                 checkCoralOpen = True
                 win32gui.SetWindowPos(windows["Coral"],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
@@ -148,15 +146,8 @@ def makeProgramAtFront():
     except:
         print "Error: window may not exist."
     if not checkCoralOpen:
-        if starttime is None:
-            openCoral()
-            starttime = time.clock()
-            time.sleep(20)
-            return   
         openCoral()
         
-                
-
    
 def openCoral ():
     global config
