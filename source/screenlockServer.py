@@ -1,4 +1,4 @@
-import os, psutil, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, win32api, zope.interface
+import os, sys, psutil, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, win32api, zope.interface
 from twisted.internet import protocol, reactor, endpoints
 import screenlockConfig, screenlockController, version
 from flask import Flask, request, Response
@@ -116,5 +116,5 @@ def get_Version():
 
 if __name__ == '__main__':
     portNumber = config.get('port')
-    # lockController.lock_screen()
+    lockController.lock_screen()
     app.run(host='0.0.0.0', port = int(portNumber), ssl_context=context)
