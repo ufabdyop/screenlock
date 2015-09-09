@@ -57,7 +57,7 @@ class OverlayFrame( wx.Frame ):
         global endFlag
         endFlag = True
         makeCoralNotTopMost()
-        sys.exit(0)
+        self.Destroy()
 
     def OnSubmit(self, event):
         self.input = self.inputField.GetValue()
@@ -68,7 +68,7 @@ class OverlayFrame( wx.Frame ):
             endFlag = True
             self.p.send_signal(signal.SIGTERM)
             makeCoralNotTopMost()
-            sys.exit(0)
+            self.Destroy()        
         else:
             self.status.SetLabel('You are not authorized.')
     
