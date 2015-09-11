@@ -1,4 +1,4 @@
-import os, sys,wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil, threading,  win32api, zope.interface
+import os, sys,wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil, threading,  win32api, zope.interface, urllib2
 from twisted.internet import protocol, reactor, endpoints
 import screenlockConfig, screenlockController, version
 from threading import *
@@ -45,7 +45,7 @@ class OverlayFrame( wx.Frame ):
 
         win32api.SetConsoleCtrlHandler(self.signal_handler, True)
         
-        self.openKeysBlock ()
+        # self.openKeysBlock ()
         try:
             thread.start_new_thread(self.deleteLabel, (self.status,))
         except:
@@ -66,7 +66,7 @@ class OverlayFrame( wx.Frame ):
         if config.passwordCheck(self.input, 'admin_override'):
             global endFlag
             endFlag = True
-            self.p.send_signal(signal.SIGTERM)
+            # self.p.send_signal(signal.SIGTERM)
             makeCoralNotTopMost()
             self.Destroy()        
         else:
@@ -132,12 +132,14 @@ def makeCoralNotTopMost():
                   
 # a method to be invoked by ControlFrameThread    
 def makeProgramAtFront():
-    windows = getWindow("Run Data Collector", "Warning", "Coral")
+    windows = getWindow("Run Data Collector", "Warning", "Error","Coral")
     global checkCoralOpen
     try:
         if windows:
             if "Warning" in windows:
                 win32gui.SetWindowPos(windows["Warning"],win32con.HWND_TOPMOST,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+            if "Error" in windows:
+                win32gui.SetWindowPos(windows["Error"],win32con.HWND_TOPMOST,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
             if "Coral" in windows:
                 checkCoralOpen = True
                 win32gui.SetWindowPos(windows["Coral"],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
@@ -150,10 +152,22 @@ def makeProgramAtFront():
         
    
 def openCoral ():
-    global config
+    global config, endFlag
     path = config.get('front_window')
+    internet_flag = internet_on()
+    while (not internet_flag) and (not endFlag):
+        print "No Internet"
+        time.sleep(2)
+        internet_flag = internet_on()
     subprocess.Popen(path)
     time.sleep (6)
+    
+def internet_on():
+    try:
+        response = urllib2.urlopen('https://www.nanofab.utah.edu/',timeout=1)
+        return True
+    except urllib2.URLError as err: pass
+    return False
 
 # a thread class to do the infinite loop to make sure the
 # Coral window at the most front
