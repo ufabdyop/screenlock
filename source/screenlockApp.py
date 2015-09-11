@@ -45,7 +45,7 @@ class OverlayFrame( wx.Frame ):
 
         win32api.SetConsoleCtrlHandler(self.signal_handler, True)
         
-        # self.openKeysBlock ()
+        self.openKeysBlock ()
         try:
             thread.start_new_thread(self.deleteLabel, (self.status,))
         except:
@@ -66,7 +66,7 @@ class OverlayFrame( wx.Frame ):
         if config.passwordCheck(self.input, 'admin_override'):
             global endFlag
             endFlag = True
-            # self.p.send_signal(signal.SIGTERM)
+            self.p.send_signal(signal.SIGTERM)
             makeCoralNotTopMost()
             self.Destroy()        
         else:
