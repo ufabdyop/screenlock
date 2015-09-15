@@ -1,5 +1,6 @@
 import os, sys, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, psutil, win32api, zope.interface, urllib2
 from twisted.internet import protocol, reactor, endpoints
+from win32api import GetSystemMetrics
 import screenlockConfig, screenlockController, version
 from flask import Flask, request, Response
 from functools import wraps
@@ -44,7 +45,7 @@ class BlockKeys(object):
         return True    # return True to pass the event to other handlers
         
     def OnMouseEvent(self, event):
-        if event.Position[0] < 100 and event.Position[1] > 600 and event.WindowName == None:
+        if (event.Position[0] < 100 and event.Position[1] > 600 and event.WindowName == None) or event.Position[1] > (GetSystemMetrics(1)-60):
             return False
         if event.WindowName != None:
             if 'start' == event.WindowName.lower():
