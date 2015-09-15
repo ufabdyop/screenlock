@@ -164,7 +164,7 @@ def openCoral ():
     
 def internet_on():
     try:
-        response = urllib2.urlopen('https://www.nanofab.utah.edu/',timeout=1)
+        response = urllib2.urlopen('https://coral.nanofab.utah.edu/',timeout=1)
         return True
     except urllib2.URLError as err: pass
     return False
