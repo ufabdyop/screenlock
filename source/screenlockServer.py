@@ -94,23 +94,40 @@ def get_status():
     return result
  
 @app.route('/lock', methods=['POST'])
+@requires_auth   
 def lock_Screen():
     global lockController
     try:
         lockController.lock_screen()
     except Exception,e:
         print str(e)
-    return json.dumps('locked')
+    return json.dumps({"status": "locked"})
 
 @app.route('/unlock', methods=['POST'])
+@requires_auth   
 def unlock_Screen():
     global lockController
     try:
         lockController.unlock_screen()
     except Exception,e:
             print str(e)
-    return json.dumps("unlocked")
-   
+    return json.dumps({"status": "unlocked"})
+
+@app.route('/enable', methods=['POST'])
+@requires_auth
+def enable_Screen():
+    return unlock_Screen()
+
+@app.route('/disable', methods=['POST'])
+@requires_auth
+def disable_Screen():
+    return lock_Screen()
+
+@app.route('/sense', methods=['POST', 'GET'])
+@requires_auth
+def sense_status():
+    return get_status()
+
 @app.route('/version')
 def get_Version():
     return json.dumps({"version": version.VERSION})
