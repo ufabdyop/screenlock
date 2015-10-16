@@ -1,4 +1,4 @@
-import os, sys,wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil, threading,  win32api, zope.interface, urllib2
+import os, sys,wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil, threading,  win32api, zope.interface, urllib2, cffi, cryptography
 from twisted.internet import protocol, reactor, endpoints
 from win32api import GetSystemMetrics
 import screenlockConfig, screenlockController, version
