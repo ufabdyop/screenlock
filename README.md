@@ -8,10 +8,19 @@ Installing
 ---
 Use the installer (ScreenLock-VERSION-Setup.exe).  This will guide you through installing all the EXE files.
 
+Post Install
+---
+Some configuration is required after installing.  You may have to edit config.ini to change some settings.
+You will have to set an admin password for local override (the installer guides you through this). You
+will have to set the admin password for web access.  The default web access password is 1234.  To change it,
+you must start the server (as administrator so it has permissions to write config files).  Then, log into
+https://localhost:PORT/admin and set the new password.  A future release will make these post installation
+steps unnecessary.
+
 Running
 ---
 Start the screen lock by running the Screenlock Server item from the start menu.  This locks the screen
-(which can be overridden by a password) and starts a server (http://YOURCOMPUTERIP:PORT/status).  You
+(which can be overridden by a password) and starts a server (https://YOURCOMPUTERIP:PORT/status).  You
 can visit the server URL in a browser and use the web interface to lock or unlock the screen.  The port
 and password can be configured.
 
@@ -44,11 +53,7 @@ Currently, this requires:
 * zope.interface (https://pypi.python.org/packages/2.7/z/zope.interface/zope.interface-4.1.2.win32-py2.7.exe#md5=ab9396981638835220fc78209bd2d803)
 * pyopenssl
 * OPENSSL for windows: https://slproweb.com/products/Win32OpenSSL.html
-
-Download All as Zip File:
-
-http://archiva.eng.utah.edu:4040/repository/internal/edu/utah/nanofab/screenlock/prerequisites/1.0.5/prerequisites-1.0.5.zip
-
+* NSIS: http://nsis.sourceforge.net/Download (build scripts expect this to be installed in C:\Program Files)
 
 Building EXE File
 ---
