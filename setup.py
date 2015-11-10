@@ -23,6 +23,7 @@ def run_setups():
     setup (console=['source\\blockKeys.py'])
     setup (console=['source\\screenlockApp.py'])
     setup (console=['source\\setAdminPassword.py'])
+    setup (console=['source\\builder.py'])
 
 def rename_dist_folder():
     os.rename(DEFAULT_DISTRIBUTION_FOLDER, NEW_DISTRIBUTION_FOLDER)
