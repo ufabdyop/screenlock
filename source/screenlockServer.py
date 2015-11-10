@@ -58,24 +58,6 @@ def lock_or_unlock_Screen():
         html = '<p><h2>Status: unlocked.</h2></p>'
         html += '<br/><form action="' +parseResult[0]+'://'+netloc +'/lock" method="POST"><input type="submit" name="submit" value="Lock the Screen"></form>'
         html += '<br/><form action="'+parseResult[0]+'://'+netloc+'/unlock" method="POST"><input type="submit" name="submit" value="Unlock the Screen" disabled></form>'
-    
-    
-    # html += '<br/><br/><form action="' + url +'" method = "POST"><table><tr><td>Enter Current Admin Password:</td><td><input type="password" name="current_pw" ></td></tr>' + \
-#     '<tr><td>Set New Admin Password:</td><td><input type="password" name="new_pw" ></td></tr><tr><td>Confirm New Admin Password:</td><td><input type="password" name="confirm_pw"></td></tr>'+ \
-#     '<tr><td colspan = "2" align =right><input type="submit" name="pw_submit" value="Submit"></td></tr></tabel></form>'
-#     if request.method == 'POST':
-#         oldPassword = request.form['current_pw']
-#         newPassword = request.form['new_pw']
-#         confirmPassword = request.form['confirm_pw']
-#         if config.passwordCheck(oldPassword, 'web_password') == False:
-#             html += '<br/><h2>Wrong Password!</h2>'
-#         elif newPassword == "":
-#             html += '<br/><h2>Empty Password!</h2>'
-#         elif newPassword != confirmPassword:
-#             html += '<br/><h2>Password Mismatch!</h2>'
-#         else:
-#             config.writePassword(newPassword, 'web_password')
-#             html += '<br/><h2>Saved New Password</h2>'
     html += '</body></html>'
     return html
 
