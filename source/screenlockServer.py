@@ -1,12 +1,8 @@
-import os, sys, psutil, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, win32api, zope.interface, urllib2, cffi, cryptography
-from twisted.internet import protocol, reactor, endpoints
-from win32api import GetSystemMetrics
-import screenlockConfig, screenlockController, version
+import urllib2, screenlockConfig, screenlockController, version, json
 from flask import Flask, request, Response
-from functools import wraps
 from urlparse import urlparse
+from functools import wraps
 from OpenSSL import SSL
-import json
 
 app = Flask(__name__)
 config = screenlockConfig.SLConfig()
@@ -64,22 +60,22 @@ def lock_or_unlock_Screen():
         html += '<br/><form action="'+parseResult[0]+'://'+netloc+'/unlock" method="POST"><input type="submit" name="submit" value="Unlock the Screen" disabled></form>'
     
     
-    html += '<br/><br/><form action="' + url +'" method = "POST"><table><tr><td>Enter Current Admin Password:</td><td><input type="password" name="current_pw" ></td></tr>' + \
-    '<tr><td>Set New Admin Password:</td><td><input type="password" name="new_pw" ></td></tr><tr><td>Confirm New Admin Password:</td><td><input type="password" name="confirm_pw"></td></tr>'+ \
-    '<tr><td colspan = "2" align =right><input type="submit" name="pw_submit" value="Submit"></td></tr></tabel></form>'
-    if request.method == 'POST':
-        oldPassword = request.form['current_pw']
-        newPassword = request.form['new_pw']
-        confirmPassword = request.form['confirm_pw']
-        if config.passwordCheck(oldPassword, 'web_password') == False:
-            html += '<br/><h2>Wrong Password!</h2>'         
-        elif newPassword == "":
-            html += '<br/><h2>Empty Password!</h2>'
-        elif newPassword != confirmPassword:
-            html += '<br/><h2>Password Mismatch!</h2>'
-        else:
-            config.writePassword(newPassword, 'web_password')
-            html += '<br/><h2>Saved New Password</h2>'
+    # html += '<br/><br/><form action="' + url +'" method = "POST"><table><tr><td>Enter Current Admin Password:</td><td><input type="password" name="current_pw" ></td></tr>' + \
+#     '<tr><td>Set New Admin Password:</td><td><input type="password" name="new_pw" ></td></tr><tr><td>Confirm New Admin Password:</td><td><input type="password" name="confirm_pw"></td></tr>'+ \
+#     '<tr><td colspan = "2" align =right><input type="submit" name="pw_submit" value="Submit"></td></tr></tabel></form>'
+#     if request.method == 'POST':
+#         oldPassword = request.form['current_pw']
+#         newPassword = request.form['new_pw']
+#         confirmPassword = request.form['confirm_pw']
+#         if config.passwordCheck(oldPassword, 'web_password') == False:
+#             html += '<br/><h2>Wrong Password!</h2>'
+#         elif newPassword == "":
+#             html += '<br/><h2>Empty Password!</h2>'
+#         elif newPassword != confirmPassword:
+#             html += '<br/><h2>Password Mismatch!</h2>'
+#         else:
+#             config.writePassword(newPassword, 'web_password')
+#             html += '<br/><h2>Saved New Password</h2>'
     html += '</body></html>'
     return html
 

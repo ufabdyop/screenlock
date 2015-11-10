@@ -1,13 +1,15 @@
-import os,sys, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil, zope.interface, urllib2, cffi, cryptography
-from twisted.internet import protocol, reactor, endpoints
-from win32api import GetSystemMetrics
-from threading import *
-import screenlockConfig, screenlockController, version
-from flask import Flask, request, Response
-from functools import wraps
-from urlparse import urlparse
-from OpenSSL import SSL
-import json
+# import os,sys, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil, zope.interface, urllib2, cffi, cryptography
+# from twisted.internet import protocol, reactor, endpoints
+# from win32api import GetSystemMetrics
+# from threading import *
+# import screenlockConfig, screenlockController, version
+# from flask import Flask, request, Response
+# from functools import wraps
+# from urlparse import urlparse
+# from OpenSSL import SSL
+# import json
+
+import os, wx, screenlockConfig
 
 ID_SUBMIT = wx.NewId()
 global endFlag
@@ -28,6 +30,12 @@ class PasswordChangeFrame( wx.Frame ):
         xPos = 10
         yPos = 10
 
+        #section 1: local screen password
+        self.section1Label = wx.StaticText(self, label="Section 1: Change the local screen admin password   ", pos=(xPos,yPos))
+        self.section1Label.SetFont(font)
+        self.section1Label.SetForegroundColour(wx.BLUE)
+        yPos += 50
+        
         #Old Password
         self.oldPasswordLabel = wx.StaticText(self, label="Enter Current Admin Password:", pos=(xPos,yPos))
         self.oldPasswordLabel.SetFont(font)
@@ -35,8 +43,7 @@ class PasswordChangeFrame( wx.Frame ):
         self.oldPasswordInputField = wx.TextCtrl(self, value="", size=(140, 30), pos=(xPos,yPos), name="input", style=wx.TE_PASSWORD)
         self.oldPasswordInputField.SetFont(font)
         self.oldPasswordInputField.Bind(wx.EVT_KEY_DOWN, self.OnTab)
-
-        yPos += 55
+        yPos += 35
 
         #New Password
         self.newPasswordLabel = wx.StaticText(self, label="Set New Admin Password:",  pos=(xPos,yPos))
@@ -45,7 +52,6 @@ class PasswordChangeFrame( wx.Frame ):
         self.newPasswordInputField = wx.TextCtrl(self, value="", size=(140, 30),  pos=(xPos,yPos), name="input", style=wx.TE_PASSWORD)
         self.newPasswordInputField.SetFont(font)
         self.newPasswordInputField.Bind(wx.EVT_KEY_DOWN, self.OnTab)
-
         yPos += 35
         
         #Confirm New Password
@@ -55,18 +61,42 @@ class PasswordChangeFrame( wx.Frame ):
         self.confirmPasswordInputField = wx.TextCtrl(self, value="", size=(140, 30),  pos=(xPos,yPos), name="input", style=wx.TE_PASSWORD)
         self.confirmPasswordInputField.SetFont(font)
         self.confirmPasswordInputField.Bind(wx.EVT_KEY_DOWN, self.OnTab)
-
-        yPos += 35        
+        yPos += 65     
+        
+        #section 2: admin web password
+        self.section2Label = wx.StaticText(self, label="Section 2: Change the admin web password   ", pos=(xPos,yPos))
+        self.section2Label.SetFont(font)
+        self.section2Label.SetForegroundColour(wx.BLUE)
+        yPos += 50
+        
+        #New web Password
+        self.newWebPasswordLabel = wx.StaticText(self, label="Set New Web Password:",  pos=(xPos,yPos))
+        self.newWebPasswordLabel.SetFont(font)
+        yPos += 35
+        self.newWebPasswordInputField = wx.TextCtrl(self, value="", size=(140, 30),  pos=(xPos,yPos), name="input", style=wx.TE_PASSWORD)
+        self.newWebPasswordInputField.SetFont(font)
+        self.newWebPasswordInputField.Bind(wx.EVT_KEY_DOWN, self.OnTab)
+        yPos += 35
+        
+        #Confirm New web Password
+        self.confirmWebPasswordLabel = wx.StaticText(self, label="Confirm New Web Password:",  pos=(xPos,yPos))
+        self.confirmWebPasswordLabel.SetFont(font)
+        yPos += 35
+        self.confirmWebPasswordInputField = wx.TextCtrl(self, value="", size=(140, 30),  pos=(xPos,yPos), name="input", style=wx.TE_PASSWORD)
+        self.confirmWebPasswordInputField.SetFont(font)
+        self.confirmWebPasswordInputField.Bind(wx.EVT_KEY_DOWN, self.OnTab)
+        yPos += 55
         
         self.submitbutton = wx.Button(self, ID_SUBMIT, 'Submit', pos=(xPos,yPos))
         self.submitbutton.SetFont(font)
         self.Bind(wx.EVT_BUTTON, self.OnSubmit, id=ID_SUBMIT)
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSubmit)
         self.input = None
-        yPos += 35
+        yPos += 50
         
         self.status = wx.StaticText(self, -1, '', pos=(xPos,yPos))
         self.status.SetFont(font)
+        self.status.SetForegroundColour(wx.RED)
 
         self.Fit()
         try:
@@ -87,21 +117,33 @@ class PasswordChangeFrame( wx.Frame ):
         elif currentFocus == self.newPasswordInputField:
             self.confirmPasswordInputField.SetFocus()
         elif currentFocus == self.confirmPasswordInputField:
+            self.newWebPasswordInputField.SetFocus()
+        elif currentFocus == self.newWebPasswordInputField:
+            self.confirmWebPasswordInputField.SetFocus()
+        elif currentFocus == self.confirmWebPasswordInputField:
             self.oldPasswordInputField.SetFocus()
             
     def OnSubmit(self, event):
         oldPassword = self.oldPasswordInputField.GetValue()
         newPassword = self.newPasswordInputField.GetValue()
         confirmPassword = self.confirmPasswordInputField.GetValue()
+        newWebPassword = self.newWebPasswordInputField.GetValue()
+        confirmWebPassword = self.confirmWebPasswordInputField.GetValue()
+        
         if self.config.passwordCheck(oldPassword, 'admin_override') == False:
-            self.errorMessage('Wrong Password!')            
+            self.errorMessage('Wrong Current Admin Password!')            
         elif newPassword.strip() == "":
-            self.errorMessage('Empty Password!')
+            self.errorMessage('Empty Admin Password!')
         elif newPassword != confirmPassword:
-            self.errorMessage('Password Mismatch!')
+            self.errorMessage('Admin Password Mismatch!')
+        elif newWebPassword.strip() == "":
+            self.errorMessage('Empty Web Password!')
+        elif newWebPassword != confirmWebPassword:
+            self.errorMessage('Web Password Mismatch!')
         else:
             self.config.writePassword(newPassword, 'admin_override')
-            self.message('Saved New Password')
+            self.config.writePassword(newWebPassword, 'web_password')
+            self.message('Saved New Passwords')
 
     def errorMessage(self, message):
         self.status.SetLabel(message)

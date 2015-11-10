@@ -1,13 +1,5 @@
-import os, sys,wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, psutil, threading,  win32api, zope.interface, urllib2, cffi, cryptography
-from twisted.internet import protocol, reactor, endpoints
-from win32api import GetSystemMetrics
-import screenlockConfig, screenlockController, version
+import wx, thread, time, win32api, win32gui, win32con, subprocess, signal, screenlockConfig,urllib2
 from threading import *
-from flask import Flask, request, Response
-from functools import wraps
-from urlparse import urlparse
-from OpenSSL import SSL
-import json
 
 global endFlag
 endFlag = False
@@ -133,7 +125,7 @@ def makeCoralNotTopMost():
                   
 # a method to be invoked by ControlFrameThread    
 def makeProgramAtFront():
-    windows = getWindow("Run Data Collector", "Warning", "Error","Coral")
+    windows = getWindow("Run Data Collector", "Warning", "Error","Coral", "Screen Saver")
     global checkCoralOpen
     try:
         if windows:
@@ -146,6 +138,8 @@ def makeProgramAtFront():
                 win32gui.SetWindowPos(windows["Coral"],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
             if "Run Data Collector" in windows:
                 win32gui.SetWindowPos(windows["Run Data Collector"],win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+            if "Screen Saver" in windows:
+                win32gui.SetWindowPos(windows["Screen Saver"],win32con.HWND_TOPMOST,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
     except:
         print "Error: window may not exist."
     if not checkCoralOpen:
