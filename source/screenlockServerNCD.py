@@ -1,4 +1,4 @@
-import screenlockConfig
+import screenlockConfig,log
 
 config = screenlockConfig.SLConfig()
 PORT=config.get('port')

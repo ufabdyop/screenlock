@@ -1,4 +1,9 @@
-import os, subprocess, signal, psutil
+from __future__ import print_function
+import os, subprocess, signal, psutil,log
+from datetime import datetime
+
+global logFile
+logFile = open(log.create_log_file('ScreenlockController'), "a")
 
 class SLController(object):
     def __init__(self):
@@ -10,8 +15,9 @@ class SLController(object):
             try:
                 if p.name == self.appname:
                     return True
-            except psutil.Error:
-                pass
+            except psutil.Error as err:
+                global logFile
+                print (str(datetime.now()) + "  ScreenlockController: " + str(err), file = logFile )
         del self.lockerProc[:]
         return False
 
@@ -20,15 +26,16 @@ class SLController(object):
 
     def unlock_screen(self):
         if len(self.lockerProc) == 0:
-            print("ignoring unlock, no lock found")
+            global logFile
+            print (str(datetime.now()) + " ScreenlockController: ignoring unlock, no lock found", file = logFile)
         else:
             for p in self.lockerProc:
                 if p.pid:
-                    print("Killing PID: %d" % p.pid)
+                    print (str(datetime.now()) + " Killing PID: " +  p.pid, file = logFile)
                     try:
                         os.kill(p.pid, signal.CTRL_BREAK_EVENT)
                     except:
-                        print ("Error: The Screenlock app is not running.")
+                        print (str(datetime.now()) + " ScreenlockController: The Screenlock app is not running.", file = logFile)
                         continue
             del self.lockerProc[:]
                 

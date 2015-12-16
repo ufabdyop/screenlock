@@ -20,6 +20,10 @@ class SLConfig(object):
         self.config.set('Section', item, encrypted_password)
         self.writeConfig()
 
+    def writeKey(self,info,item):
+        self.config.set('Section', item, info)
+        self.writeConfig()
+
     def readPassword(self, item):
         self.readConfig()
         encrypted_password = self.config.get('Section', item)
