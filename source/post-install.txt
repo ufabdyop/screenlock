@@ -1,6 +1,5 @@
 step 1: Set the password for administrator
 step 2: Make sure the path for javaws.exe located at Program Files\ScreenLock\config.ini with the tag ‘front-window’ is correct.
 step 3: Run screenlockApp.exe or screenlockServer.exe or screenlockServerNCD.exe in Program Files\ScreenLock\
-step 4: Use web interface to set new web admin password : https://localhost:9092/admin (default is admin:1234)
 
 

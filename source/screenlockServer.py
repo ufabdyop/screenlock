@@ -1,13 +1,19 @@
-import urllib2, screenlockConfig, screenlockController, version, json
+import sys, os, urllib2, screenlockConfig, screenlockController, version, json, log
 from flask import Flask, request, Response
 from urlparse import urlparse
 from functools import wraps
 from OpenSSL import SSL
+from datetime import datetime
 
 app = Flask(__name__)
 config = screenlockConfig.SLConfig()
 lockController = screenlockController.SLController()
 context = ('cert.pem', 'key.pem')
+global logFile
+logFile = open(log.create_log_file('screenlockServer'), "a")
+errorLogFile = open(log.create_log_file('ErrorscreenlockServer'), "a")
+sys.stdout = logFile
+sys.stderr = errorLogFile
 
 def check_auth(username, password):
     """This function is called to check if a username /
@@ -78,7 +84,7 @@ def lock_Screen():
     try:
         lockController.lock_screen()
     except Exception,e:
-        print str(e)
+        print (str(datetime.now()) + "  ScreenLockServer: " + str(e))
     return json.dumps({"status": "locked"})
 
 @app.route('/unlock', methods=['POST'])
@@ -88,7 +94,7 @@ def unlock_Screen():
     try:
         lockController.unlock_screen()
     except Exception,e:
-            print str(e)
+        print (str(datetime.now()) + "  ScreenLockServer: " + str(e))
     return json.dumps({"status": "unlocked"})
 
 @app.route('/enable', methods=['POST'])
@@ -114,3 +120,7 @@ if __name__ == '__main__':
     portNumber = config.get('port')
     lockController.lock_screen()
     app.run(host='0.0.0.0', port = int(portNumber), ssl_context=context)
+    global logFile
+    logFile.close()
+    global errorLogFile
+    errorLogFile.close()

@@ -18,12 +18,17 @@ def main():
     clean_up()
 
 def run_setups():
-    setup (console=['source\\screenlockServer.py'])
-    setup (console=['source\\screenlockServerNCD.py'])
-    setup (console=['source\\blockKeys.py'])
-    setup (console=['source\\screenlockApp.py'])
-    setup (console=['source\\setAdminPassword.py'])
-    setup (console=['source\\builder.py'])
+    setAdminPassword = dict(script = 'source\\setAdminPassword.py',
+                  uac_info = 'requireAdministrator')
+    postInstall = dict(script = 'source\\postInstall.py', 
+                  uac_info = 'requireAdministrator')
+    setup (console=[ postInstall,
+                    'source\\screenlockServer.py',
+                    'source\\screenlockServerNCD.py',
+                    'source\\blockKeys.py',
+                    'source\\screenlockApp.py',
+                    setAdminPassword,
+                    'source\\builder.py'])
 
 def rename_dist_folder():
     os.rename(DEFAULT_DISTRIBUTION_FOLDER, NEW_DISTRIBUTION_FOLDER)

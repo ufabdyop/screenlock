@@ -1,8 +1,8 @@
-import os, wx, screenlockConfig
+from __future__ import print_function
+import os, wx, screenlockConfig, log
+from datetime import datetime
 
 ID_SUBMIT = wx.NewId()
-global endFlag
-endFlag = False
 
 class PasswordChangeFrame( wx.Frame ):
  
@@ -88,10 +88,6 @@ class PasswordChangeFrame( wx.Frame ):
         self.status.SetForegroundColour(wx.RED)
 
         self.Fit()
-        try:
-            thread.start_new_thread(self.deleteLabel, (self.status,))
-        except:
-            pass
 
     def OnTab(self, event):
         keycode = event.GetKeyCode()
@@ -130,27 +126,20 @@ class PasswordChangeFrame( wx.Frame ):
         elif newWebPassword != confirmWebPassword:
             self.errorMessage('Web Password Mismatch!')
         else:
-            self.config.writePassword(newPassword, 'admin_override')
-            self.config.writePassword(newWebPassword, 'web_password')
-            self.message('Saved New Passwords')
-
+            try:
+                self.config.writePassword(newPassword, 'admin_override')
+                self.config.writePassword(newWebPassword, 'web_password')
+                self.message('Saved New Passwords')
+            except Exception, e:
+                logFile = open(log.create_log_file('setAdminPassword'), "a")
+                print (str(datetime.now()) + "  setAdminPassword: {}".format(str(e)),file = logFile)
+                logFile.close()
+                
     def errorMessage(self, message):
         self.status.SetLabel(message)
 
     def message(self, message):
         self.status.SetLabel(message)
-
-    def deleteLabel(self,status):
-        global endFlag
-        while not endFlag:
-            time.sleep(5)
-            if not endFlag:
-                if status.GetLabel() != '' :
-                    time.sleep(5)
-                    if not endFlag:
-                        status.SetLabel('')
-        return
-#end OverlayFrame class
         
 #=======================================================
     
@@ -158,9 +147,5 @@ if __name__ == '__main__' :
     app = wx.App( False )
     frm = PasswordChangeFrame()
     frm.Show()
-    config = screenlockConfig.SLConfig()
-    path = config.get('post-install')
-    os.startfile(path)
     app.MainLoop()
-    endFlag = True
     

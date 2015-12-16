@@ -34,7 +34,7 @@
 
 Function LaunchLink
   SetOutPath $INSTDIR
-  Exec "setAdminPassword.exe"
+  Exec "postInstall.exe"
 FunctionEnd
 
 ; Uninstaller pages
@@ -112,6 +112,7 @@ Section -AdditionalIcons
   WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
   CreateDirectory "$SMPROGRAMS\ScreenLock"
   CreateShortCut "$SMPROGRAMS\ScreenLock\ScreenLock Server.lnk" "$INSTDIR\screenlockServer.exe"
+  CreateShortCut "$SMPROGRAMS\ScreenLock\Post Install.lnk" "$INSTDIR\postInstall.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\ScreenLock NCD Server.lnk" "$INSTDIR\screenlockServerNCD.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\ScreenLock Server No Command Window.lnk" "$INSTDIR\startup.vbs"
   CreateShortCut "$SMPROGRAMS\ScreenLock\ScreenLock NCD Server No Command Window.lnk" "$INSTDIR\startupNCD.vbs"
