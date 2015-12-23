@@ -5,6 +5,9 @@ from functools import wraps
 from OpenSSL import SSL
 from datetime import datetime
 
+PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
+os.chdir(PATH)
+
 app = Flask(__name__)
 config = screenlockConfig.SLConfig()
 lockController = screenlockController.SLController()

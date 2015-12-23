@@ -113,7 +113,9 @@ def getWindow(*args):
     windows = {}
     def callback(hwnd, _):
         for windowtext in args:
-            if win32gui.GetWindowText(hwnd).find(windowtext)!= -1 and win32gui.IsWindowVisible(hwnd):
+            if win32gui.GetWindowText(hwnd).find(windowtext)!= -1:
+                if windowtext == 'Run Data Collector' and not win32gui.IsWindowVisible(hwnd):
+                    continue
                 if windowtext in windows:
                     continue
                 windows[windowtext] = hwnd
@@ -218,5 +220,4 @@ if __name__ == '__main__' :
     newthread = ControlFrameThread()
     thread.start_new_thread(bottomTaskManageWindow, ())
     app.MainLoop()
-    global logFile
     logFile.close()
