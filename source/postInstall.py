@@ -1,7 +1,10 @@
 import sys, os, wx, screenlockConfig, subprocess, log
 from datetime import datetime
+import _winreg as wreg
 
+PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
 ID_SUBMIT = wx.NewId()
+
 
 class PostInstallFrame( wx.Frame ):
  
@@ -18,17 +21,11 @@ class PostInstallFrame( wx.Frame ):
         xPos = 10
         yPos = 10
 
-        self.startScreenLockCheckbox = wx.CheckBox(self, -1, label="Start Screenlock Upon Login", pos = (xPos,yPos), size = (400, 20))
+        self.startScreenLockCheckbox = wx.CheckBox(self, -1, label="Start ScreenlockServer Upon Login", pos = (xPos,yPos), size = (400, 20))
         self.startScreenLockCheckbox.SetFont(font)
         yPos += 35
         
-        port = self.config.get('port')
-        self.firewallCheckbox = wx.CheckBox(self, -1, label="Add exception to windows firewall for port <" + port + ">", pos = (xPos,yPos), size = (500, 20))
-        self.firewallCheckbox.SetFont(font)
-        yPos += 35
-        
-        
-        self.readmeCheckbox = wx.CheckBox(self, -1, label="Open README file", pos = (xPos,yPos), size = (400, 20))
+        self.readmeCheckbox = wx.CheckBox(self, -1, label="Open post-install file", pos = (xPos,yPos), size = (400, 20))
         self.readmeCheckbox.SetFont(font)
         yPos += 35
         
@@ -68,6 +65,13 @@ class PostInstallFrame( wx.Frame ):
         sys.exit()
 
     def OnSubmit(self, event):
+        if self.startScreenLockCheckbox.IsChecked():
+            server = os.path.join(PATH, 'screenlockServer.exe')
+            key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows\\CurrentVersion\\Run",0, wreg.KEY_ALL_ACCESS)
+            # Create new value
+            wreg.SetValueEx(key, 'startScreenlockServer', 0, wreg.REG_SZ, server)
+            key.Close()
+
         if self.readmeCheckbox.IsChecked():
             path = self.config.get('post-install')
             os.startfile(path)
