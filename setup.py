@@ -22,10 +22,10 @@ def run_setups():
                   uac_info = 'requireAdministrator')
     postInstall = dict(script = 'source\\postInstall.py', 
                   uac_info = 'requireAdministrator')
-    setup (console=[ postInstall,
+    setup (console=['source\\commandClient.py'],
+           windows=[ postInstall,
                     'source\\screenlockServer.py',
                     'source\\screenlockServerNCD.py',
-                    'source\\commandClient.py',
                     'source\\blockKeys.py',
                     'source\\screenlockApp.py',
                     setAdminPassword,
