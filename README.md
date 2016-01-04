@@ -48,6 +48,7 @@ Currently, this requires:
 * Visual Studio C++ Redistributable (for running py2exe) https://www.microsoft.com/en-us/download/details.aspx?id=29
 * pyhook (http://downloads.sourceforge.net/project/pyhook/pyhook/1.5.1/pyHook-1.5.1.zip) or whl file for use with pip: http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyhook
 * flask (pip install flask)
+* requests (pip install requests)
 * psutil v1.2.1 (https://pypi.python.org/packages/2.7/p/psutil/psutil-1.2.1.win32-py2.7.exe#md5=c4264532a64414cf3aa0d8b17d17e015)
 * twisted (https://pypi.python.org/packages/2.7/T/Twisted/Twisted-15.2.1.win32-py2.7.exe#md5=54d71f4b56106541a1feb3306a0a72c7)
 * zope.interface (https://pypi.python.org/packages/2.7/z/zope.interface/zope.interface-4.1.2.win32-py2.7.exe#md5=ab9396981638835220fc78209bd2d803)
@@ -61,7 +62,8 @@ Zip of prerequisites:
 Building EXE File
 ---
 
-We are using py2exe for building an exe file.  In order to build, python needs to have access to msvcp90.dll.
+We are using py2exe for building an exe file.  In order to build, python needs to have access to msvcp90.dll.  You should be able to find msvcp90.dll in C:\Windows somewhere.
+I found it deep within C:\Windows\winsxs\... by using the search utility in windows 7.
 You should copy that file to C:\python27\DLLs to avoid any issues during build.
 
 To build, follow these steps in a cmd window (We are assuming this directory is located in Z:\screenlock )
