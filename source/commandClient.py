@@ -4,6 +4,10 @@ def main():
 	num = len(sys.argv)
 	if num < 3:
 		print "Please enter at least two arguments"
+		print "eg. commandClient.exe https://localhost:9092 admin 1234 status"
+		print "eg. commandClient.exe https://localhost:9092 admin 1234 lock"
+		print "eg. commandClient.exe https://localhost:9092 admin 1234 unlock"
+		print "eg. commandClient.exe https://localhost:9092 version"
 		sys.exit(0)
 	else:
 		mainUrl = sys.argv[1]
@@ -14,8 +18,10 @@ def main():
 		response = None
 		try:
 			if num == 5:
-				username = sys.argv[3]
-				psw = sys.argv[4]
+				path = sys.argv[4]
+				url = mainUrl + '/' + path
+				username = sys.argv[2]
+				psw = sys.argv[3]
 				if path == 'lock':
 					response = requests.post(url, auth = (username,psw),verify = False, data = {"submit": "Lock the Screen"})
 				elif path == 'unlock':
