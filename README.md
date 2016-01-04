@@ -40,7 +40,7 @@ Prerequisites for Developing on Python Source Code :
 
 Currently, this requires:
 
-* python (https://www.python.org/ftp/python/2.7.9/python-2.7.9.msi)
+* python 32-bit version, 64 bit won't work (https://www.python.org/ftp/python/2.7.9/python-2.7.9.msi)
 * pywin32 (http://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/pywin32-219.win32-py2.7.exe?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fpywin32%2Ffiles%2Fpywin32%2FBuild%2520219%2F&ts=1431713378&use_mirror=iweb)
 * wxpython (http://downloads.sourceforge.net/project/wxpython/wxPython/3.0.2.0/wxPython3.0-win32-3.0.2.0-py27.exe?r=http%3A%2F%2Fwxpython.org%2Fdownload.php&ts=1431713419&use_mirror=softlayer-dal)
 * java (for coral: http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-windows-i586.exe)
@@ -51,9 +51,12 @@ Currently, this requires:
 * psutil v1.2.1 (https://pypi.python.org/packages/2.7/p/psutil/psutil-1.2.1.win32-py2.7.exe#md5=c4264532a64414cf3aa0d8b17d17e015)
 * twisted (https://pypi.python.org/packages/2.7/T/Twisted/Twisted-15.2.1.win32-py2.7.exe#md5=54d71f4b56106541a1feb3306a0a72c7)
 * zope.interface (https://pypi.python.org/packages/2.7/z/zope.interface/zope.interface-4.1.2.win32-py2.7.exe#md5=ab9396981638835220fc78209bd2d803)
-* pyopenssl
-* OPENSSL for windows: https://slproweb.com/products/Win32OpenSSL.html
-* NSIS: http://nsis.sourceforge.net/Download (build scripts expect this to be installed in C:\Program Files)
+* pyopenssl (pip install pyopenssl)
+* NSIS: http://nsis.sourceforge.net/Download (build scripts expect this to be installed in "C:\Program Files\NSIS" or "C:\Program Files (x86)\NSIS")
+
+Zip of prerequisites:
+
+* http://archiva.eng.utah.edu:4040/#artifact-details-download-content/edu.utah.nanofab.screenlock/prerequisites/1.0.5
 
 Building EXE File
 ---
