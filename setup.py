@@ -25,6 +25,7 @@ def run_setups():
     setup (console=[ postInstall,
                     'source\\screenlockServer.py',
                     'source\\screenlockServerNCD.py',
+                    'source\\commandClient.py',
                     'source\\blockKeys.py',
                     'source\\screenlockApp.py',
                     setAdminPassword,

@@ -7,6 +7,6 @@ from flask import Flask, request, Response
 from functools import wraps
 from urlparse import urlparse
 from OpenSSL import SSL
-import json, win32file, win32security, ntsecuritycon
+import json, win32file, win32security, ntsecuritycon, requests
 from datetime import datetime
 import _winreg as wreg
