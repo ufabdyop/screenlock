@@ -1,5 +1,5 @@
 from __future__ import print_function
-import os, wx, screenlockConfig, log
+import os, wx, screenlockConfig, log, logging, pprint
 from datetime import datetime
 
 ID_SUBMIT = wx.NewId()
@@ -7,6 +7,8 @@ ID_SUBMIT = wx.NewId()
 class PasswordChangeFrame( wx.Frame ):
  
     def __init__( self ):
+        self.logger = logging.getLogger('setAdminPassword')
+        self.logger.debug("setAdminPassword started")
 
         self.config = screenlockConfig.SLConfig()
  
@@ -130,11 +132,10 @@ class PasswordChangeFrame( wx.Frame ):
                 self.config.writePassword(newPassword, 'admin_override')
                 self.config.writePassword(newWebPassword, 'web_password')
                 self.message('Saved New Passwords')
+                self.logger.debug("Saved a New Password")
             except Exception, e:
-                logFile = open(log.create_log_file('setAdminPassword'), "a")
-                print (str(datetime.now()) + "  setAdminPassword: {}".format(str(e)),file = logFile)
-                logFile.close()
-                
+                self.logger.error(pprint.pformat(e))
+
     def errorMessage(self, message):
         self.status.SetLabel(message)
 
@@ -144,6 +145,7 @@ class PasswordChangeFrame( wx.Frame ):
 #=======================================================
     
 if __name__ == '__main__' :
+    log.initialize_logging('setAdminPassword')
     app = wx.App( False )
     frm = PasswordChangeFrame()
     frm.Show()

@@ -4,126 +4,164 @@ from urlparse import urlparse
 from functools import wraps
 from OpenSSL import SSL
 from datetime import datetime
+import pprint, logging
 
-PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
-os.chdir(PATH)
+class screenlockFlaskServer(object):
+    def __init__(self):
+        self.config = screenlockConfig.SLConfig()
+        self.port = self.config.get('port')
+        self.app = Flask(__name__)
+        self.app.debug = False
+        self.logger = logging.getLogger('screenlockServer')
 
-app = Flask(__name__)
-config = screenlockConfig.SLConfig()
-lockController = screenlockController.SLController()
-context = ('cert.pem', 'key.pem')
-global logFile
-logFile = open(log.create_log_file('screenlockServer'), "a")
-errorLogFile = open(log.create_log_file('ErrorscreenlockServer'), "a")
-sys.stdout = logFile
-sys.stderr = errorLogFile
+        self.ssl_context = None
+        try:
+            ssl_cert = self.config.get('cert')
+            ssl_key = self.config.get('key')
+            if ssl_cert and ssl_key:
+                self.ssl_context = ('cert.pem', 'key.pem')
+        except:
+            pass
 
-def check_auth(username, password):
-    """This function is called to check if a username /
-    password combination is valid.
-    """
-    return username == 'admin' and config.passwordCheck(password,'web_password')
 
-def authenticate():
-    """Sends a 401 response that enables basic auth"""
-    return Response(
-    'Could not verify your access level for that URL.\n'
-    'You have to login with proper credentials', 401,
-    {'WWW-Authenticate': 'Basic realm="Login Required"'})
-    
-def passwordError():
-    """Sends a 401 response"""
-    return Response(
-    'Error, password need to be set!', 401,
-    {'WWW-Authenticate': 'Basic realm="Password needs to be Set"'})
+        self.setup_routes()
+        self.lockController = screenlockController.SLController()
 
-def requires_auth(f):
-    try:
-        password = config.get('web_password')
-        if password == '':
-            raise ValueError("The password has not been set.")
-    except ValueError:
-        return passwordError
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
-    
-@app.route('/admin', methods=['GET', 'POST'])
-@requires_auth
-def lock_or_unlock_Screen():
-    parseResult = urlparse(request.url)
-    netloc = parseResult[1]
-    url = request.url
-    html ='<html><head><title>ScreenLock</title></head><body>'
-    if lockController.is_running():
-        html = '<p><h2>Status: locked.</h2></p>'
-        html += '<br/><form action="' +parseResult[0]+'://'+netloc +'/lock" method="POST"><input type="submit" name="submit" value="Lock the Screen" disabled></form>'
-        html += '<br/><form action="'+parseResult[0]+'://'+netloc+'/unlock" method="POST"><input type="submit" name="submit" value="Unlock the Screen"></form>'
-    else:
-        html = '<p><h2>Status: unlocked.</h2></p>'
-        html += '<br/><form action="' +parseResult[0]+'://'+netloc +'/lock" method="POST"><input type="submit" name="submit" value="Lock the Screen"></form>'
-        html += '<br/><form action="'+parseResult[0]+'://'+netloc+'/unlock" method="POST"><input type="submit" name="submit" value="Unlock the Screen" disabled></form>'
-    html += '</body></html>'
-    return html
+    def run(self):
+        self.lock_screen()
+        if self.ssl_context:
+            self.app.run(host='0.0.0.0', port = self.port,
+                     ssl_context=self.ssl_context)
+        else:
+            self.app.run(host='0.0.0.0', port = self.port)
 
-@app.route('/status', methods=['GET', 'POST'])
-@requires_auth   
-def get_status():
-    result = ''
-    if lockController.is_running():
-        result = json.dumps({"status": "locked"})
-    else:
-        result = json.dumps({"status": "unlocked"})
-    return result
- 
-@app.route('/lock', methods=['POST'])
-@requires_auth   
-def lock_Screen():
-    global lockController
-    try:
-        lockController.lock_screen()
-    except Exception,e:
-        print (str(datetime.now()) + "  ScreenLockServer: " + str(e))
-    return json.dumps({"status": "locked"})
+    ########### AUTH HANDLING ############
+    def check_auth(self, username, password):
+        """This function is called to check if a username /
+        password combination is valid.
+        """
+        return username == 'admin' and \
+               self.config.passwordCheck(password,'web_password')
 
-@app.route('/unlock', methods=['POST'])
-@requires_auth   
-def unlock_Screen():
-    global lockController
-    try:
-        lockController.unlock_screen()
-    except Exception,e:
-        print (str(datetime.now()) + "  ScreenLockServer: " + str(e))
-    return json.dumps({"status": "unlocked"})
+    def authenticate(self):
+        """Sends a 401 response that enables basic auth"""
+        return Response(
+        'Could not verify your access level for that URL.\n'
+        'You have to login with proper credentials', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'})
 
-@app.route('/enable', methods=['POST'])
-@requires_auth
-def enable_Screen():
-    return unlock_Screen()
+    def passwordError(self):
+        """Sends a 401 response"""
+        return Response(
+        'Error, password need to be set!', 401,
+        {'WWW-Authenticate': 'Basic realm="Password needs to be Set"'})
 
-@app.route('/disable', methods=['POST'])
-@requires_auth
-def disable_Screen():
-    return lock_Screen()
+    def requires_auth(self, f):
+        try:
+            password = self.config.get('web_password')
+            if password == '':
+                raise ValueError("The password has not been set.")
+        except ValueError:
+            return self.passwordError
 
-@app.route('/sense', methods=['POST', 'GET'])
-@requires_auth
-def sense_status():
-    return get_status()
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            auth = request.authorization
+            if not auth or not self.check_auth(auth.username, auth.password):
+                return self.authenticate()
+            return f(*args, **kwargs)
+        return decorated
+    ########### END AUTH HANDLING ############
 
-@app.route('/version')
-def get_Version():
-    return json.dumps({"version": version.VERSION})
+    ########### HTTP ENDPOINT METHODS ############
+    def lock_or_unlock_screen(self):
+        parseResult = urlparse(request.url)
+        netloc = parseResult[1]
+        url = request.url
+        html ='<html><head><title>ScreenLock</title></head><body>'
+        if self.lockController.is_running():
+            html = '<p><h2>Status: locked.</h2></p>'
+            html += '<br/><form action="' +parseResult[0]+'://'+netloc +'/lock" method="POST"><input type="submit" name="submit" value="Lock the Screen" disabled></form>'
+            html += '<br/><form action="'+parseResult[0]+'://'+netloc+'/unlock" method="POST"><input type="submit" name="submit" value="Unlock the Screen"></form>'
+        else:
+            html = '<p><h2>Status: unlocked.</h2></p>'
+            html += '<br/><form action="' +parseResult[0]+'://'+netloc +'/lock" method="POST"><input type="submit" name="submit" value="Lock the Screen"></form>'
+            html += '<br/><form action="'+parseResult[0]+'://'+netloc+'/unlock" method="POST"><input type="submit" name="submit" value="Unlock the Screen" disabled></form>'
+        html += '</body></html>'
+        return html
+
+    def get_status(self):
+        result = ''
+        if self.lockController.is_running():
+            result = json.dumps({"status": "locked"})
+        else:
+            result = json.dumps({"status": "unlocked"})
+        return result
+
+    def lock_screen(self):
+        try:
+            self.lockController.lock_screen()
+        except Exception,e:
+            self.logger.error("ScreenLockServer error locking screen: %s" % e)
+        return json.dumps({"status": "locked"})
+
+    def unlock_screen(self):
+        try:
+            self.lockController.unlock_screen()
+        except Exception,e:
+            self.logger.error("ScreenLockServer error unlocking screen: %s" % e)
+        return json.dumps({"status": "unlocked"})
+    ########### END HTTP ENDPOINT METHODS ############
+
+    def setup_routes(self):
+        @self.app.route('/admin', methods=['GET', 'POST'])
+        @self.requires_auth
+        def admin():
+            return self.lock_or_unlock_screen()
+
+        @self.app.route('/status', methods=['GET', 'POST'])
+        @self.requires_auth
+        def status():
+            return self.get_status()
+
+        @self.app.route('/lock', methods=['POST'])
+        @self.requires_auth
+        def lock():
+            return self.lock_screen()
+
+        @self.app.route('/unlock', methods=['POST'])
+        @self.requires_auth
+        def unlock():
+            return self.unlock_screen()
+
+        #Alias for unlock
+        @self.app.route('/enable', methods=['POST'])
+        @self.requires_auth
+        def enable(self):
+            return unlock()
+
+        #Alias for lock
+        @self.app.route('/disable', methods=['POST'])
+        @self.requires_auth
+        def disable(self):
+            return lock()
+
+        #Alias for status
+        @self.app.route('/sense', methods=['POST', 'GET'])
+        @self.requires_auth
+        def sense(self):
+            return status()
+
+        @self.app.route('/version')
+        def version(self):
+            return json.dumps({"version": version.VERSION})
+
 
 if __name__ == '__main__':
-    portNumber = config.get('port')
-    lockController.lock_screen()
-    app.run(host='0.0.0.0', port = int(portNumber), ssl_context=context)
-    global logFile
-    logFile.close()
-    global errorLogFile
-    errorLogFile.close()
+    PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
+    os.chdir(PATH)
+
+    log.initialize_logging("screenlockServer")
+
+    server = screenlockFlaskServer()
+    server.run()
