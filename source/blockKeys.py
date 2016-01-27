@@ -1,15 +1,19 @@
 from __future__ import print_function
-import pythoncom, pyHook, signal,log
+import pythoncom, pyHook, signal,log, sys,logging
 from win32api import GetSystemMetrics
 from datetime import datetime
 
 class BlockKeys(object):
     def __init__ (self):
-        self.logFile = open(log.create_log_file('blockKeys'), "a")
+        log.initialize_logging('BlockKeys')
+        self.logger = logging.getLogger('BlockKeys')
+        self.logger.debug("blocking keys")
+
         self.keylist = {}
         self.blockkeys = ['f1','f2','f3','f4','f5','f6','f7','f8','f9','f10',
             'f11','f12','escape','lwin','rwin','lmenu','rmenu']
         self.beginBlocking()
+
         
     def beginBlocking(self):
         hm = pyHook.HookManager()   # create a hook manager
@@ -21,9 +25,8 @@ class BlockKeys(object):
         try:
             pythoncom.PumpMessages()
         except Exception as err:
-            print (str(datetime.now()) + "  BlockKeys: " + str(err),file = self.logFile)
-            self.logFile.close()
-            sys.exit(0)  
+            self.logger.error(err)
+            sys.exit(0)
             
     # create a keyboard hook
     def OnKeyboardEvent(self, event):
@@ -53,8 +56,7 @@ class BlockKeys(object):
         return True
 
     def signal_handler(self, signal, frame):
-        print (str(datetime.now()) + "  catcher: signal " + signal + "received!",file = self.logFile)
-        self.logFile.close()
+        self.logger.debug("received signal : %s" % signal)
         sys.exit(0)
       
 BlockKeys()

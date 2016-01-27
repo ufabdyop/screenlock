@@ -1,14 +1,29 @@
 from __future__ import print_function
-import os, subprocess, signal, psutil,log
+import os, subprocess, signal, psutil,log, sys, pprint, logging, win32api
 from datetime import datetime
-
-global logFile
-logFile = open(log.create_log_file('ScreenlockController'), "a")
-
+from screenlockConfig import SLConfig
 class SLController(object):
     def __init__(self):
+        log.initialize_logging("SLController")
+        self.logger = logging.getLogger("SLController")
+        self.config = SLConfig()
         self.lockerProc = []
-        self.appname = "screenlockApp.exe"
+
+        # determine if application is a script file or frozen exe
+        if getattr(sys, 'frozen', False):
+            application_path = os.path.dirname(sys.executable)
+            self.app_init = [os.path.join(application_path,
+                                          "screenlockApp.exe")]
+            self.appname="screenlockApp.exe"
+        elif __file__:
+            application_path = os.path.dirname(__file__)
+            self.app_init = ["python.exe",
+                                os.path.join(application_path,
+                                 "screenlockApp.py")]
+            self.appname="screenlockApp.py"
+
+        self.logger.debug("Screenlock Controller Initialized, path: %s, appName: %s" %
+                          (application_path, self.appname))
 
     def is_running(self):
         for p in psutil.process_iter():
@@ -16,28 +31,36 @@ class SLController(object):
                 if p.name == self.appname:
                     return True
             except psutil.Error as err:
-                global logFile
-                print (str(datetime.now()) + "  ScreenlockController: " + str(err), file = logFile )
-        del self.lockerProc[:]
+                #permission error on getting name of process (safe to ignore)
+                pass
         return False
 
     def lock_screen(self):
-        self.lockerProc.append( subprocess.Popen(["screenlockApp.exe"],  creationflags=subprocess.CREATE_NEW_PROCESS_GROUP) )
+        self.lockerProc.append( subprocess.Popen(self.app_init,  creationflags=subprocess.CREATE_NEW_PROCESS_GROUP) )
 
     def unlock_screen(self):
         if len(self.lockerProc) == 0:
-            global logFile
-            print (str(datetime.now()) + " ScreenlockController: ignoring unlock, no lock found", file = logFile)
+            self.logger.debug("ScreenlockController: ignoring unlock, no lock found")
         else:
             for p in self.lockerProc:
                 if p.pid:
-                    print (str(datetime.now()) + " Killing PID: " +  p.pid, file = logFile)
+                    self.logger.debug("%s %s" % (" Killing PID: ", p.pid))
                     try:
-                        os.kill(p.pid, signal.CTRL_BREAK_EVENT)
+                        p.send_signal(signal.SIGTERM)
                     except:
-                        print (str(datetime.now()) + " ScreenlockController: The Screenlock app is not running.", file = logFile)
+                        self.logger.debug("ScreenlockController: The Screenlock app is not running.")
                         continue
             del self.lockerProc[:]
-                
+        self.unlock_screen_started_by_other_process()
 
-
+    def unlock_screen_started_by_other_process(self):
+        keyBlocker = self.config.get('keysblock')
+        for p in psutil.process_iter():
+            try:
+                if p.name == self.appname or p.name == keyBlocker:
+                    self.logger.debug("Killing %s by pid %s" % (p.name, p.pid))
+                    p.send_signal(signal.SIGTERM)
+                    return True
+            except psutil.Error as err:
+                pass
+        return False

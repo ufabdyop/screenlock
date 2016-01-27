@@ -1,8 +1,15 @@
 import os, stat, sys, shutil, win32api, win32file, win32security, ntsecuritycon
+import logging
 from datetime import datetime
 
-PATH = os.path.dirname(os.path.abspath(__file__))
-LOG_FOLDER = os.path.join(PATH, '../Log')
+# determine if application is a script file or frozen exe
+if getattr(sys, 'frozen', False):
+    APPLICATION_PATH = os.path.dirname(sys.executable)
+elif __file__:
+    APPLICATION_PATH = os.path.dirname(__file__)
+
+APPLICATION_PATH = os.path.dirname(os.path.abspath(__file__))
+LOG_FOLDER = os.path.join(APPLICATION_PATH, '../Log')
 # LOG_FOLDER = 'C:\Temp\Log'
 
 #  create a log folder
@@ -28,11 +35,22 @@ def allow_everyone_permission_to_log_folder():
     LOG_FOLDER, win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION, \
     None, None, fileDacl, None )
 
+
 def create_log_file(name):
-	global FILENAME
-	time = str(datetime.now())
-	time = time.replace(':', '_')
-	FILENAME = os.path.join(LOG_FOLDER, time +'-'+ name +'.log')
-	logFile = open(FILENAME,'a')
-	logFile.close()
-	return FILENAME
+    filename = get_log_filename(name)
+    logFile = open(filename,'a')
+    logFile.close()
+    return filename
+
+def get_log_filename(name):
+    time = str(datetime.now())
+    time = time.replace(':', '_')
+    #filename = os.path.join(LOG_FOLDER, time + '-' + name + '.log')
+    filename = os.path.join(LOG_FOLDER, name + '.log')
+    return filename
+
+def initialize_logging(name):
+    filename = get_log_filename("screenlock")
+    logging.basicConfig(filename=filename,
+                        level=logging.DEBUG,
+                        format="%(asctime)s\t%(message)s\t%(filename)s\t%(funcName)s\t%(levelname)s")

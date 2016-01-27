@@ -1,4 +1,4 @@
-import sys, os, wx, screenlockConfig, subprocess, log
+import sys, os, wx, screenlockConfig, subprocess, log, logging
 from datetime import datetime
 import _winreg as wreg
 
@@ -9,6 +9,8 @@ ID_SUBMIT = wx.NewId()
 class PostInstallFrame( wx.Frame ):
  
     def __init__( self ):
+        self.logger = logging.getLogger('postInstall')
+        self.logger.debug("postInstall started")
 
         self.config = screenlockConfig.SLConfig()
  
@@ -67,7 +69,8 @@ class PostInstallFrame( wx.Frame ):
     def OnSubmit(self, event):
         if self.startScreenLockCheckbox.IsChecked():
             server = os.path.join(PATH, 'screenlockServer.exe')
-            key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows\\CurrentVersion\\Run",0, wreg.KEY_ALL_ACCESS)
+            key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE,
+                               "Software\\Microsoft\\Windows\\CurrentVersion\\Run",0, wreg.KEY_ALL_ACCESS)
             # Create new value
             wreg.SetValueEx(key, 'startScreenlockServer', 0, wreg.REG_SZ, server)
             key.Close()
@@ -75,21 +78,21 @@ class PostInstallFrame( wx.Frame ):
         if self.readmeCheckbox.IsChecked():
             path = self.config.get('post-install')
             os.startfile(path)
-            print str(datetime.now()) + '   Postinstall: post-install.txt Opened'
+            self.logger.debug(str(datetime.now()) + ' Postinstall: post-install.txt Opened')
 
         if self.setPasswordCheckbox.IsChecked():
             path = self.config.get('setAdminPsw')
-            print str(datetime.now()) + '   Postinstall: Set Passwords Opened'
+            self.logger.debug( str(datetime.now()) + ' Postinstall: Set Passwords Opened' )
             self.p = subprocess.Popen(path)
         try:
             if self.setCoralRadioBtn.GetValue():
                 self.config.writeKey('true','coral')
-                print str(datetime.now()) + '   Postinstall: \'coral\' has been updated to \'true\''
+                self.logger.debug( str(datetime.now()) + ' Postinstall: \'coral\' has been updated to \'true\'')
             else:
                 self.config.writeKey('false','coral')
-                print str(datetime.now()) + '   Postinstall: \'coral\' has been updated to \'false\''
+                self.logger.debug(str(datetime.now()) + ' Postinstall: \'coral\' has been updated to \'false\'')
         except Exception, e:
-            print str(datetime.now()) + '   Postinstall: ' + str(e)
+            self.logger.debug(str(datetime.now()) + ' Postinstall: ' + str(e))
         sys.exit()
         
 #=======================================================#
@@ -97,11 +100,8 @@ class PostInstallFrame( wx.Frame ):
 
 if __name__ == '__main__' :
     log.create_log_folder()
-    logFile = open(log.create_log_file('postInstall'), "a")
-    sys.stdout = logFile
+    log.initialize_logging('postInstall')
     app = wx.App( False )
     frm = PostInstallFrame()
     frm.Show()
     app.MainLoop()
-    logFile.close()
-    

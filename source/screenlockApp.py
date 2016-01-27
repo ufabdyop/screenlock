@@ -1,5 +1,6 @@
 from __future__ import print_function
-import wx, thread, time, win32api, win32gui, win32con, subprocess, signal, screenlockConfig,urllib2, log
+import wx, thread, time, win32api, win32gui, win32con, \
+    subprocess, signal, screenlockConfig,urllib2, log, os, logging
 from threading import *
 from datetime import datetime
 
@@ -9,14 +10,14 @@ endFlag = False
 global config
 config = screenlockConfig.SLConfig()
 
-global logFile
-logFile = open(log.create_log_file('screenlockApp'), "a")
-
 ID_SUBMIT = wx.NewId()
 
 class OverlayFrame( wx.Frame ):
- 
+
     def __init__( self )  :
+        self.logger=logging.getLogger('screenlockApp')
+        self.logger.debug(" screenlockApp: Starting")
+
         wx.Frame.__init__( self, None, title="Transparent Window",
                            style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP )
 
@@ -32,8 +33,8 @@ class OverlayFrame( wx.Frame ):
         self.inputField = wx.TextCtrl(self, value="", size=(140, 30), pos=(10,45), name="input", style=wx.TE_PASSWORD)
         self.inputField.SetFont(font)
         
-        self.submitbutton = wx.Button(self, ID_SUBMIT, 'Submit', pos=(160,50))
-        self.submitbutton.SetFont(font)
+        self.submitButton = wx.Button(self, ID_SUBMIT, 'Submit', pos=(160,50))
+        self.submitButton.SetFont(font)
         self.Bind(wx.EVT_BUTTON, self.OnSubmit, id=ID_SUBMIT)
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSubmit)
         self.input = None
@@ -41,8 +42,8 @@ class OverlayFrame( wx.Frame ):
         self.status = wx.StaticText(self, -1, '', pos=(10,80))
         self.status.SetFont(font)
 
-        win32api.SetConsoleCtrlHandler(self.signal_handler, True)
-        
+        win32api.SetConsoleCtrlHandler(self.signalHandler, True)
+
         global coral
         global config
         coral = config.get('coral')
@@ -51,12 +52,15 @@ class OverlayFrame( wx.Frame ):
         try:
             thread.start_new_thread(self.deleteLabel, (self.status,))
         except:
-            global logFile
-            print (str(datetime.now()) + "  screenlockApp: Can not start a new thread to delete Label.", file = logFile)
+            self.logger.error(" screenlockApp: Can not start a new thread to delete Label.")
 
-    def signal_handler(self, signalNumber):
-        if self.p.pid:
-            self.p.send_signal(signal.SIGTERM)
+    def signalHandler(self, signalNumber):
+        self.logger.debug("received signal: %s" % signalNumber)
+        if self.keyBlockerProcess.pid:
+            self.logger.debug("propagating signal")
+            self.keyBlockerProcess.send_signal(signal.SIGTERM)
+        else:
+            self.logger.debug("no keyblocker pid for signal")
         global endFlag
         endFlag = True
         makeCoralNotTopMost()
@@ -69,7 +73,7 @@ class OverlayFrame( wx.Frame ):
         if config.passwordCheck(self.input, 'admin_override'):
             global endFlag
             endFlag = True
-            self.p.send_signal(signal.SIGTERM)
+            self.keyBlockerProcess.send_signal(signal.SIGTERM)
             makeCoralNotTopMost()
             self.Destroy()        
         else:
@@ -89,13 +93,19 @@ class OverlayFrame( wx.Frame ):
     def openKeysBlock (self):
         global config
         path = config.get('keysblock')
-        self.p = subprocess.Popen(path)
+        if os.path.isfile(path):
+            self.logger.debug("blocking keys")
+            self.keyBlockerProcess = subprocess.Popen(path)
+        else:
+            self.keyBlockerProcess = NullProcess()
+            self.logger.error("ERROR: Cannot find keysblock from config %s" % path)
 
 
 #end OverlayFrame class        
 
 
 def bottomTaskManageWindow():
+    logger = logging.getLogger("bottomTaskManageWindow")
     global endFlag
     while not endFlag:   
         time.sleep(0.1)
@@ -104,13 +114,14 @@ def bottomTaskManageWindow():
             try:
                 win32gui.SetWindowPos(taskwindow["Windows Task Manager"],win32con.HWND_BOTTOM,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
             except:
-                global logFile
-                print (str(datetime.now()) + "  screenlockApp: Windows Task Manager may not exist.", file = logFile)
+                logger.error (str(datetime.now()) + " screenlockApp: Windows Task Manager may not exist.")
     return
             
 
 def getWindow(*args):
     windows = {}
+    logger = logging.getLogger("screenlockApp")
+
     def callback(hwnd, _):
         for windowtext in args:
             if win32gui.GetWindowText(hwnd).find(windowtext)!= -1:
@@ -123,26 +134,26 @@ def getWindow(*args):
     try:
         win32gui.EnumWindows(callback, None)
     except:
-        global logFile
-        print (str(datetime.now()) + "  screenlockApp: getWindow error.", file = logFile)
+        logger.error (str(datetime.now()) + "  screenlockApp: getWindow error.")
     if len(windows) > 0 :
         return windows
     return None
     
 def makeCoralNotTopMost():
     coralWindow = getWindow("Coral")
+    logger = logging.getLogger("screenlockApp")
     if coralWindow:
         try:
             win32gui.SetWindowPos(coralWindow["Coral"],win32con.HWND_NOTOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
         except:
-            global logFile
-            print (str(datetime.now()) + "  screenlockApp makeCoralNotTopMost: Coral window may not exist.", file = logFile)
+            logger.error (str(datetime.now()) + " screenlockApp makeCoralNotTopMost: Coral window may not exist.")
 
 # a method to be invoked by ControlFrameThread    
 def makeProgramAtFront():
     def makeWindowTopmost(windowHwnd):
         win32gui.SetWindowPos(windowHwnd,win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
     global coral
+    logger = logging.getLogger("screenlockApp")
     if (coral == 'true'):
         windows = getWindow("Run Data Collector", "Warning", "Error","Coral", "Screen Saver", "Application Update")
     else:
@@ -168,31 +179,33 @@ def makeProgramAtFront():
             if "Screen Saver" in windows:
                 makeWindowTopmost(windows["Screen Saver"])
     except:
-        global logFile
-        print (str(datetime.now()) + "  screenlockApp makeProgramAtFront: window may not exist.", file = logFile)
+        logger.error (str(datetime.now()) + " screenlockApp makeProgramAtFront: window may not exist.")
     if not checkCoralOpen and coral == 'true':
         openCoral()
         
    
 def openCoral ():
     global config, endFlag
+    logger = logging.getLogger("screenlockApp")
     path = config.get('front_window')
-    internet_flag = internet_on()
+    internet_flag = internetOn()
     while (not internet_flag) and (not endFlag):
-        global logFile
-        print (str(datetime.now()) + "  screenlockApp: NO internet.", file = logFile)
+        logger.error (str(datetime.now()) + " screenlockApp: NO internet.")
         time.sleep(2)
-        internet_flag = internet_on()
+        internet_flag = internetOn()
     subprocess.Popen(path)
     time.sleep (6)
     
-def internet_on():
+def internetOn():
+    logger = logging.getLogger("screenlockApp")
+
     try:
-        response = urllib2.urlopen('https://coral.nanofab.utah.edu/',timeout=1)
+        global config
+        test_connection_url = config.get('test_connection_url')
+        response = urllib2.urlopen(test_connection_url,timeout=1)
         return True
     except urllib2.URLError as err: 
-        global logFile
-        print (str(datetime.now()) + "  screenlockApp: " + str(err), file = logFile)
+        logger.error (str(datetime.now()) + " screenlockApp: " + str(err))
     return False
 
 # a thread class to do the infinite loop to make sure the
@@ -212,12 +225,20 @@ class ControlFrameThread(Thread):
         return
         
 #=======================================================
+
+class NullProcess(object):
+    def __init__(self):
+        self.pid = False
+        self.logger = logging.getLogger("NullProcess")
+    def send_signal(self, sig):
+        self.logger.error("NullProcess Received sig: %s" % sig)
     
 if __name__ == '__main__' :
+    log.initialize_logging('screenlockApp')
     app = wx.App( False )
     frm = OverlayFrame()
+
     frm.Show()
     newthread = ControlFrameThread()
     thread.start_new_thread(bottomTaskManageWindow, ())
     app.MainLoop()
-    logFile.close()

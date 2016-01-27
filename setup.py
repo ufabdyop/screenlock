@@ -17,12 +17,30 @@ def main():
     try_running_nsis()
     clean_up()
 
+def create_zope_init_fix():
+    #See : http://stackoverflow.com/a/11632115/1243508
+    pythondir = sys.exec_prefix
+    zope_init_file = os.path.join(pythondir, 'Lib', 'site-packages', 'zope', '__init__.py')
+    touch(zope_init_file)
+
+def delete_old_build():
+    if os.path.isdir(DEFAULT_DISTRIBUTION_FOLDER):
+        shutil.rmtree(DEFAULT_DISTRIBUTION_FOLDER)
+    if os.path.isdir(NEW_DISTRIBUTION_FOLDER):
+        shutil.rmtree(NEW_DISTRIBUTION_FOLDER)
+    if os.path.isdir(BUILD_FOLDER):
+        shutil.rmtree(BUILD_FOLDER)
+
 def run_setups():
     setAdminPassword = dict(script = 'source\\setAdminPassword.py',
                   uac_info = 'requireAdministrator')
     postInstall = dict(script = 'source\\postInstall.py', 
                   uac_info = 'requireAdministrator')
-    setup (console=['source\\commandClient.py'],
+
+    setup (console=['source\\commandClient.py',
+                    'source\\ncdClient.py',
+                    {'script': 'source\\screenlockServerNCD.py', 'dest_base': 'screenlockServerNCD_console'}
+                    ],
            windows=[ postInstall,
                     'source\\screenlockServer.py',
                     'source\\screenlockServerNCD.py',
@@ -39,40 +57,6 @@ def copy_support_files_to_dist_folder():
     write_version_to_text_file()
     copy_nsis_file_to_dist_folder()
     dynamically_add_file_list_to_nsis()
-
-def copy_config_and_text_files_to_dist_folder():
-    files = [os.path.join(SOURCE_FOLDER, 'config.ini'),
-    		os.path.join(SOURCE_FOLDER, 'key.pem'),
-    		os.path.join(SOURCE_FOLDER, 'cert.pem'),
-            os.path.join(SOURCE_FOLDER, 'license.txt'),
-            os.path.join(SOURCE_FOLDER, 'post-install.txt'),
-            os.path.join(SOURCE_FOLDER, 'startup.bat'),
-            os.path.join(SOURCE_FOLDER, 'startup.vbs'),
-            os.path.join(SOURCE_FOLDER, 'startupNCD.bat'),
-            os.path.join(SOURCE_FOLDER, 'startupNCD.vbs'),
-            os.path.join(PATH, 'README.md')]
-
-    for f in files:
-        shutil.copy (f,NEW_DISTRIBUTION_FOLDER)
-
-def write_version_to_text_file():
-    version_filename = os.path.join(NEW_DISTRIBUTION_FOLDER, 'releaseVersion.txt')
-    with open(version_filename, "w") as text_file:
-        text_file.write( VERSION )
-
-def copy_nsis_file_to_dist_folder():
-    nsis_file = os.path.join(SOURCE_FOLDER, 'installer', 'install.nsi')
-    new_installer_folder = os.path.join(NEW_DISTRIBUTION_FOLDER, 'installer')
-    os.makedirs(new_installer_folder)
-    shutil.copy (nsis_file,new_installer_folder)
-
-def delete_old_build():
-    if os.path.isdir(DEFAULT_DISTRIBUTION_FOLDER):
-        shutil.rmtree(DEFAULT_DISTRIBUTION_FOLDER)
-    if os.path.isdir(NEW_DISTRIBUTION_FOLDER):
-        shutil.rmtree(NEW_DISTRIBUTION_FOLDER)
-    if os.path.isdir(BUILD_FOLDER):
-        shutil.rmtree(BUILD_FOLDER)
 
 def create_tagged_folder():
     if os.path.isdir(TAGGED_FOLDER):
@@ -114,6 +98,33 @@ def clean_up():
     shutil.rmtree(BUILD_FOLDER)
     clean_up_temporary_assets_if_nsis_succeeded()
 
+def copy_config_and_text_files_to_dist_folder():
+    files = [os.path.join(SOURCE_FOLDER, 'config.ini'),
+            os.path.join(SOURCE_FOLDER, 'key.pem'),
+            os.path.join(SOURCE_FOLDER, 'cert.pem'),
+            os.path.join(SOURCE_FOLDER, 'license.txt'),
+            os.path.join(SOURCE_FOLDER, 'post-install.txt'),
+            os.path.join(SOURCE_FOLDER, 'startup.bat'),
+            os.path.join(SOURCE_FOLDER, 'startup.vbs'),
+            os.path.join(SOURCE_FOLDER, 'startupNCD.bat'),
+            os.path.join(SOURCE_FOLDER, 'startupNCD.vbs'),
+            os.path.join(PATH, 'README.md')]
+
+    for f in files:
+        shutil.copy (f,NEW_DISTRIBUTION_FOLDER)
+
+def write_version_to_text_file():
+    version_filename = os.path.join(NEW_DISTRIBUTION_FOLDER, 'releaseVersion.txt')
+    with open(version_filename, "w") as text_file:
+        text_file.write( VERSION )
+
+def copy_nsis_file_to_dist_folder():
+    nsis_file = os.path.join(SOURCE_FOLDER, 'installer', 'install.nsi')
+    new_installer_folder = os.path.join(NEW_DISTRIBUTION_FOLDER, 'installer')
+    os.makedirs(new_installer_folder)
+    print("copying %s to %s" %  (nsis_file,new_installer_folder))
+    shutil.copy (nsis_file,new_installer_folder)
+
 def clean_up_temporary_assets_if_nsis_succeeded():
     nsis_setup_file = os.path.join(TAGGED_FOLDER, 'screenlock','installer', 'ScreenLock-' + VERSION + '-Setup.exe')
     if os.path.isfile(nsis_setup_file):
@@ -147,12 +158,6 @@ def touch(filename):
         open(filename, 'w').close() 
     else:
         print("file exists, skipping")
-
-def create_zope_init_fix():
-    #See : http://stackoverflow.com/a/11632115/1243508
-    pythondir = sys.exec_prefix
-    zope_init_file = os.path.join(pythondir, 'Lib', 'site-packages', 'zope', '__init__.py')
-    touch(zope_init_file)
 
 #constants
 DEFAULT_DISTRIBUTION_FOLDER = os.path.join(PATH, 'dist')

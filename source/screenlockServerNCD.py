@@ -1,9 +1,9 @@
-import screenlockConfig,log
+import logging, sys
+import screenlockConfig,log,screenlockController
+from twisted.internet import protocol, reactor, endpoints
 
-config = screenlockConfig.SLConfig()
-PORT=config.get('port')
-
-lockControl = screenlockController.SLController()
+log.initialize_logging("NCD Server")
+logger = logging.getLogger()
 
 class OptimisticCoralResponse(protocol.Protocol):
 
@@ -13,34 +13,39 @@ class OptimisticCoralResponse(protocol.Protocol):
 
     def dataReceived(self, data):
         global lockControl
-        print("got a command! first byte: %s, second byte: %s" % (ord(data[0]), ord(data[1])))
+        global logger
+        logger.debug("got a command! first byte: %s, second byte: %s" % (ord(data[0]), ord(data[1])))
         response = 0
 
         if ord(data[1]) == 17: #SENSE COMMAND
-            print("sense command")
+            logger.debug("sense command")
             if lockControl.is_running():
                 response = chr(0)
             else:
                 response = chr(1)
         elif ord(data[1]) == 1: #TURN OFF COMMAND
-            print("disable command")
+            logger.debug("disable command")
             lockControl.lock_screen()
             response = chr(1)
         elif ord(data[1]) == 9: #TURN ON COMMAND
-            print("enable command")
+            logger.debug("enable command")
             lockControl.unlock_screen()
-            response = chr(1)
+            response = chr(0)
         else:
             response = chr(1) #UNKNOWN COMMAND
-        print("writing response: %s" % ord(response))
+        logger.debug("writing response: %s" % ord(response))
         self.transport.write(response)
 
 class OptimistFactory(protocol.Factory):
     def buildProtocol(self, addr):
         return OptimisticCoralResponse()
-
-lockControl.lock_screen()
-print("starting listening on %s" % PORT)
-endpoints.serverFromString(reactor, "tcp:" + str(PORT)).listen(OptimistFactory())
-reactor.run()
-
+try:
+    config = screenlockConfig.SLConfig()
+    PORT=config.get('port')
+    lockControl = screenlockController.SLController()
+    lockControl.lock_screen()
+    logger.debug("starting listening on %s" % PORT)
+    endpoints.serverFromString(reactor, "tcp:" + str(PORT)).listen(OptimistFactory())
+    reactor.run()
+except Exception as e:
+    logger.error("NCD Caught Error: %s" % e)
