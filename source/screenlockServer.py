@@ -137,19 +137,19 @@ class screenlockFlaskServer(object):
         #Alias for unlock
         @self.app.route('/enable', methods=['POST'])
         @self.requires_auth
-        def enable(self):
+        def enable():
             return unlock()
 
         #Alias for lock
         @self.app.route('/disable', methods=['POST'])
         @self.requires_auth
-        def disable(self):
+        def disable():
             return lock()
 
         #Alias for status
         @self.app.route('/sense', methods=['POST', 'GET'])
         @self.requires_auth
-        def sense(self):
+        def sense():
             return status()
 
         @self.app.route('/version')
