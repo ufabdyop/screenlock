@@ -98,3 +98,7 @@ To detect status, you can send an NCD device two bytes (254, 17, in decimal nota
   echo 'fe11' | xxd -r -p | nc ncd-device.example.com 2101
 
 The device will respond with a 1 or a 0 byte to show it is enabled or disabled respectively.
+
+More Info:
+---
+https://github.com/ufabdyop/screenlock
