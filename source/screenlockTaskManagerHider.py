@@ -2,6 +2,7 @@ import logging
 import time
 from threading import Thread
 
+import thread
 import win32gui
 import win32con
 
@@ -28,7 +29,11 @@ class TaskManagerHider(Thread):
         self.active.clear()
 
     def bottomTaskManageWindow(self):
-        while self.active.isSet():
+        while True:
+            if not self.active.isSet():
+                self.logger.debug("quitting task manager")
+                break
+
             time.sleep(0.5)
             taskwindow = getWindow("Windows Task Manager")
             if taskwindow:

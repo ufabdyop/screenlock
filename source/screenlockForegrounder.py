@@ -1,27 +1,37 @@
 import logging
 import subprocess
 import time
-import urllib2, threading
+import urllib2, threading, thread
 from datetime import datetime
 from threading import Thread
 from screenlockWindowHelper import getWindow
 import win32gui
 import win32con
+import pprint
+import psutil
 
 # a thread class to do the infinite loop to make sure the
 # Coral window at the most front
 #=======================================================
 
 class ControlFrameThread(Thread):
-    def __init__(self, front_window, test_connection_url, use_coral):
+    def __init__(self,
+                 front_window,
+                 test_connection_url,
+                 use_coral,
+                 coral_sleep_delay=6):
         Thread.__init__(self)
         self.front_window = front_window
         self.test_connection_url = test_connection_url
         self.use_coral = use_coral
+        self.coral_sleep_delay = coral_sleep_delay
         self.checkCoralOpen = False
         self.logger = logging.getLogger("screenlockApp")
         self.active = threading.Event()
         self.active.set()
+        self.max_coral_attempts = 10
+        self.coral_attempts = 0
+        self.appProcess = False
 
     def stopRunning(self):
         self.active.clear()
@@ -30,9 +40,10 @@ class ControlFrameThread(Thread):
         while self.active.isSet():
             self.checkCoralOpen = False
             self.makeProgramAtFront()
+            self.debugPidInfo()
             time.sleep(1)
         self.makeCoralNotTopMost()
-        print("deactivated fg")
+        thread.exit()
         return
 
     # a method to be invoked by ControlFrameThread
@@ -41,7 +52,6 @@ class ControlFrameThread(Thread):
             win32gui.SetWindowPos(windowHwnd, win32con.HWND_TOPMOST, 0, 0, 500, 500,
                                   win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
 
-        logger = logging.getLogger("screenlockApp")
         if (self.use_coral == 'true'):
             windows = getWindow("Run Data Collector", "Warning", "Error", "Coral", "Screen Saver", "Application Update")
         else:
@@ -56,6 +66,7 @@ class ControlFrameThread(Thread):
                     makeWindowTopmost(windows["Error"])
                 elif "Coral" in windows:
                     self.checkCoralOpen = True
+                    self.coral_attempts = 0
 
                 if "Application Update" in windows:
                     self.checkCoralOpen = True
@@ -67,20 +78,37 @@ class ControlFrameThread(Thread):
                 if "Screen Saver" in windows:
                     makeWindowTopmost(windows["Screen Saver"])
         except:
-            logger.error(str(datetime.now()) + " screenlockApp makeProgramAtFront: window may not exist.")
+            self.logger.error(str(datetime.now()) + " screenlockApp makeProgramAtFront: window may not exist.")
         if not self.checkCoralOpen and self.use_coral == 'true':
             self.openCoral()
 
     def openCoral(self):
-        logger = logging.getLogger("screenlockApp")
         path = self.front_window
         internet_flag = self.internetOn()
         while (not internet_flag) and (self.active.isSet()):
-            logger.error (str(datetime.now()) + " screenlockApp: NO internet.")
+            self.logger.error (str(datetime.now()) + " screenlockApp: NO internet.")
             time.sleep(2)
             internet_flag = self.internetOn()
-        subprocess.Popen(path)
-        time.sleep (6)
+
+        self.logger.debug("opening coral attempt %s" % self.coral_attempts)
+
+        if self.coral_attempts <= self.max_coral_attempts:
+            self.coral_attempts += 1
+            self.appProcess = subprocess.Popen(path)
+            self.logger.debug("Opened PID: %s" % self.appProcess.pid)
+            self.debugPidInfo()
+        else:
+            self.logger.debug("exceeded max coral open attempts")
+        time.sleep(int(self.coral_sleep_delay))
+
+    def debugPidInfo(self):
+        if self.appProcess:
+            if self.appProcess.pid:
+                try:
+                    procObject = psutil.Process(self.appProcess.pid)
+                    self.logger.debug("object: %s" % (pprint.pformat(procObject)))
+                except:
+                    self.logger.debug("No process for %s" % (self.appProcess.pid))
 
     def internetOn(self):
         try:
@@ -93,7 +121,6 @@ class ControlFrameThread(Thread):
 
     def makeCoralNotTopMost(self):
         coralWindow = getWindow("Coral")
-
         if coralWindow:
             try:
                 win32gui.SetWindowPos(coralWindow["Coral"],win32con.HWND_NOTOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )

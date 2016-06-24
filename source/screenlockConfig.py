@@ -39,8 +39,17 @@ class SLConfig(object):
             self.config.write(configfile)
         self.convert_unix_line_endings_to_win(r'config.ini')
 
-    def get(self, key):
-        return self.config.get('Section', key)
+    def get(self, key, default=None):
+        result = None
+        try:
+            result = self.config.get('Section', key, default)
+        except ConfigParser.NoOptionError as noe:
+            if default is not None:
+                result = default
+            else:
+                raise noe
+        return result
+
         
     def convert_unix_line_endings_to_win(self, filename):
         text = open(filename, "U").read()
