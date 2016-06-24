@@ -1,8 +1,24 @@
 from __future__ import print_function
-import wx, thread, time, win32api, win32gui, win32con, \
-    subprocess, signal, screenlockConfig,urllib2, log, os, logging
-from threading import *
+
+import logging
+import os
+import signal
+import subprocess
+import thread
+import time
+import urllib2
 from datetime import datetime
+
+import win32api
+import win32con
+import win32gui
+import wx
+from screenlockForegrounder import ControlFrameThread
+
+import log
+import screenlockConfig
+from screenlockTaskManagerHider import TaskManagerHider
+from screenlockWindowHelper import getWindow
 
 global endFlag
 endFlag = False
@@ -63,7 +79,6 @@ class OverlayFrame( wx.Frame ):
             self.logger.debug("no keyblocker pid for signal")
         global endFlag
         endFlag = True
-        makeCoralNotTopMost()
         self.Destroy()
 
     def OnSubmit(self, event):
@@ -74,8 +89,8 @@ class OverlayFrame( wx.Frame ):
             global endFlag
             endFlag = True
             self.keyBlockerProcess.send_signal(signal.SIGTERM)
-            makeCoralNotTopMost()
-            self.Destroy()        
+            self.Close()
+            self.Destroy()
         else:
             self.status.SetLabel('You are not authorized.')
     
@@ -104,128 +119,6 @@ class OverlayFrame( wx.Frame ):
 #end OverlayFrame class        
 
 
-def bottomTaskManageWindow():
-    logger = logging.getLogger("bottomTaskManageWindow")
-    global endFlag
-    while not endFlag:   
-        time.sleep(0.1)
-        taskwindow = getWindow("Windows Task Manager")
-        if taskwindow:
-            try:
-                win32gui.SetWindowPos(taskwindow["Windows Task Manager"],win32con.HWND_BOTTOM,0,0,500,500,win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
-            except:
-                logger.error (str(datetime.now()) + " screenlockApp: Windows Task Manager may not exist.")
-    return
-            
-
-def getWindow(*args):
-    windows = {}
-    logger = logging.getLogger("screenlockApp")
-
-    def callback(hwnd, _):
-        for windowtext in args:
-            if win32gui.GetWindowText(hwnd).find(windowtext)!= -1:
-                if windowtext == 'Run Data Collector' and not win32gui.IsWindowVisible(hwnd):
-                    continue
-                if windowtext in windows:
-                    continue
-                windows[windowtext] = hwnd
-        return True
-    try:
-        win32gui.EnumWindows(callback, None)
-    except:
-        logger.error (str(datetime.now()) + "  screenlockApp: getWindow error.")
-    if len(windows) > 0 :
-        return windows
-    return None
-    
-def makeCoralNotTopMost():
-    coralWindow = getWindow("Coral")
-    logger = logging.getLogger("screenlockApp")
-    if coralWindow:
-        try:
-            win32gui.SetWindowPos(coralWindow["Coral"],win32con.HWND_NOTOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
-        except:
-            logger.error (str(datetime.now()) + " screenlockApp makeCoralNotTopMost: Coral window may not exist.")
-
-# a method to be invoked by ControlFrameThread    
-def makeProgramAtFront():
-    def makeWindowTopmost(windowHwnd):
-        win32gui.SetWindowPos(windowHwnd,win32con.HWND_TOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
-    global coral
-    logger = logging.getLogger("screenlockApp")
-    if (coral == 'true'):
-        windows = getWindow("Run Data Collector", "Warning", "Error","Coral", "Screen Saver", "Application Update")
-    else:
-        windows = getWindow("Warning","Error","Screen Saver")
-    global checkCoralOpen
-    try:
-        if windows:
-            if "Warning" in windows:
-                checkCoralOpen = True
-                makeWindowTopmost(windows["Warning"])
-            elif "Error" in windows:
-                checkCoralOpen = True
-                makeWindowTopmost(windows["Error"])
-            elif "Coral" in windows:
-                checkCoralOpen = True
-            if "Application Update" in windows:
-                checkCoralOpen = True
-                makeWindowTopmost(windows["Application Update"])
-            elif checkCoralOpen:
-                makeWindowTopmost(windows["Coral"])
-            if "Run Data Collector" in windows:
-                makeWindowTopmost(windows["Run Data Collector"])
-            if "Screen Saver" in windows:
-                makeWindowTopmost(windows["Screen Saver"])
-    except:
-        logger.error (str(datetime.now()) + " screenlockApp makeProgramAtFront: window may not exist.")
-    if not checkCoralOpen and coral == 'true':
-        openCoral()
-        
-   
-def openCoral ():
-    global config, endFlag
-    logger = logging.getLogger("screenlockApp")
-    path = config.get('front_window')
-    internet_flag = internetOn()
-    while (not internet_flag) and (not endFlag):
-        logger.error (str(datetime.now()) + " screenlockApp: NO internet.")
-        time.sleep(2)
-        internet_flag = internetOn()
-    subprocess.Popen(path)
-    time.sleep (6)
-    
-def internetOn():
-    logger = logging.getLogger("screenlockApp")
-
-    try:
-        global config
-        test_connection_url = config.get('test_connection_url')
-        response = urllib2.urlopen(test_connection_url,timeout=1)
-        return True
-    except urllib2.URLError as err: 
-        logger.error (str(datetime.now()) + " screenlockApp: " + str(err))
-    return False
-
-# a thread class to do the infinite loop to make sure the
-# Coral window at the most front
-class ControlFrameThread(Thread):
-    def __init__(self):
-        Thread.__init__(self)
-        self.start()
-        
-    def run(self):
-        global endFlag
-        while not endFlag:
-            global checkCoralOpen
-            checkCoralOpen = False
-            makeProgramAtFront()
-            time.sleep(1)
-        return
-        
-#=======================================================
-
 class NullProcess(object):
     def __init__(self):
         self.pid = False
@@ -237,8 +130,27 @@ if __name__ == '__main__' :
     log.initialize_logging('screenlockApp')
     app = wx.App( False )
     frm = OverlayFrame()
-
     frm.Show()
-    newthread = ControlFrameThread()
-    thread.start_new_thread(bottomTaskManageWindow, ())
+
+    frameController = ControlFrameThread(config.get('front_window'),
+                                         config.get('test_connection_url'),
+                                         config.get('coral'))
+    frameController.start()
+
+    taskmgrController = TaskManagerHider()
+    taskmgrController.start()
+
     app.MainLoop()
+    print("main loop exited")
+
+    taskmgrController.stopRunning()
+    frameController.stopRunning()
+
+    taskmgrController.join(5)
+    print("taskmgr exited")
+
+    frameController.join(5)
+    print("frame controller exited")
+
+    frm.Destroy()
+    #raise Exception("Just exit!")

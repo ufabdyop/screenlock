@@ -2,7 +2,7 @@ from __future__ import print_function
 import os, sys, wx, win32gui, win32con, time, thread, win32process, subprocess, ConfigParser, signal, pythoncom, pyHook, threading, psutil, win32api, zope.interface, urllib2, cffi, cryptography, stat
 from twisted.internet import protocol, reactor, endpoints
 from win32api import GetSystemMetrics
-import screenlockConfig, screenlockController, version, log
+import screenlockConfig, screenlockController, version, log, screenlockForegrounder, screenlockTaskManagerHider, screenlockWindowHelper
 from flask import Flask, request, Response
 from functools import wraps
 from urlparse import urlparse
