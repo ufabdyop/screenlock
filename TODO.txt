@@ -1,0 +1,8 @@
+* Figure out how to end screenlockApp gracefully
+
+* Figure out how to generalize thread that starts Coral and runs it in
+  the foreground so that it can be used with other clients
+
+* Figure out how to build on linux (maybe pyInstaller)
+
+* Simple Lock

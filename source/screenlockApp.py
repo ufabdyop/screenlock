@@ -4,7 +4,7 @@ import logging
 import os
 import signal
 import subprocess
-import thread
+import thread, threading
 import time
 import urllib2
 from datetime import datetime
@@ -19,6 +19,7 @@ import log
 import screenlockConfig
 from screenlockTaskManagerHider import TaskManagerHider
 from screenlockWindowHelper import getWindow
+import pprint
 
 global endFlag
 endFlag = False
@@ -134,7 +135,8 @@ if __name__ == '__main__' :
 
     frameController = ControlFrameThread(config.get('front_window'),
                                          config.get('test_connection_url'),
-                                         config.get('coral'))
+                                         config.get('coral'),
+                                         config.get('coral_sleep_delay', 6))
     frameController.start()
 
     taskmgrController = TaskManagerHider()
@@ -146,11 +148,14 @@ if __name__ == '__main__' :
     taskmgrController.stopRunning()
     frameController.stopRunning()
 
-    taskmgrController.join(5)
+    taskmgrController.join()
     print("taskmgr exited")
 
-    frameController.join(5)
+    frameController.join()
     print("frame controller exited")
+
+    print (threading.active_count())
+    print (threading.enumerate())
 
     frm.Destroy()
     #raise Exception("Just exit!")
