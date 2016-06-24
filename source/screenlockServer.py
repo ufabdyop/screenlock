@@ -153,7 +153,7 @@ class screenlockFlaskServer(object):
             return status()
 
         @self.app.route('/version')
-        def version(self):
+        def versionPath():
             return json.dumps({"version": version.VERSION})
 
 
