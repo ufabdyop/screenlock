@@ -50,5 +50,3 @@ class BlockKeys(object):
                 return False
         return True
 
-
-BlockKeys()
