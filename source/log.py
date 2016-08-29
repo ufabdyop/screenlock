@@ -5,11 +5,19 @@ from datetime import datetime
 # determine if application is a script file or frozen exe
 if getattr(sys, 'frozen', False):
     APPLICATION_PATH = os.path.dirname(sys.executable)
+elif '.exe' in os.path.dirname(__file__):
+    APPLICATION_PATH = os.path.dirname(os.path.dirname(__file__))
 elif __file__:
     APPLICATION_PATH = os.path.dirname(__file__)
 
+print("Path: " + APPLICATION_PATH)
+
+
 APPLICATION_PATH = os.path.dirname(os.path.abspath(__file__))
-LOG_FOLDER = os.path.join(APPLICATION_PATH, '../Log')
+LOG_FOLDER = os.path.join(APPLICATION_PATH, '..', 'Log')
+
+print("Log Path: " + LOG_FOLDER)
+
 # LOG_FOLDER = 'C:\Temp\Log'
 
 #  create a log folder
@@ -53,4 +61,6 @@ def initialize_logging(name):
     filename = get_log_filename("screenlock")
     logging.basicConfig(filename=filename,
                         level=logging.DEBUG,
-                        format="%(asctime)s\t%(message)s\t%(filename)s\t%(funcName)s\t%(levelname)s")
+                        format="%(asctime)s:%(levelname)s\t%(thread)d-%(threadName)s\t%(filename)s\t%(lineno)s\t%(message)s\t")
+
+

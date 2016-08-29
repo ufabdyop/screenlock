@@ -1,7 +1,9 @@
 from __future__ import print_function
 
+from threading import Thread
 import logging
 import os
+import sys
 import signal
 import subprocess
 import thread, threading
@@ -20,6 +22,7 @@ import screenlockConfig
 from screenlockTaskManagerHider import TaskManagerHider
 from screenlockWindowHelper import getWindow
 import pprint
+import blockKeys
 
 global endFlag
 endFlag = False
@@ -65,7 +68,7 @@ class OverlayFrame( wx.Frame ):
         global config
         coral = config.get('coral')
 
-        self.openKeysBlock ()
+        self.openKeysBlock()
         try:
             thread.start_new_thread(self.deleteLabel, (self.status,))
         except:
@@ -73,11 +76,7 @@ class OverlayFrame( wx.Frame ):
 
     def signalHandler(self, signalNumber):
         self.logger.debug("received signal: %s" % signalNumber)
-        if self.keyBlockerProcess.pid:
-            self.logger.debug("propagating signal")
-            self.keyBlockerProcess.send_signal(signal.SIGTERM)
-        else:
-            self.logger.debug("no keyblocker pid for signal")
+        self.logger.debug("no keyblocker pid for signal")
         global endFlag
         endFlag = True
         self.Destroy()
@@ -89,7 +88,6 @@ class OverlayFrame( wx.Frame ):
         if config.passwordCheck(self.input, 'admin_override'):
             global endFlag
             endFlag = True
-            self.keyBlockerProcess.send_signal(signal.SIGTERM)
             self.Close()
             self.Destroy()
         else:
@@ -107,17 +105,8 @@ class OverlayFrame( wx.Frame ):
         return
         
     def openKeysBlock (self):
-        global config
-        path = config.get('keysblock')
-        if os.path.isfile(path):
-            self.logger.debug("blocking keys")
-            self.keyBlockerProcess = subprocess.Popen(path)
-        else:
-            self.keyBlockerProcess = NullProcess()
-            self.logger.error("ERROR: Cannot find keysblock from config %s" % path)
-
-
-#end OverlayFrame class        
+        keyBlocker = blockKeys.BlockKeys()
+        keyBlocker.beginBlocking()
 
 
 class NullProcess(object):
@@ -129,6 +118,7 @@ class NullProcess(object):
     
 if __name__ == '__main__' :
     log.initialize_logging('screenlockApp')
+    logger = logging.getLogger("Main Method")
     app = wx.App( False )
     frm = OverlayFrame()
     frm.Show()
@@ -139,23 +129,31 @@ if __name__ == '__main__' :
                                          config.get('coral_sleep_delay', 6))
     frameController.start()
 
-    taskmgrController = TaskManagerHider()
+    taskmgrController = TaskManagerHider(frameController.logger)
     taskmgrController.start()
 
     app.MainLoop()
-    print("main loop exited")
+    logger.debug("main loop exited")
 
     taskmgrController.stopRunning()
+    logger.debug("taskmgr signaled stop")
+
     frameController.stopRunning()
+    logger.debug("frame controller signaled stop")
 
-    taskmgrController.join()
-    print("taskmgr exited")
+    taskmgrController.join(5)
+    logger.debug("taskmgr exited")
 
-    frameController.join()
-    print("frame controller exited")
+    frameController.join(5)
+    logger.debug("frame controller exited")
 
-    print (threading.active_count())
-    print (threading.enumerate())
+    logger.debug (threading.active_count())
+    logger.debug (threading.enumerate())
 
-    frm.Destroy()
-    #raise Exception("Just exit!")
+    try:
+        frm.Destroy()
+    except Exception:
+        logger.error("Could not destroy frame: %s" % Exception)
+
+    logger.debug("Exiting normally")
+    sys.exit(0)
