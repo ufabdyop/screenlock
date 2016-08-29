@@ -77,7 +77,9 @@ prerequisites (excluding DLLs that are included in windows)
 
 Notes:
 ---
-Building exe requires msvcp90.dll (similar issue: http://stackoverflow.com/questions/323424/py2exe-fails-to-generate-an-executable)
+
+* Building exe requires msvcp90.dll (similar issue: http://stackoverflow.com/questions/323424/py2exe-fails-to-generate-an-executable)
+* 8/28/2016 - After building, ran into error about packaging import.  Fix is downgrade setuptools: http://stackoverflow.com/questions/35255339
 
 Emulating NCD Device:
 ---
