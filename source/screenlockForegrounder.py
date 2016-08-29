@@ -1,6 +1,7 @@
 import logging
 import subprocess
 import time
+import os.path
 import urllib2, threading, thread
 from datetime import datetime
 from threading import Thread
@@ -39,15 +40,21 @@ class ControlFrameThread(Thread):
     def run(self):
         while self.active.isSet():
             self.checkCoralOpen = False
+            self.logger.debug("Making Program at Front")
             self.makeProgramAtFront()
+            self.logger.debug("Debugging PID Info")
             self.debugPidInfo()
+            self.logger.debug("Sleeping")
             time.sleep(1)
         self.makeCoralNotTopMost()
-        thread.exit()
-        return
+        self.logger.debug("foregrounder over")
 
     # a method to be invoked by ControlFrameThread
     def makeProgramAtFront(self):
+        if not self.active.isSet():
+            self.logger.debug("Active flag disabled, returning")
+            return
+
         def makeWindowTopmost(windowHwnd):
             win32gui.SetWindowPos(windowHwnd, win32con.HWND_TOPMOST, 0, 0, 500, 500,
                                   win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
@@ -94,8 +101,11 @@ class ControlFrameThread(Thread):
 
         if self.coral_attempts <= self.max_coral_attempts:
             self.coral_attempts += 1
-            self.appProcess = subprocess.Popen(path)
-            self.logger.debug("Opened PID: %s" % self.appProcess.pid)
+            try:
+                self.appProcess = subprocess.Popen(path)
+                self.logger.debug("Opened PID: %s" % self.appProcess.pid)
+            except:
+                self.logger.debug("Caught exception does '%s' exist" % path)
             self.debugPidInfo()
         else:
             self.logger.debug("exceeded max coral open attempts")
@@ -120,6 +130,12 @@ class ControlFrameThread(Thread):
         return False
 
     def makeCoralNotTopMost(self):
+        if not self.active.isSet():
+            self.logger.debug("Active flag disabled, returning and skipping setting coral not topmost")
+            return
+
+        self.logger.debug("making coral NOT topmost")
+
         coralWindow = getWindow("Coral")
         if coralWindow:
             try:

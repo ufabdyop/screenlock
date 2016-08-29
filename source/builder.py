@@ -10,3 +10,4 @@ from OpenSSL import SSL
 import json, win32file, win32security, ntsecuritycon, requests
 from datetime import datetime
 import _winreg as wreg
+import packaging
