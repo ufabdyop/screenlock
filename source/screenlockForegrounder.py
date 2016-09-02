@@ -87,7 +87,8 @@ class ControlFrameThread(Thread):
         except:
             self.logger.error(str(datetime.now()) + " screenlockApp makeProgramAtFront: window may not exist.")
         if not self.checkCoralOpen and self.use_coral == 'true':
-            self.openCoral()
+            pass
+            #self.openCoral()
 
     def openCoral(self):
         path = self.front_window

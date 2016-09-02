@@ -37,6 +37,7 @@ class OverlayFrame( wx.Frame ):
     def __init__( self )  :
         self.logger=logging.getLogger('screenlockApp')
         self.logger.debug(" screenlockApp: Starting")
+        self.appProcess = None
 
         wx.Frame.__init__( self, None, title="Transparent Window",
                            style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP )
@@ -57,6 +58,12 @@ class OverlayFrame( wx.Frame ):
         self.submitButton.SetFont(font)
         self.Bind(wx.EVT_BUTTON, self.OnSubmit, id=ID_SUBMIT)
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSubmit)
+
+        START_CORAL = wx.NewId()
+        self.clientButton = wx.Button(self, START_CORAL, 'Start Coral', pos=(10,150), size=wx.Size(300, 50))
+        self.clientButton.SetFont(font)
+        self.Bind(wx.EVT_BUTTON, self.OnStartCoral, id=START_CORAL)
+
         self.input = None
         
         self.status = wx.StaticText(self, -1, '', pos=(10,80))
@@ -92,7 +99,11 @@ class OverlayFrame( wx.Frame ):
             self.Destroy()
         else:
             self.status.SetLabel('You are not authorized.')
-    
+
+    def OnStartCoral(self, event):
+        path = config.get('front_window')
+        self.appProcess = subprocess.Popen(path)
+
     def deleteLabel(self,status):
         global endFlag
         while not endFlag:
