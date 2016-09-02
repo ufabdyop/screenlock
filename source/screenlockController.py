@@ -2,6 +2,10 @@ from __future__ import print_function
 import os, subprocess, signal, psutil,log, sys, pprint, logging, win32api
 from datetime import datetime
 from screenlockConfig import SLConfig
+from screenlockWindowHelper import getWindow
+import win32gui
+import win32con
+
 class SLController(object):
     def __init__(self):
         log.initialize_logging("SLController")
@@ -52,6 +56,7 @@ class SLController(object):
                         continue
             del self.lockerProc[:]
         self.unlock_screen_started_by_other_process()
+        self.make_coral_not_top_most()
 
     def unlock_screen_started_by_other_process(self):
         keyBlocker = self.config.get('keysblock')
@@ -62,5 +67,20 @@ class SLController(object):
                     p.send_signal(signal.SIGTERM)
                     return True
             except psutil.Error as err:
-                pass
+                self.logger.error("Error on unlock: %s" % (pprint.pformat(err)))
         return False
+
+    def make_coral_not_top_most(self):
+        self.logger.debug("making coral NOT topmost from SERVER")
+
+        coralWindow = getWindow("Coral")
+        if coralWindow:
+            try:
+                win32gui.SetWindowPos(coralWindow["Coral"],win32con.HWND_NOTOPMOST,0,0,500,500, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE )
+                self.logger.debug("Made coral not topmost")
+            except:
+                self.logger.error (" screenlockApp makeCoralNotTopMost: Coral window may not exist.")
+        else:
+            self.logger.debug("No coral window to not topmost")
+
+
