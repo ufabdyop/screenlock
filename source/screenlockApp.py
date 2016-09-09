@@ -134,10 +134,7 @@ if __name__ == '__main__' :
     frm = OverlayFrame()
     frm.Show()
 
-    frameController = ControlFrameThread(config.get('front_window'),
-                                         config.get('test_connection_url'),
-                                         config.get('coral'),
-                                         config.get('coral_sleep_delay', 6))
+    frameController = ControlFrameThread()
     frameController.start()
 
     taskmgrController = TaskManagerHider(frameController.logger)
