@@ -55,7 +55,7 @@ def getWindow(*args):
         logger.debug("getWindow : Returning windows: %s" % pprint.pformat(filtered_windows))
         return filtered_windows
 
-    logger.debug("getWindow : Returning None")
+    #logger.debug("getWindow : Returning None")
     return None
 
 def windowTitleMatchesAny(needle, haystack):

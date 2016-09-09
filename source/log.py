@@ -53,8 +53,9 @@ def create_log_file(name):
 def get_log_filename(name):
     time = str(datetime.now())
     time = time.replace(':', '_')
-    #filename = os.path.join(LOG_FOLDER, time + '-' + name + '.log')
-    filename = os.path.join(LOG_FOLDER, name + '.log')
+    time = time.replace('.', '_')
+    filename = os.path.join(LOG_FOLDER, time + '-' + name + '.log')
+    #filename = os.path.join(LOG_FOLDER, name + '.log')
     return filename
 
 def initialize_logging(name):

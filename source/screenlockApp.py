@@ -137,20 +137,20 @@ if __name__ == '__main__' :
     frameController = ControlFrameThread()
     frameController.start()
 
-    taskmgrController = TaskManagerHider(frameController.logger)
-    taskmgrController.start()
+    #taskmgrController = TaskManagerHider(frameController.logger)
+    #taskmgrController.start()
 
     app.MainLoop()
     logger.debug("main loop exited")
 
-    taskmgrController.stopRunning()
-    logger.debug("taskmgr signaled stop")
+    #taskmgrController.stopRunning()
+    #logger.debug("taskmgr signaled stop")
 
     frameController.stopRunning()
     logger.debug("frame controller signaled stop")
 
-    taskmgrController.join(5)
-    logger.debug("taskmgr exited")
+    #taskmgrController.join(5)
+    #logger.debug("taskmgr exited")
 
     frameController.join(5)
     logger.debug("frame controller exited")

@@ -47,8 +47,8 @@ class ControlFrameThread(Thread):
         while self.active.isSet():
             self.updateWindowList()
             self.pushNecessaryWindowsToForeground()
-            self.logger.debug("Sleeping")
-            time.sleep(1)
+            time.sleep(0.5)
+        self.undoTopmost()
         self.logger.debug("foregrounder over")
 
     def updateWindowList(self):
@@ -60,22 +60,29 @@ class ControlFrameThread(Thread):
     def pushNecessaryWindowsToForeground(self):
         titles_we_care_about = self.config['order'].values()
         windows_we_care_about = self.filterByTitle(titles_we_care_about).values()
-        zOrdering      = self.orderByZ(windows_we_care_about)
-        preferredOrder = self.orderByPreference(windows_we_care_about)
+        zOrdering = list(windows_we_care_about)
+        self.orderByZ(zOrdering)
+
+        preferredOrder = list(windows_we_care_about)
+        self.orderByPreference(preferredOrder)
+
         reOrder = False
         if zOrdering != preferredOrder:
             self.logger.debug("Ordering of preferred windows needs to be changed!")
             reOrder = True
         else:
-            self.logger.debug("Ordering of preferred windows seems good!")
+            pass
+            #self.logger.debug("Ordering of preferred windows seems good!")
 
-        if self.getTopWindow() not in windows_we_care_about:
+        topWindow = self.getTopWindow()
+        if topWindow not in windows_we_care_about:
             self.logger.debug("Why isn't the top window one of our preferred ones?")
+            self.logger.debug(topWindow)
             reOrder = True
 
         if reOrder:
-            for h in preferredOrder:
-                self.makeTopMost(h)
+            for win in reversed(preferredOrder):
+                self.makeTopMost(win['hwnd'])
 
     def filterByTitle(self, titles_we_care_about):
         filtered = {}
@@ -110,22 +117,10 @@ class ControlFrameThread(Thread):
         return buffer
 
     def orderByZ(self, windowList):
-        def getKey(obj):
-            return obj['zIndex']
-        sorted(windowList, key=getKey)
-        hwndOrder = []
-        for w in windowList:
-            hwndOrder.append(w['hwnd'])
-        return hwndOrder
+        windowList.sort(key=lambda x: x['zIndex'])
 
     def orderByPreference(self, windowList):
-        def getKey(obj):
-            return obj['preferredOrder']
-        sorted(windowList, key=getKey)
-        hwndOrder = []
-        for w in windowList:
-            hwndOrder.append(w['hwnd'])
-        return hwndOrder
+        windowList.sort(key=lambda x: x['preferredOrder'])
 
     def addPreferredOrderAttribute(self, objects):
         order = self.config['order']
@@ -147,13 +142,30 @@ class ControlFrameThread(Thread):
         else:
             return None
 
+    def undoTopmost(self):
+        titles_we_care_about = self.config['order'].values()
+        windows_we_care_about = self.filterByTitle(titles_we_care_about).values()
+        for win in windows_we_care_about:
+            try:
+                win32gui.SetWindowPos(win['hwnd'], win32con.HWND_NOTOPMOST, 0, 0, 500, 500,
+                                      win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+            except:
+                self.logger.error("Couldn't set NOT topmost %s" % win['hwnd'])
+
     def makeTopMost(self, hwnd):
-        win32gui.SetWindowPos(hwnd, win32con.HWND_NOTOPMOST, 0, 0, 500, 500,
+        try:
+            win32gui.SetWindowPos(hwnd, win32con.HWND_NOTOPMOST, 0, 0, 500, 500,
                               win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+        except:
+            self.logger.error("Couldn't set NOT topmost %s" % hwnd)
 
-        win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, 0, 0, 500, 500,
+        try:
+            win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, 0, 0, 500, 500,
                               win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+        except:
+            self.logger.error("Couldn't set as topmost %s" % hwnd)
 
-        win32gui.SetForegroundWindow(hwnd)
-
-
+        try:
+            win32gui.SetForegroundWindow(hwnd)
+        except:
+            self.logger.error("SetForegroundWindow failed for hwnd: %s" % hwnd)
