@@ -35,7 +35,6 @@ class TaskManagerHider(Thread):
                 self.logger.debug("quitting task manager")
                 break
 
-            self.logger.debug("getting task manager window")
             taskwindow = getWindow("Windows Task Manager")
             if taskwindow:
                 self.logger.debug("taskwindow discovered : %s" % pprint.pformat(taskwindow))
@@ -46,6 +45,7 @@ class TaskManagerHider(Thread):
                 except:
                     self.logger.error(str(datetime.now()) + " screenlockApp: Windows Task Manager may not exist.")
             else:
-                self.logger.debug("NO taskwindow ")
+                pass
+                #self.logger.debug("NO taskwindow ")
 
             time.sleep(0.5)
