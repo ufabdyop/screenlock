@@ -1,20 +1,23 @@
+# -*- coding: utf-8 -*-
+"""ControlFrameThread
+
+a thread class to do the infinite loop to make sure the
+Coral window at the most front.
+
+It contains a list of title strings to match window titles and gives each one
+a preferred priority.  While this thread is running it makes sure that the
+windows that match those titles are ordered according to their preference.
+
+"""
+
 import logging
-import subprocess
 import time
-import os.path
-import traceback
 import urllib2, threading, thread
-from datetime import datetime
 from threading import Thread
 from screenlockWindowHelper import getWindow, getAllVisibleWindows, windowTitleMatchesAny
 import win32gui
 import win32con
 import pprint
-import psutil
-
-# a thread class to do the infinite loop to make sure the
-# Coral window at the most front
-#=======================================================
 
 class ControlFrameThread(Thread):
     windows = {}
@@ -52,12 +55,21 @@ class ControlFrameThread(Thread):
         self.logger.debug("foregrounder over")
 
     def updateWindowList(self):
+        """
+        This class maintains a list of all active windows.
+        Every loop through, this function updates that list.
+        """
         newWindows = getAllVisibleWindows()
         self.addPreferredOrderAttribute(newWindows)
         self.printListDiffs(ControlFrameThread.windows, newWindows)
         ControlFrameThread.windows = newWindows
 
     def pushNecessaryWindowsToForeground(self):
+        """
+        If the windows that are in the foreground are not
+        the same as the ones we want in the foreground,
+        rearrange windows
+        """
         titles_we_care_about = self.config['order'].values()
         windows_we_care_about = self.filterByTitle(titles_we_care_about).values()
         zOrdering = list(windows_we_care_about)
@@ -70,9 +82,6 @@ class ControlFrameThread(Thread):
         if zOrdering != preferredOrder:
             self.logger.debug("Ordering of preferred windows needs to be changed!")
             reOrder = True
-        else:
-            pass
-            #self.logger.debug("Ordering of preferred windows seems good!")
 
         topWindow = self.getTopWindow()
         if topWindow not in windows_we_care_about:

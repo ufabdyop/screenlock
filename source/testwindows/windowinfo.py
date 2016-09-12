@@ -23,7 +23,6 @@ def win_info(hwnd, glob):
     window['IsWindowEnabled'] = win32gui.IsWindowEnabled(hwnd)
     window['GetWindowText'] = win32gui.GetWindowText(hwnd)
     window['GetForegroundWindow'] = win32gui.GetForegroundWindow() == hwnd
-    #window['Focused'] = win32gui.GetFocus() == hwnd
 
     stored_window = glob.get(hwnd, False)
     if stored_window == False:
@@ -35,7 +34,6 @@ def win_info(hwnd, glob):
     else:
         print_window_diff(glob[hwnd], window)
         glob[hwnd] = window
-    #SetFocus
 
 def enum(window_list):
     win32gui.EnumWindows(win_info, window_list)
