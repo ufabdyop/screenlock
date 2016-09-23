@@ -174,7 +174,3 @@ class ControlFrameThread(Thread):
         except:
             self.logger.error("Couldn't set as topmost %s" % hwnd)
 
-        try:
-            win32gui.SetForegroundWindow(hwnd)
-        except:
-            self.logger.error("SetForegroundWindow failed for hwnd: %s" % hwnd)
