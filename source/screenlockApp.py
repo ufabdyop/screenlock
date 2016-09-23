@@ -19,9 +19,6 @@ from screenlockForegrounder import ControlFrameThread
 
 import log
 import screenlockConfig
-from screenlockTaskManagerHider import TaskManagerHider
-from screenlockWindowHelper import getWindow
-import pprint
 import blockKeys
 
 global endFlag
