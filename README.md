@@ -57,7 +57,7 @@ Currently, this requires:
 
 Zip of prerequisites:
 
-* http://archiva.eng.utah.edu:4040/#artifact-details-download-content/edu.utah.nanofab.screenlock/prerequisites/1.0.5
+* http://www.nanofab.utah.edu/sv/index.php?dec=1&cat=Computer%20Passwords&t1=Prerequisites%20For%20Screenlock%20Build&t2=
 
 Building EXE File
 ---
