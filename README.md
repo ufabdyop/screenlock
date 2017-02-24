@@ -60,7 +60,12 @@ Zip of prerequisites:
 Building EXE File
 ---
 
-If building on linux, we first used winetricks to install python26, then installed 2.7 with "msiexec /i python-2.7.10.msi"
+#### With Docker:
+
+Use the instructions in docker-screenlock-builder/README.md
+This build process uses wine to run the pyinstaller process.
+
+#### With Windows:
 
 We are using pyinstaller for building an exe file.
 
