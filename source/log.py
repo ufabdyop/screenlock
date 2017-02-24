@@ -59,8 +59,10 @@ def get_log_filename(name):
 
 def initialize_logging(name):
     filename = get_log_filename("screenlock")
-    logging.basicConfig(filename=filename,
-                        level=logging.DEBUG,
-                        format="%(asctime)s:%(levelname)s\t%(thread)d-%(threadName)s\t%(filename)s\t%(lineno)s\t%(message)s\t")
-
-
+    if os.path.isdir(LOG_FOLDER):       
+        logging.basicConfig(filename=filename,
+                            level=logging.DEBUG,
+                            format="%(asctime)s:%(levelname)s\t%(thread)d-%(threadName)s\t%(filename)s\t%(lineno)s\t%(message)s\t")
+    else:
+        logging.basicConfig(level=logging.DEBUG,
+                            format="%(asctime)s:%(levelname)s\t%(thread)d-%(threadName)s\t%(filename)s\t%(lineno)s\t%(message)s\t")
