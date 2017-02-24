@@ -1,27 +1,31 @@
-import sys, time, os, py2exe, shutil, pprint, subprocess
+import sys, time, os, shutil, pprint, subprocess
 from distutils.core import setup
+from distutils.dir_util import copy_tree
+
 PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(PATH, "source"))
 from version import VERSION
 
+#constants
+DEFAULT_DISTRIBUTION_FOLDER = os.path.join(PATH, 'dist')
+COMBINED_DISTRIBUTION_FOLDER = os.path.join(DEFAULT_DISTRIBUTION_FOLDER, 'combined')
+NEW_DISTRIBUTION_FOLDER = os.path.join(PATH, 'screenlock')
+BUILD_FOLDER = os.path.join(PATH, 'build')
+SOURCE_FOLDER = os.path.join(PATH, 'source')
+TAGS_BASE_FOLDER = os.path.join(PATH, 'Tags')
+TAGGED_FOLDER = os.path.join(TAGS_BASE_FOLDER, VERSION)
+
 def main():
-    create_zope_init_fix()
     delete_old_build()
-    run_setups()
+    create_exe()
+    merge_files()
     rename_dist_folder()
     copy_support_files_to_dist_folder()
-    time.sleep(5)
     create_tagged_folder()
     move_assets_to_tagged_folder()
     print_message()
     try_running_nsis()
-    clean_up()
-
-def create_zope_init_fix():
-    #See : http://stackoverflow.com/a/11632115/1243508
-    pythondir = sys.exec_prefix
-    zope_init_file = os.path.join(pythondir, 'Lib', 'site-packages', 'zope', '__init__.py')
-    touch(zope_init_file)
+    #clean_up()
 
 def delete_old_build():
     if os.path.isdir(DEFAULT_DISTRIBUTION_FOLDER):
@@ -31,26 +35,8 @@ def delete_old_build():
     if os.path.isdir(BUILD_FOLDER):
         shutil.rmtree(BUILD_FOLDER)
 
-def run_setups():
-    setAdminPassword = dict(script = 'source\\setAdminPassword.py',
-                  uac_info = 'requireAdministrator')
-    postInstall = dict(script = 'source\\postInstall.py', 
-                  uac_info = 'requireAdministrator')
-
-    setup (console=['source\\commandClient.py',
-                    'source\\ncdClient.py',
-                    {'script': 'source\\screenlockServerNCD.py', 'dest_base': 'screenlockServerNCD_console'}
-                    ],
-           windows=[ postInstall,
-                    'source\\screenlockServer.py',
-                    'source\\screenlockServerNCD.py',
-                    'source\\blockKeys.py',
-                    'source\\screenlockApp.py',
-                    setAdminPassword,
-                    'source\\builder.py'])
-
 def rename_dist_folder():
-    os.rename(DEFAULT_DISTRIBUTION_FOLDER, NEW_DISTRIBUTION_FOLDER)
+    os.rename(COMBINED_DISTRIBUTION_FOLDER, NEW_DISTRIBUTION_FOLDER)
 
 def copy_support_files_to_dist_folder():
     copy_config_and_text_files_to_dist_folder()
@@ -159,12 +145,32 @@ def touch(filename):
     else:
         print("file exists, skipping")
 
-#constants
-DEFAULT_DISTRIBUTION_FOLDER = os.path.join(PATH, 'dist')
-NEW_DISTRIBUTION_FOLDER = os.path.join(PATH, 'screenlock')
-BUILD_FOLDER = os.path.join(PATH, 'build')
-SOURCE_FOLDER = os.path.join(PATH, 'source')
-TAGS_BASE_FOLDER = os.path.join(PATH, 'Tags')
-TAGGED_FOLDER = os.path.join(TAGS_BASE_FOLDER, VERSION)
+def source_files():
+    return [
+        'setAdminPassword',
+        'postinstall',
+        'commandClient',
+        'ncdClient',
+        'screenlockServerNCD',
+        'screenlockServer',
+        'screenlockServerNCD',
+        'screenlockApp']
+
+def create_exe():
+    os.system('pyinstaller  --windowed --uac-admin source/setAdminPassword.py')
+    os.system('pyinstaller  --windowed --uac-admin source/postinstall.py')
+    os.system('pyinstaller  --console source/commandClient.py')
+    os.system('pyinstaller  --console source/ncdClient.py')
+    os.system('pyinstaller  --console -n screenlockServerNCD_console source/screenlockServerNCD.py')
+    os.system('pyinstaller  --windowed source/screenlockServer.py')
+    os.system('pyinstaller  --windowed source/screenlockServerNCD.py')
+    os.system('pyinstaller  --windowed source/screenlockApp.py')
+
+def merge_files():
+    if not os.path.isdir(COMBINED_DISTRIBUTION_FOLDER):
+        os.mkdir(COMBINED_DISTRIBUTION_FOLDER)
+
+    for i in source_files():
+        copy_tree("dist/%s" % i, COMBINED_DISTRIBUTION_FOLDER)
 
 main()
