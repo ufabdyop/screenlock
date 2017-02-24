@@ -8,8 +8,8 @@ from version import VERSION
 
 #constants
 DEFAULT_DISTRIBUTION_FOLDER = os.path.join(PATH, 'dist')
-COMBINED_DISTRIBUTION_FOLDER = os.path.join(DEFAULT_DISTRIBUTION_FOLDER, 'combined')
-NEW_DISTRIBUTION_FOLDER = os.path.join(PATH, 'screenlock')
+COMBINED_DISTRIBUTION_FOLDER = os.path.join(DEFAULT_DISTRIBUTION_FOLDER, 'screenlock')
+NEW_DISTRIBUTION_FOLDER = COMBINED_DISTRIBUTION_FOLDER
 BUILD_FOLDER = os.path.join(PATH, 'build')
 SOURCE_FOLDER = os.path.join(PATH, 'source')
 TAGS_BASE_FOLDER = os.path.join(PATH, 'Tags')
@@ -19,13 +19,12 @@ def main():
     delete_old_build()
     create_exe()
     merge_files()
-    rename_dist_folder()
     copy_support_files_to_dist_folder()
     create_tagged_folder()
     move_assets_to_tagged_folder()
     print_message()
     try_running_nsis()
-    #clean_up()
+    clean_up()
 
 def delete_old_build():
     if os.path.isdir(DEFAULT_DISTRIBUTION_FOLDER):
@@ -34,9 +33,6 @@ def delete_old_build():
         shutil.rmtree(NEW_DISTRIBUTION_FOLDER)
     if os.path.isdir(BUILD_FOLDER):
         shutil.rmtree(BUILD_FOLDER)
-
-def rename_dist_folder():
-    os.rename(COMBINED_DISTRIBUTION_FOLDER, NEW_DISTRIBUTION_FOLDER)
 
 def copy_support_files_to_dist_folder():
     copy_config_and_text_files_to_dist_folder()
@@ -117,15 +113,6 @@ def clean_up_temporary_assets_if_nsis_succeeded():
         shutil.copy(nsis_setup_file, TAGS_BASE_FOLDER )
         shutil.rmtree(TAGGED_FOLDER)
 
-def create_nsis_file_instructions():
-    path = NEW_DISTRIBUTION_FOLDER
-    filenames = next(os.walk(path))[2]
-
-    buff = ''
-    for f in filenames:
-        buff += 'File "..\\%s"' % f
-        buff += "\n"
-    return buff
 
 def dynamically_add_file_list_to_nsis():
     nsis_file = os.path.join(NEW_DISTRIBUTION_FOLDER, 'installer', 'install.nsi')
@@ -137,6 +124,18 @@ def dynamically_add_file_list_to_nsis():
     file = open(nsis_file, 'w')
     file.write(new_contents)
     file.close()
+
+def create_nsis_file_instructions():
+    path = NEW_DISTRIBUTION_FOLDER
+    buff = ''
+    toplevel = next(os.walk(path))[0]
+    #print("toplevel: %s" % toplevel)
+    for root, dirs, filenames in os.walk(path):
+        for f in filenames:
+            buff += "; in root: %s\n" % root
+            buff += 'File "..\\%s\\%s"' % (root, f)
+            buff += "\n"
+    return buff.replace(toplevel + "\\", "")
 
 def touch(filename):
     if not os.path.exists(filename):
