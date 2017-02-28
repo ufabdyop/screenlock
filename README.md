@@ -99,6 +99,14 @@ To detect status, you can send an NCD device two bytes (254, 17, in decimal nota
 
 The device will respond with a 1 or a 0 byte to show it is enabled or disabled respectively.
 
+Screenshot:
+---
+![Alt text](8.png)
+
+More screenshots at:
+
+[more screenshots](https://github.com/ufabdyop/screenlock/doc/screenshots/example.md "Examples") 
+
 More Info:
 ---
 https://github.com/ufabdyop/screenlock
