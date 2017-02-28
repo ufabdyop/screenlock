@@ -101,11 +101,11 @@ The device will respond with a 1 or a 0 byte to show it is enabled or disabled r
 
 Screenshot:
 ---
-![Alt text](8.png)
+![Screenshot](doc/screenshots/8.png)
 
 More screenshots at:
 
-[more screenshots](https://github.com/ufabdyop/screenlock/doc/screenshots/example.md "Examples") 
+[more screenshots](https://github.com/ufabdyop/screenlock/blob/master/doc/screenshots/example.md "Examples") 
 
 More Info:
 ---
