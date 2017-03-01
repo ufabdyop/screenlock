@@ -111,8 +111,7 @@ def clean_up_temporary_assets_if_nsis_succeeded():
     nsis_setup_file = os.path.join(TAGGED_FOLDER, 'screenlock','installer', 'ScreenLock-' + VERSION + '-Setup.exe')
     if os.path.isfile(nsis_setup_file):
         shutil.copy(nsis_setup_file, TAGS_BASE_FOLDER )
-        shutil.rmtree(TAGGED_FOLDER)
-
+        #shutil.rmtree(TAGGED_FOLDER)
 
 def dynamically_add_file_list_to_nsis():
     nsis_file = os.path.join(NEW_DISTRIBUTION_FOLDER, 'installer', 'install.nsi')
@@ -120,21 +119,29 @@ def dynamically_add_file_list_to_nsis():
     file = open(nsis_file)
     contents = file.read()
     file.close()
-    new_contents = contents.replace(';DYNAMIC_ADD_OF_PY2EXE_FILES', buff)
+    new_contents = contents.replace(';DYNAMIC_ADD_OF_PY2EXE_FILES', ";DYNAMIC_ADD_OF_PY2EXE_FILES\n" + buff)
     file = open(nsis_file, 'w')
     file.write(new_contents)
     file.close()
 
 def create_nsis_file_instructions():
     path = NEW_DISTRIBUTION_FOLDER
+
     buff = ''
     toplevel = next(os.walk(path))[0]
-    #print("toplevel: %s" % toplevel)
-    for root, dirs, filenames in os.walk(path):
-        for f in filenames:
-            buff += "; in root: %s\n" % root
-            buff += 'File "..\\%s\\%s"' % (root, f)
-            buff += "\n"
+    toplevel_subdirs = next(os.walk(path))[1]
+    toplevel_files = next(os.walk(path))[2]
+    pprint.pprint(toplevel_subdirs)
+
+    for f in toplevel_files:
+        # buff += "; in root: %s\n" % root
+        buff += 'File "..\\%s"' % f
+        buff += "\n"
+
+    for f in toplevel_subdirs:
+        buff += 'File /r "..\\%s"' % f
+        buff += "\n"
+
     return buff.replace(toplevel + "\\", "")
 
 def touch(filename):
