@@ -17,7 +17,7 @@ Click "Lock the Screen" and get response (notice controlled computer is now lock
 Return to Admin screen and click "Unlock the Screen":
 ![Alt text](5.png)
 
-Get server response (notice controlled computer is now locked):
+Get server response (notice controlled computer is now unlocked):
 ![Alt text](6.png)
 
 Same procedure using curl on the command line:
