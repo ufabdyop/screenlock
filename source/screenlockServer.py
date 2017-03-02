@@ -1,5 +1,5 @@
 import sys, os, urllib2, screenlockConfig, screenlockController, version, json, log
-from flask import Flask, request, Response
+from flask import Flask, request, Response, render_template
 from urlparse import urlparse
 from functools import wraps
 from OpenSSL import SSL
@@ -11,7 +11,7 @@ class screenlockFlaskServer(object):
     def __init__(self):
         self.config = screenlockConfig.SLConfig()
         self.port = int(self.config.get('port'))
-        self.app = Flask(__name__)
+        self.app = Flask(__name__, static_folder='static', static_path='/static', static_url_path='/static')
         self.app.debug = False
         self.logger = logging.getLogger('screenlockServer')
         self.server = None
@@ -159,6 +159,22 @@ class screenlockFlaskServer(object):
         @self.requires_auth
         def sense():
             return status()
+
+
+        @self.app.route('/static', methods=['GET'])
+        @self.app.route('/static/', methods=['GET'])
+        @self.app.route('/', methods=['GET'])
+        def serve_static_index():
+            self.logger.debug('static asset')
+            return self.app.send_static_file('index.html')
+
+        @self.app.route('/swagger.yaml', methods=['GET'])
+        def swagger():
+            self.logger.debug('swagger yaml')
+            buffer = render_template('swagger.yaml',
+                                     host=request.host)
+            return buffer
+
 
         @self.app.route('/version')
         def versionPath():
