@@ -12,6 +12,8 @@ COMBINED_DISTRIBUTION_FOLDER = os.path.join(DEFAULT_DISTRIBUTION_FOLDER, 'screen
 NEW_DISTRIBUTION_FOLDER = COMBINED_DISTRIBUTION_FOLDER
 BUILD_FOLDER = os.path.join(PATH, 'build')
 SOURCE_FOLDER = os.path.join(PATH, 'source')
+STATIC_FOLDER = os.path.join(SOURCE_FOLDER, 'static')
+TEMPLATE_FOLDER = os.path.join(SOURCE_FOLDER, 'templates')
 TAGS_BASE_FOLDER = os.path.join(PATH, 'Tags')
 TAGGED_FOLDER = os.path.join(TAGS_BASE_FOLDER, VERSION)
 
@@ -19,6 +21,7 @@ def main():
     delete_old_build()
     create_exe()
     merge_files()
+    copy_static_files_tagged_folder()
     copy_support_files_to_dist_folder()
     create_tagged_folder()
     move_assets_to_tagged_folder()
@@ -47,6 +50,12 @@ def create_tagged_folder():
 
 def move_assets_to_tagged_folder():
     shutil.move(NEW_DISTRIBUTION_FOLDER, TAGGED_FOLDER)
+
+def copy_static_files_tagged_folder():
+    destination = os.path.join(NEW_DISTRIBUTION_FOLDER, "static")
+    shutil.copytree(STATIC_FOLDER, destination)
+    destination = os.path.join(NEW_DISTRIBUTION_FOLDER, "templates")
+    shutil.copytree(TEMPLATE_FOLDER, destination)
 
 def print_message():
     make_nsis_command_example = '"c:\\Program Files\\NSIS\\makensis.exe" %s' % (os.path.join(TAGGED_FOLDER, 'screenlock','installer', 'install.nsi'))

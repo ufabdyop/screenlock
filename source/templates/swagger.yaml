@@ -90,29 +90,6 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /proxy:
-    post:
-      security:
-      - basicAuth: []
-      summary: Forward on to another Interlock
-      description: |
-        Post to this url to reach another interlock
-      parameters:
-      - in: body
-        name: body
-        description: Config object that describes the request to proxy forward
-        required: true
-        schema:
-          "$ref": "#/definitions/Proxy"
-      responses:
-        200:
-          description: A description of state of interlock
-          schema:
-            $ref: '#/definitions/Status'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
 
 definitions:
   Proxy:
