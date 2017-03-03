@@ -47,6 +47,7 @@ Currently, this requires:
 * pyinstaller (pip install pyinstaller)
 * pyhook (http://downloads.sourceforge.net/project/pyhook/pyhook/1.5.1/pyHook-1.5.1.zip) or whl file for use with pip: http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyhook
 * flask (pip install flask)
+* rocket (pip install rocket)
 * requests (pip install requests)
 * psutil v1.2.1 (https://pypi.python.org/packages/2.7/p/psutil/psutil-1.2.1.win32-py2.7.exe#md5=c4264532a64414cf3aa0d8b17d17e015)
 * twisted (https://pypi.python.org/packages/2.7/T/Twisted/Twisted-15.2.1.win32-py2.7.exe#md5=54d71f4b56106541a1feb3306a0a72c7)
@@ -60,7 +61,12 @@ Zip of prerequisites:
 Building EXE File
 ---
 
-If building on linux, we first used winetricks to install python26, then installed 2.7 with "msiexec /i python-2.7.10.msi"
+#### With Docker:
+
+Use the instructions in docker-screenlock-builder/README.md
+This build process uses wine to run the pyinstaller process.
+
+#### With Windows:
 
 We are using pyinstaller for building an exe file.
 
@@ -93,6 +99,14 @@ To detect status, you can send an NCD device two bytes (254, 17, in decimal nota
   echo 'fe11' | xxd -r -p | nc ncd-device.example.com 2101
 
 The device will respond with a 1 or a 0 byte to show it is enabled or disabled respectively.
+
+Screenshot:
+---
+![Screenshot](doc/screenshots/8.png)
+
+More screenshots at:
+
+[more screenshots](https://github.com/ufabdyop/screenlock/blob/master/doc/screenshots/example.md "Examples") 
 
 More Info:
 ---

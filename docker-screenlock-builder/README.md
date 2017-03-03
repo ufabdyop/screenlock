@@ -15,13 +15,13 @@ http://www.nanofab.utah.edu/sv/?dec=1&cat=Computer%20Passwords&t1=Prerequisites%
 Import:
 ---
 ```
-docker import - screenlock-builder:2 < docker-screenlock-builder-2.tar
+sudo docker import - screenlock-builder:2 < docker-screenlock-builder-2.tar
 ```
 
 Run:
 ---
-Assuming the screenlock source parent directory is "~/dev/screenlock-package":
+Assuming the screenlock source directory is "~/dev/screenlock":
 
 ```
-docker run -u developer  -it -v ~/dev/screenlock-package/:/slock screenlock-builder:2 bash -c 'cd /slock/screenlock && wine python /slock/screenlock/setup.py'
+sudo docker run -u developer  -it -v ~/dev/screenlock:/screenlock screenlock-builder:2 bash -c 'cd /screenlock && wine python /screenlock/setup.py'
 ```
