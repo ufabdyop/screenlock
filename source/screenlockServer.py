@@ -1,18 +1,23 @@
 import sys, os, urllib2, screenlockConfig, screenlockController, version, json, log
-from flask import Flask, request, Response
+from flask import Flask, request, Response, render_template
 from urlparse import urlparse
 from functools import wraps
 from OpenSSL import SSL
 from datetime import datetime
 import pprint, logging
+from rocket import Rocket
 
 class screenlockFlaskServer(object):
     def __init__(self):
         self.config = screenlockConfig.SLConfig()
-        self.port = self.config.get('port')
-        self.app = Flask(__name__)
+        self.port = int(self.config.get('port'))
+        self.app = Flask(__name__, static_folder='static', static_path='/static', static_url_path='/static')
         self.app.debug = False
         self.logger = logging.getLogger('screenlockServer')
+        self.server = None
+
+        rocketlog = logging.getLogger('Rocket')
+        rocketlog.setLevel(logging.INFO)
 
         self.ssl_context = None
         try:
@@ -29,11 +34,14 @@ class screenlockFlaskServer(object):
 
     def run(self):
         self.lock_screen()
+        interfaces = ("0.0.0.0", self.port)
+
         if self.ssl_context:
-            self.app.run(host='0.0.0.0', port = self.port,
-                     ssl_context=self.ssl_context)
-        else:
-            self.app.run(host='0.0.0.0', port = self.port)
+            interfaces = [('127.0.0.1', 80),
+             ('0.0.0.0', self.port, self.ssl_context[1], self.ssl_context[0])]
+
+        self.server = Rocket(interfaces, 'wsgi', {"wsgi_app": self.app})
+        self.server.start(background=False)
 
     ########### AUTH HANDLING ############
     def check_auth(self, username, password):
@@ -151,6 +159,22 @@ class screenlockFlaskServer(object):
         @self.requires_auth
         def sense():
             return status()
+
+
+        @self.app.route('/static', methods=['GET'])
+        @self.app.route('/static/', methods=['GET'])
+        @self.app.route('/', methods=['GET'])
+        def serve_static_index():
+            self.logger.debug('static asset')
+            return self.app.send_static_file('index.html')
+
+        @self.app.route('/swagger.yaml', methods=['GET'])
+        def swagger():
+            self.logger.debug('swagger yaml')
+            buffer = render_template('swagger.yaml',
+                                     host=request.host)
+            return buffer
+
 
         @self.app.route('/version')
         def versionPath():
