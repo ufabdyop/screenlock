@@ -14,7 +14,7 @@ print("Path: " + APPLICATION_PATH)
 
 
 APPLICATION_PATH = os.path.dirname(os.path.abspath(__file__))
-LOG_FOLDER = os.path.join(APPLICATION_PATH, '..', 'Log')
+LOG_FOLDER = os.path.join(APPLICATION_PATH, 'Log')
 
 print("Log Path: " + LOG_FOLDER)
 
@@ -22,10 +22,21 @@ print("Log Path: " + LOG_FOLDER)
 
 #  create a log folder
 def create_log_folder():
-	if os.path.isdir(LOG_FOLDER):
-		shutil.rmtree(LOG_FOLDER)
-	os.makedirs(LOG_FOLDER)
-	allow_everyone_permission_to_log_folder()
+    try:
+        if os.path.isdir(LOG_FOLDER):
+            shutil.rmtree(LOG_FOLDER)
+    except:
+        print("Could not remove %s" % LOG_FOLDER)
+
+    try:
+        os.makedirs(LOG_FOLDER)
+    except:
+        print("Could not create %s" % LOG_FOLDER)
+
+    try:
+	    allow_everyone_permission_to_log_folder()
+    except:
+        print("Could not grant permission for everyone to %s" % LOG_FOLDER)
 
 def allow_everyone_permission_to_log_folder():
 	sidWorld = win32security.CreateWellKnownSid(win32security.WinWorldSid, None)
