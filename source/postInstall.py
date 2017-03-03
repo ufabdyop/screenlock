@@ -7,57 +7,83 @@ ID_SUBMIT = wx.NewId()
 
 
 class PostInstallFrame( wx.Frame ):
- 
-    def __init__( self ):
+
+    def __init__(self, parent, title):
+        super(PostInstallFrame, self).__init__(parent, title="Post Install", size=(300, 250))
+        self.InitUI()
+        self.Centre()
+        self.Show()
+
+
+    def InitUI(self):
         self.logger = logging.getLogger('postInstall')
         self.logger.debug("postInstall started")
 
         self.config = screenlockConfig.SLConfig()
- 
-        wx.Frame.__init__( self, None, title= "Post Install",
-                           style=wx.DEFAULT_FRAME_STYLE )
-        self.SetBackgroundColour('#CCCCCC')
-        
-        font=wx.Font(14,wx.DECORATIVE,wx.NORMAL,wx.BOLD)
+        self.SetBackgroundColour('#ffffff')
 
-        xPos = 10
-        yPos = 10
+        gs = wx.GridSizer(5, 1, 5, 5)
+        font = wx.Font(14, wx.DECORATIVE, wx.NORMAL, wx.BOLD)
 
-        self.startScreenLockCheckbox = wx.CheckBox(self, -1, label="Start ScreenlockServer Upon Login", pos = (xPos,yPos), size = (400, 20))
+        self.startScreenLockCheckbox = wx.CheckBox(self, -1, label="Start ScreenlockServer Upon Login")
         self.startScreenLockCheckbox.SetFont(font)
-        yPos += 35
-        
-        self.readmeCheckbox = wx.CheckBox(self, -1, label="Open post-install file", pos = (xPos,yPos), size = (400, 20))
-        self.readmeCheckbox.SetFont(font)
-        yPos += 35
-        
-        self.setPasswordCheckbox = wx.CheckBox(self, -1, label="Set Administrator and Web Passwords", pos = (xPos,yPos), size = (400, 20))
-        self.setPasswordCheckbox.SetFont(font)
-        yPos += 35
-        
+        gs.Add(self.startScreenLockCheckbox)
+        self.SetSize(gs)
 
-        self.setCoralRadioBtn = wx.RadioButton(self,label= "Coral", pos = (xPos,yPos), size = (400, 20), style = wx.RB_GROUP)
-        self.setCoralRadioBtn.SetFont(font)
-        self.setCoralRadioBtn.Bind(wx.EVT_LEFT_DOWN,self.OnRB)
-        yPos += 20
-        
-        self.setBlankRadioBtn = wx.RadioButton(self, label = "No Client", pos = (xPos,yPos), size = (400,20))
-        self.setBlankRadioBtn.SetFont(font)
-        self.setBlankRadioBtn.Bind(wx.EVT_LEFT_DOWN,self.OnRB)
-        yPos += 35
-        
-        self.OKbutton = wx.Button(self, ID_SUBMIT, label='OK', pos=(xPos + 250,yPos))
-        self.OKbutton.SetFont(font)
-        self.Bind(wx.EVT_BUTTON, self.OnSubmit, id=ID_SUBMIT)
-        self.Bind(wx.EVT_TEXT_ENTER, self.OnSubmit)
-        self.input = None
 
-        self.CancelBtn = wx.Button(self, label = 'Cancel', pos=(xPos + 350,yPos))
-        self.CancelBtn.SetFont(font)
-        self.CancelBtn.Bind(wx.EVT_BUTTON, self.OnCancel)
-        yPos += 50
 
-        self.Fit()
+
+
+    # def __init__( self ):
+    #     self.logger = logging.getLogger('postInstall')
+    #     self.logger.debug("postInstall started")
+    #
+    #     self.config = screenlockConfig.SLConfig()
+    #
+    #     wx.Frame.__init__( self, None, title= "Post Install",
+    #                        style=wx.DEFAULT_FRAME_STYLE )
+    #     self.SetBackgroundColour('#CCCCCC')
+    #
+    #     font=wx.Font(14,wx.DECORATIVE,wx.NORMAL,wx.BOLD)
+    #
+    #     xPos = 10
+    #     yPos = 10
+    #
+    #     self.startScreenLockCheckbox = wx.CheckBox(self, -1, label="Start ScreenlockServer Upon Login", pos = (xPos,yPos), size = (400, 20))
+    #     self.startScreenLockCheckbox.SetFont(font)
+    #     yPos += 35
+    #
+    #     self.readmeCheckbox = wx.CheckBox(self, -1, label="Open post-install file", pos = (xPos,yPos), size = (400, 20))
+    #     self.readmeCheckbox.SetFont(font)
+    #     yPos += 35
+    #
+    #     self.setPasswordCheckbox = wx.CheckBox(self, -1, label="Set Administrator and Web Passwords", pos = (xPos,yPos), size = (400, 20))
+    #     self.setPasswordCheckbox.SetFont(font)
+    #     yPos += 35
+    #
+    #
+    #     self.setCoralRadioBtn = wx.RadioButton(self,label= "Coral", pos = (xPos,yPos), size = (400, 20), style = wx.RB_GROUP)
+    #     self.setCoralRadioBtn.SetFont(font)
+    #     self.setCoralRadioBtn.Bind(wx.EVT_LEFT_DOWN,self.OnRB)
+    #     yPos += 20
+    #
+    #     self.setBlankRadioBtn = wx.RadioButton(self, label = "No Client", pos = (xPos,yPos), size = (400,20))
+    #     self.setBlankRadioBtn.SetFont(font)
+    #     self.setBlankRadioBtn.Bind(wx.EVT_LEFT_DOWN,self.OnRB)
+    #     yPos += 35
+    #
+    #     self.OKbutton = wx.Button(self, ID_SUBMIT, label='OK', pos=(xPos + 250,yPos))
+    #     self.OKbutton.SetFont(font)
+    #     self.Bind(wx.EVT_BUTTON, self.OnSubmit, id=ID_SUBMIT)
+    #     self.Bind(wx.EVT_TEXT_ENTER, self.OnSubmit)
+    #     self.input = None
+    #
+    #     self.CancelBtn = wx.Button(self, label = 'Cancel', pos=(xPos + 350,yPos))
+    #     self.CancelBtn.SetFont(font)
+    #     self.CancelBtn.Bind(wx.EVT_BUTTON, self.OnCancel)
+    #     yPos += 50
+    #
+    #     self.Fit()
 
     def OnRB(self,event):
         if (event.GetEventObject().GetValue() == False):
