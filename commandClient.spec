@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['source\\commandClient.py'],
-             pathex=['Z:\\slock'],
+             pathex=['Z:\\screenlock'],
              binaries=[],
              datas=[],
              hiddenimports=[],

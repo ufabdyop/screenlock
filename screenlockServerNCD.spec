@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['source\\screenlockServerNCD.py'],
-             pathex=['Z:\\slock'],
+             pathex=['Z:\\screenlock'],
              binaries=[],
              datas=[],
              hiddenimports=[],
