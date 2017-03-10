@@ -172,14 +172,14 @@ def source_files():
         'screenlockApp']
 
 def create_exe():
-    os.system('pyinstaller  --windowed --uac-admin source/setAdminPassword.py')
-    os.system('pyinstaller  --windowed --uac-admin source/postinstall.py')
-    os.system('pyinstaller  --console source/commandClient.py')
-    os.system('pyinstaller  --console source/ncdClient.py')
-    os.system('pyinstaller  --console -n screenlockServerNCD_console source/screenlockServerNCD.py')
-    os.system('pyinstaller  --windowed source/screenlockServer.py')
-    os.system('pyinstaller  --windowed source/screenlockServerNCD.py')
-    os.system('pyinstaller  --windowed source/screenlockApp.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --uac-admin source/setAdminPassword.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --uac-admin source/postinstall.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/commandClient.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/ncdClient.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --console -n screenlockServerNCD_console source/screenlockServerNCD.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockServer.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockServerNCD.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockApp.py')
 
 def merge_files():
     if not os.path.isdir(COMBINED_DISTRIBUTION_FOLDER):
