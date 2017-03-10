@@ -15,7 +15,7 @@ https://hub.docker.com/r/saltlakeryan/xvfb-wine-python/
 Import:
 ---
 ```
-sudo docker import - screenlock-builder:2 < docker-screenlock-builder-2.tar
+docker pull saltlakeryan/xvfb-wine-python
 ```
 
 Run:
@@ -23,5 +23,6 @@ Run:
 Assuming the screenlock source directory is "~/dev/screenlock":
 
 ```
-sudo docker run -u developer  -it -v ~/dev/screenlock:/screenlock screenlock-builder:2 bash -c 'cd /screenlock && wine python /screenlock/setup.py'
+sudo docker run -u developer  -it -v ~/dev/screenlock:/screenlock saltlakeryan/xvfb-wine-python bash -c 'cd /screenlock && wine c:/Python27/python /screenlock/setup.py'
+
 ```
