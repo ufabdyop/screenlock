@@ -162,7 +162,6 @@ def touch(filename):
 
 def source_files():
     return [
-        'setAdminPassword',
         'postinstall',
         'commandClient',
         'ncdClient',
@@ -172,7 +171,6 @@ def source_files():
         'screenlockApp']
 
 def create_exe():
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --uac-admin source/setAdminPassword.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --uac-admin source/postinstall.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/commandClient.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/ncdClient.py')
