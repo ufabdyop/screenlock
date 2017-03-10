@@ -1,0 +1,110 @@
+2017-03-10 13:31:46,696:DEBUG	1352-MainThread	screenlockApp.py	36	 screenlockApp: Starting	
+2017-03-10 13:31:46,726:DEBUG	1352-MainThread	blockKeys.py	10	blocking keys	
+2017-03-10 13:31:46,757:DEBUG	5872-Thread-1	screenlockForegrounder.py	117	win1 length: 0, win2 length: 8	
+2017-03-10 13:31:46,757:DEBUG	5872-Thread-1	screenlockForegrounder.py	118	Only in list 2: {'GetWindowText': 'Command Prompt - python  screenlockApp.py',
+ 'IsForegroundWindow': False,
+ 'IsWindowEnabled': 1,
+ 'IsWindowVisible': 1,
+ 'hwnd': 328448,
+ 'minimized': 0,
+ 'next': 263174,
+ 'preferredOrder': 999,
+ 'rectangle': (463, 60, 1456, 579),
+ 'title': 'Command Prompt - python  screenlockApp.py',
+ 'zIndex': 27}
+Only in list 2: {'GetWindowText': 'Program Manager',
+ 'IsForegroundWindow': False,
+ 'IsWindowEnabled': 1,
+ 'IsWindowVisible': 1,
+ 'hwnd': 65794,
+ 'minimized': 0,
+ 'next': 0,
+ 'preferredOrder': 999,
+ 'rectangle': (0, 0, 1600, 828),
+ 'title': 'Program Manager',
+ 'zIndex': 113}
+Only in list 2: {'GetWindowText': 'Transparent Window',
+ 'IsForegroundWindow': True,
+ 'IsWindowEnabled': 1,
+ 'IsWindowVisible': 1,
+ 'hwnd': 852970,
+ 'minimized': 0,
+ 'next': 65982,
+ 'preferredOrder': 6,
+ 'rectangle': (0, 0, 1600, 828),
+ 'title': 'Transparent Window',
+ 'zIndex': 5}
+Only in list 2: {'GetWindowText': 'Settings',
+ 'IsForegroundWindow': False,
+ 'IsWindowEnabled': 1,
+ 'IsWindowVisible': 1,
+ 'hwnd': 196782,
+ 'minimized': 0,
+ 'next': 459748,
+ 'preferredOrder': 999,
+ 'rectangle': (-7, 46, 809, 686),
+ 'title': 'Settings',
+ 'zIndex': 44}
+Only in list 2: {'GetWindowText': 'source',
+ 'IsForegroundWindow': False,
+ 'IsWindowEnabled': 1,
+ 'IsWindowVisible': 1,
+ 'hwnd': 196976,
+ 'minimized': 0,
+ 'next': 66576,
+ 'preferredOrder': 999,
+ 'rectangle': (0, 2, 894, 683),
+ 'title': 'source',
+ 'zIndex': 38}
+Only in list 2: {'GetWindowText': 'Settings',
+ 'IsForegroundWindow': False,
+ 'IsWindowEnabled': 1,
+ 'IsWindowVisible': 1,
+ 'hwnd': 66574,
+ 'minimized': 0,
+ 'next': 132114,
+ 'preferredOrder': 999,
+ 'rectangle': (0, 32, 800, 632),
+ 'title': 'Settings',
+ 'zIndex': 40}
+Only in list 2: {'GetWindowText': '',
+ 'IsForegroundWindow': False,
+ 'IsWindowEnabled': 1,
+ 'IsWindowVisible': 1,
+ 'hwnd': 65884,
+ 'minimized': 0,
+ 'next': 66378,
+ 'preferredOrder': 999,
+ 'rectangle': (0, 0, 0, 0),
+ 'title': '',
+ 'zIndex': 76}
+Only in list 2: {'GetWindowText': '',
+ 'IsForegroundWindow': False,
+ 'IsWindowEnabled': 1,
+ 'IsWindowVisible': 1,
+ 'hwnd': 65706,
+ 'minimized': 0,
+ 'next': 131446,
+ 'preferredOrder': 999,
+ 'rectangle': (0, 788, 1600, 828),
+ 'title': '',
+ 'zIndex': 101}
+	
+2017-03-10 13:31:50,085:DEBUG	1352-MainThread	blockKeys.py	26	Caught key down: Numpad1	
+2017-03-10 13:31:50,148:DEBUG	1352-MainThread	blockKeys.py	26	Caught key down: Numpad2	
+2017-03-10 13:31:50,257:DEBUG	1352-MainThread	blockKeys.py	26	Caught key down: Numpad3	
+2017-03-10 13:31:50,273:DEBUG	1352-MainThread	blockKeys.py	29	Caught key up: Numpad1	
+2017-03-10 13:31:50,368:DEBUG	1352-MainThread	blockKeys.py	29	Caught key up: Numpad2	
+2017-03-10 13:31:50,507:DEBUG	1352-MainThread	blockKeys.py	29	Caught key up: Numpad3	
+2017-03-10 13:31:50,743:DEBUG	1352-MainThread	blockKeys.py	26	Caught key down: Numpad4	
+2017-03-10 13:31:50,868:DEBUG	1352-MainThread	blockKeys.py	29	Caught key up: Numpad4	
+2017-03-10 13:31:50,930:DEBUG	1352-MainThread	blockKeys.py	26	Caught key down: Return	
+2017-03-10 13:31:50,930:DEBUG	1352-MainThread	screenlockApp.py	146	main loop exited	
+2017-03-10 13:31:50,930:DEBUG	1352-MainThread	screenlockApp.py	152	frame controller signaled stop	
+2017-03-10 13:31:51,414:ERROR	5872-Thread-1	screenlockForegrounder.py	162	Couldn't set NOT topmost 852970	
+2017-03-10 13:31:51,414:DEBUG	5872-Thread-1	screenlockForegrounder.py	55	foregrounder over	
+2017-03-10 13:31:51,476:DEBUG	1352-MainThread	screenlockApp.py	158	frame controller exited	
+2017-03-10 13:31:51,476:DEBUG	1352-MainThread	screenlockApp.py	160	1	
+2017-03-10 13:31:51,476:DEBUG	1352-MainThread	screenlockApp.py	161	[<_MainThread(MainThread, started 1352)>]	
+2017-03-10 13:31:51,476:ERROR	1352-MainThread	screenlockApp.py	166	Could not destroy frame: <type 'exceptions.Exception'>	
+2017-03-10 13:31:51,476:DEBUG	1352-MainThread	screenlockApp.py	168	Exiting normally	

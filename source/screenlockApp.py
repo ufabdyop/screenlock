@@ -39,31 +39,45 @@ class OverlayFrame( wx.Frame ):
         wx.Frame.__init__( self, None, title="Transparent Window",
                            style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP )
 
+        print('Number of arguments:', len(sys.argv), 'arguments.')
+        print('Argument List:', str(sys.argv))
+
+        yPos = 50;
+
         self.ShowFullScreen( True )
-        self.alphaValue = 220
+        self.alphaValue = 225
         self.SetTransparent( self.alphaValue )
-        self.SetBackgroundColour('#CCE8CF')
+        self.SetBackgroundColour('#993333')
         
         font=wx.Font(16,wx.DECORATIVE,wx.NORMAL,wx.BOLD)
-        self.label = wx.StaticText(self, label="For Administrator Only:", pos=(10,10))
+        self.label = wx.StaticText(self, label="For Administrator Only:", pos=(0, yPos), size=(500,30), style=wx.ALIGN_CENTER)
         self.label.SetFont(font)
-        
-        self.inputField = wx.TextCtrl(self, value="", size=(140, 30), pos=(10,45), name="input", style=wx.TE_PASSWORD)
+        self.label.SetForegroundColour(wx.Colour(255, 255, 255))
+
+        yPos+=30;
+
+        self.inputField = wx.TextCtrl(self, value="", size=(140, 30), pos=(175,yPos), name="input", style=wx.TE_PASSWORD)
         self.inputField.SetFont(font)
+
+        yPos+=50;
         
-        self.submitButton = wx.Button(self, ID_SUBMIT, 'Submit', pos=(160,50))
+        self.submitButton = wx.Button(self, ID_SUBMIT, 'Submit', pos=(160,yPos))
         self.submitButton.SetFont(font)
         self.Bind(wx.EVT_BUTTON, self.OnSubmit, id=ID_SUBMIT)
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSubmit)
 
+        yPos += 50;
+
         START_CORAL = wx.NewId()
-        self.clientButton = wx.Button(self, START_CORAL, 'Start Coral', pos=(10,150), size=wx.Size(300, 50))
+        self.clientButton = wx.Button(self, START_CORAL, 'Start Coral', pos=(10,yPos), size=wx.Size(300, 50))
         self.clientButton.SetFont(font)
         self.Bind(wx.EVT_BUTTON, self.OnStartCoral, id=START_CORAL)
 
         self.input = None
-        
-        self.status = wx.StaticText(self, -1, '', pos=(10,80))
+
+        yPos+=50;
+
+        self.status = wx.StaticText(self, -1, '', pos=(10,yPos))
         self.status.SetFont(font)
 
         win32api.SetConsoleCtrlHandler(self.signalHandler, True)
