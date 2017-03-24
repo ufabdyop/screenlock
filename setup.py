@@ -21,8 +21,9 @@ def main():
     delete_old_build()
     create_exe()
     merge_files()
-    copy_static_files_tagged_folder()
+    copy_static_files_to_tagged_folder()
     copy_support_files_to_dist_folder()
+    dynamically_add_file_list_to_nsis()
     create_tagged_folder()
     move_assets_to_tagged_folder()
     print_message()
@@ -37,11 +38,32 @@ def delete_old_build():
     if os.path.isdir(BUILD_FOLDER):
         shutil.rmtree(BUILD_FOLDER)
 
+def create_exe():
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --console --uac-admin source/postinstall.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/commandClient.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/ncdClient.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --console -n screenlockServerNCD_console source/screenlockServerNCD.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/screenlockServer.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/screenlockServerNCD.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/screenlockApp.py')
+
+def merge_files():
+    if not os.path.isdir(COMBINED_DISTRIBUTION_FOLDER):
+        os.mkdir(COMBINED_DISTRIBUTION_FOLDER)
+
+    for i in source_files():
+        copy_tree("dist/%s" % i, COMBINED_DISTRIBUTION_FOLDER)
+
+def copy_static_files_to_tagged_folder():
+    destination = os.path.join(NEW_DISTRIBUTION_FOLDER, "static")
+    shutil.copytree(STATIC_FOLDER, destination)
+    destination = os.path.join(NEW_DISTRIBUTION_FOLDER, "templates")
+    shutil.copytree(TEMPLATE_FOLDER, destination)
+
 def copy_support_files_to_dist_folder():
     copy_config_and_text_files_to_dist_folder()
     write_version_to_text_file()
     copy_nsis_file_to_dist_folder()
-    dynamically_add_file_list_to_nsis()
 
 def create_tagged_folder():
     if os.path.isdir(TAGGED_FOLDER):
@@ -50,12 +72,6 @@ def create_tagged_folder():
 
 def move_assets_to_tagged_folder():
     shutil.move(NEW_DISTRIBUTION_FOLDER, TAGGED_FOLDER)
-
-def copy_static_files_tagged_folder():
-    destination = os.path.join(NEW_DISTRIBUTION_FOLDER, "static")
-    shutil.copytree(STATIC_FOLDER, destination)
-    destination = os.path.join(NEW_DISTRIBUTION_FOLDER, "templates")
-    shutil.copytree(TEMPLATE_FOLDER, destination)
 
 def print_message():
     make_nsis_command_example = '"c:\\Program Files\\NSIS\\makensis.exe" %s' % (os.path.join(TAGGED_FOLDER, 'screenlock','installer', 'install.nsi'))
@@ -170,20 +186,5 @@ def source_files():
         'screenlockServerNCD',
         'screenlockApp']
 
-def create_exe():
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --uac-admin source/postinstall.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/commandClient.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/ncdClient.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --console -n screenlockServerNCD_console source/screenlockServerNCD.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockServer.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockServerNCD.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockApp.py')
-
-def merge_files():
-    if not os.path.isdir(COMBINED_DISTRIBUTION_FOLDER):
-        os.mkdir(COMBINED_DISTRIBUTION_FOLDER)
-
-    for i in source_files():
-        copy_tree("dist/%s" % i, COMBINED_DISTRIBUTION_FOLDER)
 
 main()
