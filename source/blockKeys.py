@@ -23,10 +23,10 @@ class BlockKeys(object):
     # create a keyboard hook
     def OnKeyboardEvent(self, event):
         if "down" in event.MessageName.lower():
-            self.logger.debug("Caught key down: %s" % event.Key)
+            #self.logger.debug("Caught key down: %s" % event.Key)
             self.keylist[event.Key.lower()] = event.Key
         elif "up" in event.MessageName.lower():
-            self.logger.debug("Caught key up: %s" % event.Key)
+            #self.logger.debug("Caught key up: %s" % event.Key)
             if self.keylist.has_key(event.Key.lower()):
                 del self.keylist[event.Key.lower()]
         for key in self.keylist.keys():     
