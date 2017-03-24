@@ -39,13 +39,13 @@ def delete_old_build():
         shutil.rmtree(BUILD_FOLDER)
 
 def create_exe():
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --console --uac-admin source/postinstall.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --uac-admin source/postinstall.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/commandClient.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/ncdClient.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --console -n screenlockServerNCD_console source/screenlockServerNCD.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/screenlockServer.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/screenlockServerNCD.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/screenlockApp.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockServer.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockServerNCD.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockApp.py')
 
 def merge_files():
     if not os.path.isdir(COMBINED_DISTRIBUTION_FOLDER):
