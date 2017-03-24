@@ -23,13 +23,8 @@ print("Log Path: " + LOG_FOLDER)
 #  create a log folder
 def create_log_folder():
     try:
-        if os.path.isdir(LOG_FOLDER):
-            shutil.rmtree(LOG_FOLDER)
-    except:
-        print("Could not remove %s" % LOG_FOLDER)
-
-    try:
-        os.makedirs(LOG_FOLDER)
+        if not os.path.isdir(LOG_FOLDER):
+            os.makedirs(LOG_FOLDER)
     except:
         print("Could not create %s" % LOG_FOLDER)
 
