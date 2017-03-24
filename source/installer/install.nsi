@@ -114,6 +114,9 @@ Section -AdditionalIcons
   CreateShortCut "$SMPROGRAMS\ScreenLock\ScreenLock Server.lnk" "$INSTDIR\screenlockServer.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\Post Install.lnk" "$INSTDIR\postInstall.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\ScreenLock.lnk" "$INSTDIR\screenlockApp.exe"
+  CreateShortCut "$SMPROGRAMS\ScreenLock\Lock Computer.lnk" "$INSTDIR\userLock.exe"
+  ;create desktop shortcut
+  CreateShortCut "$DESKTOP\Lock Computer.lnk" "$INSTDIR\userLock.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\Set Password.lnk" "$INSTDIR\setAdminPassword.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\Config File.lnk" "$INSTDIR\config.ini"
   CreateShortCut "$SMPROGRAMS\ScreenLock\Uninstall.lnk" "$INSTDIR\uninst.exe"
