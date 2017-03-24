@@ -1,5 +1,5 @@
 from __future__ import print_function
-import sys, os, wx, screenlockConfig, subprocess, log, logging, pprint
+import sys, os, wx, screenlockConfig, log, logging, subprocess, pprint
 from datetime import datetime
 import _winreg as wreg
 
@@ -93,7 +93,22 @@ class PostInstallFrame( wx.Frame ):
             self.confirmPasswordInputField.SetFocus()
 
     def OnSubmit(self, event):
-        print("onsubmit")
+        passwordVal = self.passwordInputField.GetValue()
+        confirmPassVal = self.confirmPasswordInputField.GetValue()
+
+        if self.nameField.GetValue() == "":
+            self.errorMessage('Empty Name Field!')
+        elif passwordVal == "":
+            self.errorMessage('Empty Password Field!')
+        elif confirmPassVal == "":
+            self.errorMessage('Please re-enter password!')
+        elif passwordVal != confirmPassVal:
+            self.errorMessage('Password Mismatch!')
+        else:
+            self.message('Saved Password!')
+            self.Close()
+            import screenlockApp
+            screenlockApp.main([self.nameField.GetValue(), passwordVal])
 
     def errorMessage(self, message):
         self.status.SetLabel(message)

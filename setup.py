@@ -46,6 +46,7 @@ def create_exe():
     os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockServer.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockServerNCD.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockApp.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/userLock.py')
 
 def merge_files():
     if not os.path.isdir(COMBINED_DISTRIBUTION_FOLDER):
@@ -184,7 +185,8 @@ def source_files():
         'screenlockServerNCD',
         'screenlockServer',
         'screenlockServerNCD',
-        'screenlockApp']
+        'screenlockApp',
+        'userLock']
 
 
 main()
