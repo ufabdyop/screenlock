@@ -132,6 +132,8 @@ class OverlayFrame( wx.Frame ):
         self.userinput = self.userPassword.GetValue()
         self.userPassword.Clear()
         if self.userlock_password == self.userinput:
+            global endFlag
+            endFlag = True
             self.Close()
             self.Destroy()
         else:

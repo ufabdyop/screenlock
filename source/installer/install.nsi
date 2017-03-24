@@ -115,11 +115,12 @@ Section -AdditionalIcons
   CreateShortCut "$SMPROGRAMS\ScreenLock\Post Install.lnk" "$INSTDIR\postInstall.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\ScreenLock.lnk" "$INSTDIR\screenlockApp.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\Lock Computer.lnk" "$INSTDIR\userLock.exe"
-  ;create desktop shortcut
-  CreateShortCut "$DESKTOP\Lock Computer.lnk" "$INSTDIR\userLock.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\Set Password.lnk" "$INSTDIR\setAdminPassword.exe"
   CreateShortCut "$SMPROGRAMS\ScreenLock\Config File.lnk" "$INSTDIR\config.ini"
   CreateShortCut "$SMPROGRAMS\ScreenLock\Uninstall.lnk" "$INSTDIR\uninst.exe"
+
+   ;create desktop shortcut
+  CreateShortCut "$DESKTOP\Lock Computer.lnk" "$INSTDIR\userLock.exe"
 SectionEnd
 
 Section -Post
@@ -148,6 +149,7 @@ Section Uninstall
 
   Delete "$SMPROGRAMS\ScreenLock\Uninstall.lnk"
   Delete "$SMPROGRAMS\ScreenLock\Website.lnk"
+  Delete "$DESKTOP\Lock Computer.lnk"
   Delete "$STARTMENU.lnk"
   Delete "$STARTMENU.lnk"
 

@@ -39,7 +39,7 @@ def delete_old_build():
         shutil.rmtree(BUILD_FOLDER)
 
 def create_exe():
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --uac-admin source/postinstall.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --uac-admin --icon=Logo_256.ico source/postinstall.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/commandClient.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/ncdClient.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --console -n screenlockServerNCD_console source/screenlockServerNCD.py')
@@ -104,7 +104,13 @@ def try_running_nsis():
 
 def clean_up():
     shutil.rmtree(BUILD_FOLDER)
+    shutil.rmtree(DEFAULT_DISTRIBUTION_FOLDER)
     clean_up_temporary_assets_if_nsis_succeeded()
+
+    filelist = [f for f in os.listdir(".") if f.endswith(".spec")]
+    for f in filelist:
+        os.remove(f)
+
 
 def copy_config_and_text_files_to_dist_folder():
     files = [os.path.join(SOURCE_FOLDER, 'config.ini'),
@@ -137,7 +143,7 @@ def clean_up_temporary_assets_if_nsis_succeeded():
     nsis_setup_file = os.path.join(TAGGED_FOLDER, 'screenlock','installer', 'ScreenLock-' + VERSION + '-Setup.exe')
     if os.path.isfile(nsis_setup_file):
         shutil.copy(nsis_setup_file, TAGS_BASE_FOLDER )
-        #shutil.rmtree(TAGGED_FOLDER)
+        shutil.rmtree(TAGGED_FOLDER)
 
 def dynamically_add_file_list_to_nsis():
     nsis_file = os.path.join(NEW_DISTRIBUTION_FOLDER, 'installer', 'install.nsi')
