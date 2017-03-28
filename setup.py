@@ -85,7 +85,6 @@ def print_message():
     them all up into an installer.  To do so, run the make NSI
     application using the build file located in the Tagged folder's
     subdirectory "installer"
-
     For example, you might run:
     %s
     """
@@ -181,7 +180,7 @@ def create_nsis_file_instructions():
 def touch(filename):
     if not os.path.exists(filename):
         print("Creating file")
-        open(filename, 'w').close() 
+        open(filename, 'w').close()
     else:
         print("file exists, skipping")
 
