@@ -13,6 +13,7 @@ NEW_DISTRIBUTION_FOLDER = COMBINED_DISTRIBUTION_FOLDER
 BUILD_FOLDER = os.path.join(PATH, 'build')
 SOURCE_FOLDER = os.path.join(PATH, 'source')
 STATIC_FOLDER = os.path.join(SOURCE_FOLDER, 'static')
+GRAPHIC_FOLDER = os.path.join(SOURCE_FOLDER, 'graphics')
 TEMPLATE_FOLDER = os.path.join(SOURCE_FOLDER, 'templates')
 TAGS_BASE_FOLDER = os.path.join(PATH, 'Tags')
 TAGGED_FOLDER = os.path.join(TAGS_BASE_FOLDER, VERSION)
@@ -39,14 +40,14 @@ def delete_old_build():
         shutil.rmtree(BUILD_FOLDER)
 
 def create_exe():
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --uac-admin --icon=Logo_256.ico source/postinstall.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/commandClient.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --console source/ncdClient.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --console -n screenlockServerNCD_console source/screenlockServerNCD.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockServer.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockServerNCD.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/screenlockApp.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed source/userLock.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --uac-admin --icon=source/graphics/Lock_256.ico source/postinstall.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --console --icon=source/graphics/Lock_256.ico source/commandClient.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --console --icon=source/graphics/Lock_256.ico source/ncdClient.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --console -n screenlockServerNCD_console --icon=source/graphics/Lock_256.ico source/screenlockServerNCD.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --icon=source/graphics/Lock_256.ico source/screenlockServer.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --icon=source/graphics/Lock_256.ico source/screenlockServerNCD.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --icon=source/graphics/Lock_256.ico source/screenlockApp.py')
+    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --icon=source/graphics/Lock_256.ico source/userLock.py')
 
 def merge_files():
     if not os.path.isdir(COMBINED_DISTRIBUTION_FOLDER):
@@ -122,6 +123,7 @@ def copy_config_and_text_files_to_dist_folder():
             os.path.join(SOURCE_FOLDER, 'startup.vbs'),
             os.path.join(SOURCE_FOLDER, 'startupNCD.bat'),
             os.path.join(SOURCE_FOLDER, 'startupNCD.vbs'),
+            os.path.join(GRAPHIC_FOLDER, 'Lock_256.ico'),
             os.path.join(PATH, 'README.md')]
 
     for f in files:
