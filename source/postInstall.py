@@ -1,5 +1,5 @@
 from __future__ import print_function
-import sys, os, wx, screenlockConfig, subprocess, log, logging, pprint
+import sys, os, wx, screenlockConfig, subprocess, log, logging, pprint, ConfigParser
 from datetime import datetime
 import _winreg as wreg
 
@@ -33,10 +33,8 @@ class PostInstallFrame(wx.Frame):
         self.readmeCheckbox.SetFont(font)
         yPos += 32
 
-        self.setCoralRadioBtn = wx.CheckBox(self, label="Use OpenCoral Client", pos=(xPos, yPos), size=(400, 30),
-                                            style=wx.RB_GROUP)
-        self.setCoralRadioBtn.SetFont(font)
-        self.setCoralRadioBtn.Bind(wx.EVT_LEFT_DOWN, self.OnRB)
+        self.setCoralCheckbox = wx.CheckBox(self, -1, label="Use OpenCoral Client", pos=(xPos, yPos), size=(400, 30))
+        self.setCoralCheckbox.SetFont(font)
         yPos += 50
 
         # section 1: local screen password
@@ -206,14 +204,35 @@ class PostInstallFrame(wx.Frame):
     def message(self, message):
         self.status.SetLabel(message)
 
+def makeConfigFileIfNeeded():
+    if os.path.isfile("config.ini") == False:
+        newConfig = ConfigParser.ConfigParser()
+        configFile = open("config.ini", 'w')
+        newConfig.add_section('Section')
+        newConfig.set('Section', 'front_window', 'javaws.exe http://coral.nanofab.utah.edu/coral/etc/coral.jnlp')
+        newConfig.set('Section', 'keysblock', 'blockKeys.exe')
+        newConfig.set('Section', 'post-install', 'post-install.txt')
+        newConfig.set('Section', 'test_connection_url', 'http://coral.nanofab.utah.edu/coral/etc/')
+        newConfig.set('Section', 'port', '9092')
+        newConfig.set('Section', 'admin_override', '')
+        newConfig.set('Section', 'web_password', '')
+        newConfig.set('Section', 'coral', '')
+        newConfig.set('Section', 'coral_sleep_delay', '6')
+        newConfig.set('Section', 'max_coral_open_attempts', '3')
+        newConfig.set('Section', 'cert', 'cert.pem')
+        newConfig.set('Section', 'key', 'key.pem')
+        newConfig.write(configFile)
+        configFile.close()
 
 # =======================================================#
 
 
 if __name__ == '__main__':
+    makeConfigFileIfNeeded()
     log.create_log_folder()
     log.initialize_logging('postInstall')
     app = wx.App(False)
     frm = PostInstallFrame()
     frm.Show()
     app.MainLoop()
+

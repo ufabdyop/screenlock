@@ -3,12 +3,12 @@
 
 * Simple Lock
 
-* Screenlock feature: walk-away tool
+* Screenlock feature: walk-away tool -- COMPLETED
 
 * Screenlock feature: multiple connected PCs
 
 * Screenlock feature: multiple monitors
 
-* Build Process: Add cleanup step to remove pyinstall .spec files
+* Build Process: Add cleanup step to remove pyinstall .spec files -- COMPLETED
 
 * Build Process: Try speeding up building all the exe files
