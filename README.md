@@ -111,3 +111,10 @@ More screenshots at:
 More Info:
 ---
 https://github.com/ufabdyop/screenlock
+
+
+
+[CHANGELOG]: ./CHANGELOG.md
+[LICENSE]: ./LICENSE
+[version-badge]: https://img.shields.io/badge/Version-1.1.10-blue.svg
+[license-badge]: https://img.shields.io/badge/License-MIT-blue.svg
