@@ -113,8 +113,7 @@ def clean_up():
 
 
 def copy_config_and_text_files_to_dist_folder():
-    files = [os.path.join(SOURCE_FOLDER, 'config.ini'),
-            os.path.join(SOURCE_FOLDER, 'key.pem'),
+    files = [os.path.join(SOURCE_FOLDER, 'key.pem'),
             os.path.join(SOURCE_FOLDER, 'cert.pem'),
             os.path.join(SOURCE_FOLDER, 'license.txt'),
             os.path.join(SOURCE_FOLDER, 'post-install.txt'),
