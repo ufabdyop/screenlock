@@ -3,12 +3,10 @@
 This program locks the screen of a windows computer and only allows coral to run in the foreground.  
 All other programs are blocked by a large, transparent window
 
-Installing
----
+## Installing
 Use the installer (ScreenLock-VERSION-Setup.exe).  This will guide you through installing all the EXE files.
 
-Post Install
----
+## Post Install
 Some configuration is required after installing.  You may have to edit config.ini to change some settings.
 You will have to set an admin password for local override (the installer guides you through this). You
 will have to set the admin password for web access.  The default web access password is 1234.  To change it,
@@ -16,8 +14,7 @@ you must start the server (as administrator so it has permissions to write confi
 https://localhost:PORT/admin and set the new password.  A future release will make these post installation
 steps unnecessary.
 
-Running
----
+## Running
 Start the screen lock by running the Screenlock Server item from the start menu.  This locks the screen
 (which can be overridden by a password) and starts a server (https://YOURCOMPUTERIP:PORT/status).  You
 can visit the server URL in a browser and use the web interface to lock or unlock the screen.  The port
@@ -26,16 +23,14 @@ and password can be configured.
 You may alternatively use Screenlock Server NCD to run an NCD-like server to accept commands as though
 an NCD device.
 
-Running on Startup or Login
----
+## Running on Startup or Login
 The working directory must be set correctly to run the executables for this application.  There are
 some startup batch files in the install directory that will do this for you (startup.bat, startupNCD.bat).
 Configure your windows machine to run one of those startup scripts on login and it should run the 
 application automatically.  In addition to batch files, there are some vbs files that are provided to 
 do the same thing, but should hide the command prompt window.
 
-Prerequisites for Developing on Python Source Code :
----
+## Prerequisites for Developing on Python Source Code :
 
 Currently, this requires:
 
@@ -57,8 +52,7 @@ Zip of prerequisites:
 
 * http://www.nanofab.utah.edu/sv/index.php?dec=1&cat=Computer%20Passwords&t1=Prerequisites%20For%20Screenlock%20Build&t2=
 
-Building EXE File
----
+## Building EXE File
 
 #### With Docker:
 
@@ -79,8 +73,7 @@ Once built, you should have a directory matching the current version in Tags wit
 prerequisites (excluding DLLs that are included in windows)
 
 
-Emulating NCD Device:
----
+## Emulating NCD Device:
 The screenlockServerNCD.py and .exe files emulate the commands that the NCD network interlock devices use.  Some examples
 follow.  This is assuming coral is set to use channel 1 (operating NCD relay at index 1).  Also, we assume the ncd device
 is using port 2101.
@@ -99,16 +92,14 @@ To detect status, you can send an NCD device two bytes (254, 17, in decimal nota
 
 The device will respond with a 1 or a 0 byte to show it is enabled or disabled respectively.
 
-Screenshot:
----
+## Screenshot:
 ![Screenshot](doc/screenshots/8.png)
 
 More screenshots at:
 
 [more screenshots](https://github.com/ufabdyop/screenlock/blob/master/doc/screenshots/example.md "Examples") 
 
-More Info:
----
+## More Info:
 https://github.com/ufabdyop/screenlock
 
 
