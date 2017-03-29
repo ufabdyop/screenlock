@@ -2,6 +2,7 @@
 ### Added
 - 'config.ini' file gets created automatically if it doesn't exist
 - Setup cleans up after it self
+- Removed the log folders
     
 ## [1.1.9]  -  03/13/2017
 ### Added
