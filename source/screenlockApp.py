@@ -8,6 +8,7 @@ import signal
 import subprocess
 import thread, threading
 import time
+import version
 import urllib2
 from datetime import datetime
 
@@ -42,6 +43,16 @@ class OverlayFrame( wx.Frame ):
         wx.Frame.__init__( self, None, title="Transparent Window",
                            style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP )
 
+        if wx.Display_GetCount() >= 2:
+            xPos2 = wx.Display(1).GetGeometry()[0]
+            self.secondFrame = wx.Frame(None, title="Transparent Window", pos=(xPos2, 0),
+                                        style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP)
+            alphaValue = 240
+            self.secondFrame.SetTransparent(alphaValue)
+            self.secondFrame.SetBackgroundColour('#666666')
+            self.secondFrame.ShowFullScreen(True)
+            self.secondFrame.Show()
+
         yPos = 50;
 
         self.ShowFullScreen( True )
@@ -70,6 +81,11 @@ class OverlayFrame( wx.Frame ):
         self.clientButton = wx.Button(self, START_CORAL, 'Start Coral', pos=(10,yPos), size=wx.Size(300, 50))
         self.clientButton.SetFont(font)
         self.Bind(wx.EVT_BUTTON, self.OnStartCoral, id=START_CORAL)
+
+        yPos += 60;
+        self.versionLable = wx.StaticText(self, -1, 'v' + version.VERSION, pos=(0, yPos), size=wx.Size(300, 50), style=wx.ALIGN_CENTER)
+        self.versionLable.SetForegroundColour(wx.Colour(255, 255, 255))
+        self.versionLable.SetFont(wx.Font(10, wx.DECORATIVE, wx.NORMAL, wx.BOLD))
 
         self.input = None
 
@@ -125,6 +141,9 @@ class OverlayFrame( wx.Frame ):
             endFlag = True
             self.Close()
             self.Destroy()
+            if wx.Display_GetCount() >= 2:
+                self.secondFrame.Close()
+                self.secondFrame.Destroy()
         else:
             self.status.SetLabel('You are not authorized.')
 
@@ -136,6 +155,9 @@ class OverlayFrame( wx.Frame ):
             endFlag = True
             self.Close()
             self.Destroy()
+            if wx.Display_GetCount() >= 2:
+                self.secondFrame.Close()
+                self.secondFrame.Destroy()
         else:
             self.status.SetLabel('You are not authorized.')
 
@@ -174,6 +196,7 @@ def main(sysargs):
         frm = OverlayFrame(sysargs[0], sysargs[1])
     else:
         frm = OverlayFrame()
+
     frm.Show()
 
     frameController = ControlFrameThread()
