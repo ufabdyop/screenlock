@@ -7,7 +7,7 @@
 
 * Screenlock feature: multiple connected PCs
 
-* Screenlock feature: multiple monitors
+* Screenlock feature: multiple monitors -- COMPLETED
 
 * Build Process: Add cleanup step to remove pyinstall .spec files -- COMPLETED
 
