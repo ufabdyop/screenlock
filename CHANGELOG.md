@@ -1,3 +1,8 @@
+## [1.1.11]  -  03/31/2017
+### Added
+- Support for dual monitors
+- Version number is now displayed on the screenlock app.
+
 ## [1.1.10]  -  03/29/2017
 ### Added
 - 'config.ini' file gets created automatically if it doesn't exist
@@ -26,6 +31,7 @@
 ### Changed
 - Switched to Pyinstaller instead of Py2exe to build the exe files
 
+[1.1.11]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.11
 [1.1.10]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.10
 [1.1.9]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.9
 [1.1.8]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.8
