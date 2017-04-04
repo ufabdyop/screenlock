@@ -93,7 +93,7 @@ To detect status, you can send an NCD device two bytes (254, 17, in decimal nota
 The device will respond with a 1 or a 0 byte to show it is enabled or disabled respectively.
 
 ## Screenshot:
-![Screenshot](doc/screenshots/v11.png)
+![Screenshot](screenshots/v11.png)
 
 More screenshots at:
 
