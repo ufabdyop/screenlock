@@ -5,7 +5,7 @@
 
 * Screenlock feature: walk-away tool -- COMPLETED
 
-* Screenlock feature: multiple connected PCs
+* Screenlock feature: multiple connected PCs -- In Progress
 
 * Screenlock feature: multiple monitors -- COMPLETED
 
