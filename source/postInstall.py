@@ -221,6 +221,12 @@ def makeConfigFileIfNeeded():
         newConfig.set('Section', 'max_coral_open_attempts', '3')
         newConfig.set('Section', 'cert', 'cert.pem')
         newConfig.set('Section', 'key', 'key.pem')
+
+        newConfig.add_section('SubHosts')
+        newConfig.set('SubHosts', 'name', '')
+        newConfig.set('SubHosts', 'schemas', '')
+        newConfig.set('SubHosts', 'ports', '')
+
         newConfig.write(configFile)
         configFile.close()
 
