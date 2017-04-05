@@ -26,6 +26,19 @@ class SLController(object):
                                  "screenlockApp.py")]
             self.appname="screenlockApp.py"
 
+        if getattr(sys, 'frozen', False):
+            application_path = os.path.dirname(sys.executable)
+            self.app_init1 = [os.path.join(application_path,
+                                          "userLock.exe")]
+            self.appname1="userLock.exe"
+        elif __file__:
+            application_path = os.path.dirname(__file__)
+            self.app_init1 = ["python.exe",
+                             os.path.join(application_path,
+                                          "userLock.py")]
+            self.appname1 = "userLock.py"
+
+
         self.logger.debug("Screenlock Controller Initialized, path: %s, appName: %s" %
                           (application_path, self.appname))
 
@@ -34,6 +47,9 @@ class SLController(object):
             try:
                 if p.name == self.appname:
                     return True
+                elif p.name == self.appname1:
+                    self.appname = self.appname1
+                    return True;
             except psutil.Error as err:
                 #permission error on getting name of process (safe to ignore)
                 pass

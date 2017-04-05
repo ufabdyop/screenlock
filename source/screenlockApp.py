@@ -16,6 +16,8 @@ import win32api
 import win32con
 import win32gui
 import wx
+import ctypes
+import psutil
 from screenlockForegrounder import ControlFrameThread
 
 import log
@@ -191,42 +193,64 @@ class NullProcess(object):
 def main(sysargs):
     log.initialize_logging('screenlockApp')
     logger = logging.getLogger("Main Method")
-    app = wx.App( False )
-    if len(sysargs) == 2:
-        frm = OverlayFrame(sysargs[0], sysargs[1])
-    else:
-        frm = OverlayFrame()
 
-    frm.Show()
+    runApp = True
+    lockCounter = 0
+    for p in psutil.process_iter():
+        logger.debug("Checking if screenlock app is already running.")
+        try:
+            if p.name == "screenlockApp.exe":
+                lockCounter += 1;
+            elif p.name == "userLock.exe":
+                lockCounter += 1
+            if lockCounter >=2:
+                ctypes.windll.user32.MessageBoxA(None, 'Screenlock already running! Exiting.', 'Screenlock Error', 0)
+                logger.debug("Screenlockapp already running, exiting.")
+                runApp = False
+                break
 
-    frameController = ControlFrameThread()
-    frameController.start()
+        except psutil.Error as err:
+            # permission error on getting name of process (safe to ignore)
+            pass
 
-    #taskmgrController = TaskManagerHider(frameController.logger)
-    #taskmgrController.start()
 
-    app.MainLoop()
-    logger.debug("main loop exited")
+    if (runApp):
+        app = wx.App( False )
+        if len(sysargs) == 2:
+            frm = OverlayFrame(sysargs[0], sysargs[1])
+        else:
+            frm = OverlayFrame()
 
-    #taskmgrController.stopRunning()
-    #logger.debug("taskmgr signaled stop")
+        frm.Show()
 
-    frameController.stopRunning()
-    logger.debug("frame controller signaled stop")
+        frameController = ControlFrameThread()
+        frameController.start()
 
-    #taskmgrController.join(5)
-    #logger.debug("taskmgr exited")
+        #taskmgrController = TaskManagerHider(frameController.logger)
+        #taskmgrController.start()
 
-    frameController.join(5)
-    logger.debug("frame controller exited")
+        app.MainLoop()
+        logger.debug("main loop exited")
 
-    logger.debug (threading.active_count())
-    logger.debug (threading.enumerate())
+        #taskmgrController.stopRunning()
+        #logger.debug("taskmgr signaled stop")
 
-    try:
-        frm.Destroy()
-    except Exception:
-        logger.error("Could not destroy frame: %s" % Exception)
+        frameController.stopRunning()
+        logger.debug("frame controller signaled stop")
+
+        #taskmgrController.join(5)
+        #logger.debug("taskmgr exited")
+
+        frameController.join(5)
+        logger.debug("frame controller exited")
+
+        logger.debug (threading.active_count())
+        logger.debug (threading.enumerate())
+
+        try:
+            frm.Destroy()
+        except Exception:
+            logger.error("Could not destroy frame: %s" % Exception)
 
     logger.debug("Exiting normally")
     sys.exit(0)
