@@ -55,7 +55,23 @@ class SLController(object):
                 pass
         return False
 
+    def kill_userlock(self):
+        for p in psutil.process_iter():
+            try:
+                if p.name == self.appname1:
+                    if p.pid:
+                        self.logger.debug("%s %s" % (" Killing PID: ", p.pid))
+                        try:
+                            p.send_signal(signal.SIGTERM)
+                        except:
+                            self.logger.debug("ScreenlockController: The Screenlock app is not running.")
+                            continue
+            except psutil.Error as err:
+                #permission error on getting name of process (safe to ignore)
+                pass
+
     def lock_screen(self):
+        self.kill_userlock()
         self.lockerProc.append( subprocess.Popen(self.app_init,  creationflags=subprocess.CREATE_NEW_PROCESS_GROUP) )
 
     def unlock_screen(self):
