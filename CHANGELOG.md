@@ -1,3 +1,7 @@
+## [1.1.12] & [1.1.13]  -  04/07/2017
+### Changed
+- Major bug fixes
+
 ## [1.1.11]  -  03/31/2017
 ### Added
 - Support for dual monitors
