@@ -1,5 +1,6 @@
 from __future__ import print_function
 import sys, os, wx, screenlockConfig, log, logging, subprocess, pprint
+from screenlockForegrounder import ControlFrameThread
 from datetime import datetime
 import _winreg as wreg
 

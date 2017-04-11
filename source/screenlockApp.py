@@ -19,6 +19,7 @@ import wx
 import ctypes
 import psutil
 from screenlockForegrounder import ControlFrameThread
+from threading import Timer
 
 import log
 import screenlockConfig
@@ -71,11 +72,12 @@ class OverlayFrame( wx.Frame ):
 
         self.inputField = wx.TextCtrl(self, value="", size=(140, 30), pos=(25,yPos), name="input", style=wx.TE_PASSWORD)
         self.inputField.SetFont(font)
+        self.inputField.Bind(wx.EVT_TEXT_ENTER, self.OnEnterAdmin)
 
         self.submitButton = wx.Button(self, ID_SUBMIT, 'Submit', size=(100, 30), pos=(185 ,yPos))
         self.submitButton.SetFont(font)
         self.Bind(wx.EVT_BUTTON, self.OnSubmit, id=ID_SUBMIT)
-        self.Bind(wx.EVT_TEXT_ENTER, self.OnSubmit)
+        #self.Bind(wx.EVT_TEXT_ENTER, self.OnSubmit)
 
         yPos += 50;
 
@@ -104,11 +106,12 @@ class OverlayFrame( wx.Frame ):
             self.userPassword = wx.TextCtrl(self, value="", size=(140, 30), pos=(25, yPos), name="input",
                                           style=wx.TE_PASSWORD)
             self.userPassword.SetFont(font)
+            self.userPassword.Bind(wx.EVT_TEXT_ENTER, self.OnEnterUser)
 
             self.userSubmitButton = wx.Button(self, USR_SUBMIT, 'Submit', size=(100, 30), pos=(185, yPos))
             self.userSubmitButton.SetFont(font)
             self.Bind(wx.EVT_BUTTON, self.OnSubmitUser, id=USR_SUBMIT)
-            self.Bind(wx.EVT_TEXT_ENTER, self.OnSubmitUser)
+            #self.Bind(wx.EVT_TEXT_ENTER, self.OnSubmitUser)
 
         yPos+=50;
 
@@ -133,6 +136,12 @@ class OverlayFrame( wx.Frame ):
         global endFlag
         endFlag = True
         self.Destroy()
+
+    def OnEnterAdmin(self, event):
+        self.OnSubmit(event)
+
+    def OnEnterUser(self, event):
+        self.OnSubmitUser(event)
 
     def OnSubmit(self, event):
         self.input = self.inputField.GetValue()
@@ -190,6 +199,7 @@ class NullProcess(object):
     def send_signal(self, sig):
         self.logger.error("NullProcess Received sig: %s" % sig)
 
+
 def main(sysargs):
     log.initialize_logging('screenlockApp')
     logger = logging.getLogger("Main Method")
@@ -204,6 +214,7 @@ def main(sysargs):
             elif p.name == "userLock.exe":
                 lockCounter += 1
             if lockCounter >=2:
+
                 ctypes.windll.user32.MessageBoxA(None, 'Screenlock already running! Exiting.', 'Screenlock Error', 0)
                 logger.debug("Screenlockapp already running, exiting.")
                 runApp = False
