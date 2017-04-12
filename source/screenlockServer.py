@@ -1,4 +1,4 @@
-import sys, os, urllib2, screenlockConfig, screenlockController, version, json, log
+import sys, os, urllib2, screenlockConfig, screenlockController, version, json, log, childController
 from flask import Flask, request, Response, render_template
 from urlparse import urlparse
 from functools import wraps
@@ -31,6 +31,7 @@ class screenlockFlaskServer(object):
 
         self.setup_routes()
         self.lockController = screenlockController.SLController()
+        self.childController = childController.child_controller()
 
     def run(self):
         self.lock_screen()

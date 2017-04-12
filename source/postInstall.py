@@ -223,7 +223,7 @@ def makeConfigFileIfNeeded():
         newConfig.set('Section', 'key', 'key.pem')
 
         newConfig.add_section('SubHosts')
-        newConfig.set('SubHosts', 'name', '')
+        newConfig.set('SubHosts', 'names', '')
         newConfig.set('SubHosts', 'schemas', '')
         newConfig.set('SubHosts', 'ports', '')
 

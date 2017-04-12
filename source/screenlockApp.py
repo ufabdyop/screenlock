@@ -19,6 +19,7 @@ import wx
 import ctypes
 import psutil
 from screenlockForegrounder import ControlFrameThread
+from childController import child_controller
 from threading import Timer
 
 import log
@@ -42,6 +43,7 @@ class OverlayFrame( wx.Frame ):
         self.appProcess = None
         self.userlock_name = userlock_name
         self.userlock_password = userlock_password
+        self.childController = child_controller()
 
         wx.Frame.__init__( self, None, title="Transparent Window",
                            style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP )
@@ -152,6 +154,7 @@ class OverlayFrame( wx.Frame ):
             endFlag = True
             self.Close()
             self.Destroy()
+            self.childController.lock_childs()
             if wx.Display_GetCount() >= 2:
                 self.secondFrame.Close()
                 self.secondFrame.Destroy()
