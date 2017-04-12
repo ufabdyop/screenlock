@@ -50,6 +50,18 @@ class SLConfig(object):
                 raise noe
         return result
 
+    def getFromSubHosts(self, key, default=None):
+        toReturn = None
+        try:
+            result = self.config.get('SubHosts', key, default)
+            result = result.split(',')
+        except ConfigParser.NoOptionError as noe:
+            if default is not None:
+                result = default
+            else:
+                raise noe
+        return result
+
         
     def convert_unix_line_endings_to_win(self, filename):
         text = open(filename, "U").read()
