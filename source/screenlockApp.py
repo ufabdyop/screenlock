@@ -154,7 +154,7 @@ class OverlayFrame( wx.Frame ):
             endFlag = True
             self.Close()
             self.Destroy()
-            self.childController.lock_childs()
+            self.childController.unlock_childs("admin", self.input)
             if wx.Display_GetCount() >= 2:
                 self.secondFrame.Close()
                 self.secondFrame.Destroy()
