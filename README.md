@@ -1,4 +1,4 @@
-# ScreenLock  [![version][version-badge]][CHANGELOG] [![license][license-badge]][LICENSE] 
+# ScreenLock  [![version][version-badge]][CHANGELOG] [![license][license-badge]][LICENSE]
 
 This program locks the screen of a windows computer and only allows coral to run in the foreground.  
 All other programs are blocked by a large, transparent window

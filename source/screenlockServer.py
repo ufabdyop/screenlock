@@ -109,14 +109,20 @@ class screenlockFlaskServer(object):
 
     def lock_screen(self):
         try:
+            auth = request.authorization
+            print (auth)
             self.lockController.lock_screen()
+            self.childController.lock_childs(auth.username, auth.password)
         except Exception,e:
             self.logger.error("ScreenLockServer error locking screen: %s" % e)
         return json.dumps({"status": "locked"})
 
     def unlock_screen(self):
         try:
+            auth = request.authorization
+            print (auth)
             self.lockController.unlock_screen()
+            self.childController.unlock_childs(auth.username, auth.password)
         except Exception,e:
             self.logger.error("ScreenLockServer error unlocking screen: %s" % e)
         return json.dumps({"status": "unlocked"})
