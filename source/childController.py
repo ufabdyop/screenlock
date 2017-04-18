@@ -70,7 +70,6 @@ class child_controller(object):
             username: The username of the screenlock.
             password: The password of the screenlock.
         """
-
         # Gets the list of childs.
         childs = self.config.getFromSubHosts('names')
         # Gets the list of schemas.
@@ -119,12 +118,16 @@ def send_signal_to_child(hostname, schema, port, command, username, password):
         command: 'lock' or 'unlock'.
     """
 
-    logging.info("Sending " + command + " single to " + hostname + ".")
+    logging.info("Sending " + command + " single to " + hostname + ":" + port + "")
     url = '%s://%s:%s/%s' % (schema, hostname, port, command)
     auth = HTTPBasicAuth(username, password)
     logging.debug("Proxying request: %s, %s" % (url, command))
-    response = requests.post(url, data=None, headers=None, auth=auth)
-    logging.info("Got response code %s " % response.status_code)
+    try:
+        response = requests.post(url, data=None, headers=None, auth=auth, verify=False, timeout=3)
+        logging.info("Got response code %s " % response.status_code)
+    except requests.exceptions.RequestException as e:  # This is the correct syntax
+        logging.error("Could not connect to given child in the config.ini file.")
+
 
 
 

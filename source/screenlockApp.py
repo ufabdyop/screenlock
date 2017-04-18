@@ -45,15 +45,20 @@ class OverlayFrame( wx.Frame ):
         self.userlock_password = userlock_password
         self.childController = child_controller()
 
+
         wx.Frame.__init__( self, None, title="Transparent Window",
                            style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP )
+
+        self.alphaValue = int(config.get('opacity'))
+
+        if self.alphaValue <= 180 or self.alphaValue > 255:
+            self.alphaValue = 240
 
         if wx.Display_GetCount() >= 2:
             xPos2 = wx.Display(1).GetGeometry()[0]
             self.secondFrame = wx.Frame(None, title="Transparent Window", pos=(xPos2, 0),
                                         style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP)
-            alphaValue = 240
-            self.secondFrame.SetTransparent(alphaValue)
+            self.secondFrame.SetTransparent(self.alphaValue)
             self.secondFrame.SetBackgroundColour('#666666')
             self.secondFrame.ShowFullScreen(True)
             self.secondFrame.Show()
@@ -61,8 +66,7 @@ class OverlayFrame( wx.Frame ):
         yPos = 50;
 
         self.ShowFullScreen( True )
-        self.alphaValue = 240
-        self.SetTransparent( self.alphaValue )
+        self.SetTransparent(self.alphaValue)
         self.SetBackgroundColour('#666666')
         
         font=wx.Font(16,wx.DECORATIVE,wx.NORMAL,wx.BOLD)
@@ -152,9 +156,9 @@ class OverlayFrame( wx.Frame ):
         if config.passwordCheck(self.input, 'admin_override'):
             global endFlag
             endFlag = True
+            self.childController.unlock_childs("admin", self.input)
             self.Close()
             self.Destroy()
-            self.childController.unlock_childs("admin", self.input)
             if wx.Display_GetCount() >= 2:
                 self.secondFrame.Close()
                 self.secondFrame.Destroy()
@@ -217,7 +221,6 @@ def main(sysargs):
             elif p.name == "userLock.exe":
                 lockCounter += 1
             if lockCounter >=2:
-
                 ctypes.windll.user32.MessageBoxA(None, 'Screenlock already running! Exiting.', 'Screenlock Error', 0)
                 logger.debug("Screenlockapp already running, exiting.")
                 runApp = False
@@ -262,12 +265,12 @@ def main(sysargs):
         logger.debug (threading.enumerate())
 
         try:
+            frm.Close()
             frm.Destroy()
         except Exception:
             logger.error("Could not destroy frame: %s" % Exception)
 
     logger.debug("Exiting normally")
     sys.exit(0)
-
 if __name__ == '__main__' :
     main(sys.argv[1:3])
