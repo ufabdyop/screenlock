@@ -221,6 +221,7 @@ def makeConfigFileIfNeeded():
         newConfig.set('Section', 'max_coral_open_attempts', '3')
         newConfig.set('Section', 'cert', 'cert.pem')
         newConfig.set('Section', 'key', 'key.pem')
+        newConfig.set('Section', 'opacity', '240')
 
         newConfig.add_section('SubHosts')
         newConfig.set('SubHosts', 'names', '')

@@ -109,9 +109,8 @@ class screenlockFlaskServer(object):
 
     def lock_screen(self):
         try:
-            auth = request.authorization
-            print (auth)
             self.lockController.lock_screen()
+            auth = request.authorization
             self.childController.lock_childs(auth.username, auth.password)
         except Exception,e:
             self.logger.error("ScreenLockServer error locking screen: %s" % e)
@@ -119,9 +118,8 @@ class screenlockFlaskServer(object):
 
     def unlock_screen(self):
         try:
-            auth = request.authorization
-            print (auth)
             self.lockController.unlock_screen()
+            auth = request.authorization
             self.childController.unlock_childs(auth.username, auth.password)
         except Exception,e:
             self.logger.error("ScreenLockServer error unlocking screen: %s" % e)
