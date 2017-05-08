@@ -59,7 +59,7 @@ ports = 1234</pre>
 Example of two childs with default schemas and ports:
 <pre>
 [SubHosts]
-names = 127.0.0.5, 127.0.0.12
+names = 127.0.0.5, 127.0.0.12               
 schemas = ,
 ports = ,</pre>
 </td>
