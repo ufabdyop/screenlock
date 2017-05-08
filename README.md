@@ -66,6 +66,9 @@ ports = ,</pre>
 </tr>
 </table>
 
+#### Adjustable Opacity
+The opacity of the screenlock's screen can be changed through the 'config.ini' file. Change the opacity field to a number within the range of 180 to 255 (inclusive). The default opacity is 240.
+
 ## Prerequisites for Developing on Python Source Code :
 
 Currently, this requires:
