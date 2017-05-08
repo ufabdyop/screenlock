@@ -1,12 +1,11 @@
 from __future__ import print_function
 import sys, os, wx, screenlockConfig, log, logging, subprocess, pprint
-from screenlockForegrounder import ControlFrameThread
 from datetime import datetime
 import _winreg as wreg
 
 PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
 ID_SUBMIT = wx.NewId()
-
+global username, password
 
 class PostInstallFrame( wx.Frame ):
 
@@ -94,6 +93,7 @@ class PostInstallFrame( wx.Frame ):
             self.confirmPasswordInputField.SetFocus()
 
     def OnSubmit(self, event):
+        global username, password
         passwordVal = self.passwordInputField.GetValue()
         confirmPassVal = self.confirmPasswordInputField.GetValue()
 
@@ -106,10 +106,10 @@ class PostInstallFrame( wx.Frame ):
         elif passwordVal != confirmPassVal:
             self.errorMessage('Password Mismatch!')
         else:
+            username = self.nameField.GetValue()
+            password = passwordVal
             self.message('Saved Password!')
             self.Close()
-            import screenlockApp
-            screenlockApp.main([self.nameField.GetValue(), passwordVal])
 
     def errorMessage(self, message):
         self.status.SetLabel(message)
@@ -122,9 +122,12 @@ class PostInstallFrame( wx.Frame ):
 
 
 if __name__ == '__main__' :
+    global username, password
     log.create_log_folder()
     log.initialize_logging('userLock')
     app = wx.App( False )
     frm = PostInstallFrame()
     frm.Show()
     app.MainLoop()
+    import screenlockApp
+    screenlockApp.main([username, password])
