@@ -30,6 +30,42 @@ Configure your windows machine to run one of those startup scripts on login and 
 application automatically.  In addition to batch files, there are some vbs files that are provided to 
 do the same thing, but should hide the command prompt window.
 
+## Features
+
+<img src="screenshots/v11-1.png" align="right" width="500">
+
+#### Walk Away
+User can use the screenlock shortcut on the desktop to lock the computer with a temporary password which expires after once use.
+
+#### Multiple Monitors
+Screenlock works with mulitple monitors.
+<br><br>
+#### Multiple Computers
+Master computer can be set to unlock child computers. To setup this feature, you will need to add the IP addresses, schemas, and the port number of the child computers to the 'config.ini' file of the master computer. Each IP address should be separated but a comma. You do not need to edit the 'config.ini' file of the child computers.
+
+Note: If no schema or port number is specified, the default will be used. (Default schema is HTTP and port number is 9092)
+
+<table>
+<tr>
+<td>
+Example of one child:
+<pre>
+[SubHosts]
+names = 127.0.0.5
+schemas = HTTP                               
+ports = 1234</pre>
+</td>
+<td>
+Example of two childs with default schemas and ports:
+<pre>
+[SubHosts]
+names = 127.0.0.5, 127.0.0.12
+schemas = ,
+ports = ,</pre>
+</td>
+</tr>
+</table>
+
 ## Prerequisites for Developing on Python Source Code :
 
 Currently, this requires:
