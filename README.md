@@ -106,5 +106,5 @@ https://github.com/ufabdyop/screenlock
 
 [CHANGELOG]: ./CHANGELOG.md
 [LICENSE]: ./LICENSE
-[version-badge]: https://img.shields.io/badge/Version-1.1.13-blue.svg
+[version-badge]: https://img.shields.io/badge/Version-1.1.16-blue.svg
 [license-badge]: https://img.shields.io/badge/License-MIT-blue.svg
