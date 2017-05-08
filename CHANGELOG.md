@@ -1,3 +1,13 @@
+## [1.1.16]  -  05/08/2017
+### Added
+- Support for unlocking multiple computer
+- 'SubHost' section in 'config.ini' file for adding IP addresses of secondary computers
+- Timeout for inactive secondary computers
+
+### Changed
+- Only one instance of screenlock is allowed
+- Bug fixes
+
 ## [1.1.12] & [1.1.13]  -  04/07/2017
 ### Changed
 - Major bug fixes
@@ -35,6 +45,9 @@
 ### Changed
 - Switched to Pyinstaller instead of Py2exe to build the exe files
 
+[1.1.16]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.16
+[1.1.13]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.13
+[1.1.12]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.12
 [1.1.11]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.11
 [1.1.10]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.10
 [1.1.9]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.9
