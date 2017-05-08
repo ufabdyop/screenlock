@@ -16,10 +16,9 @@ import win32api
 import win32con
 import win32gui
 import wx
-import ctypes
 import psutil
 from screenlockForegrounder import ControlFrameThread
-from childController import child_controller
+# from childController import child_controller
 from threading import Timer
 
 import log
@@ -43,7 +42,7 @@ class OverlayFrame( wx.Frame ):
         self.appProcess = None
         self.userlock_name = userlock_name
         self.userlock_password = userlock_password
-        self.childController = child_controller()
+        # self.childController = child_controller()
 
 
         wx.Frame.__init__( self, None, title="Transparent Window",
@@ -127,7 +126,6 @@ class OverlayFrame( wx.Frame ):
         win32api.SetConsoleCtrlHandler(self.signalHandler, True)
 
         global coral
-        global config
         coral = config.get('coral')
 
         self.openKeysBlock()
@@ -156,7 +154,7 @@ class OverlayFrame( wx.Frame ):
         if config.passwordCheck(self.input, 'admin_override'):
             global endFlag
             endFlag = True
-            self.childController.unlock_childs("admin", self.input)
+            # self.childController.unlock_childs("admin", self.input)
             self.Close()
             self.Destroy()
             if wx.Display_GetCount() >= 2:
@@ -213,15 +211,14 @@ def main(sysargs):
 
     runApp = True
     lockCounter = 0
+    logger.debug("Checking if screenlock app is already running.")
     for p in psutil.process_iter():
-        logger.debug("Checking if screenlock app is already running.")
         try:
             if p.name == "screenlockApp.exe":
                 lockCounter += 1;
             elif p.name == "userLock.exe":
                 lockCounter += 1
             if lockCounter >=2:
-                ctypes.windll.user32.MessageBoxA(None, 'Screenlock already running! Exiting.', 'Screenlock Error', 0)
                 logger.debug("Screenlockapp already running, exiting.")
                 runApp = False
                 break
@@ -258,7 +255,10 @@ def main(sysargs):
         #taskmgrController.join(5)
         #logger.debug("taskmgr exited")
 
-        frameController.join(5)
+        print (threading.active_count())
+        print (threading.enumerate())
+
+        frameController.join()
         logger.debug("frame controller exited")
 
         logger.debug (threading.active_count())
@@ -272,5 +272,6 @@ def main(sysargs):
 
     logger.debug("Exiting normally")
     sys.exit(0)
+
 if __name__ == '__main__' :
     main(sys.argv[1:3])

@@ -1,4 +1,4 @@
-import logging, log, requests
+import logging, log, requests, socket
 from screenlockConfig import SLConfig
 from requests.auth import HTTPBasicAuth
 
@@ -89,7 +89,6 @@ class child_controller(object):
         else:
             # Go through the list of childs and send signal to each of them.
             for index in range(len(childs)):
-
                 if childs[index] == '':
                     self.logger.error("Host field is blank, skipping to next child host in config.ini.")
                     continue
@@ -117,16 +116,28 @@ def send_signal_to_child(hostname, schema, port, command, username, password):
         port: The port number of the screenlock app server.
         command: 'lock' or 'unlock'.
     """
-
-    logging.info("Sending " + command + " single to " + hostname + ":" + port + "")
-    url = '%s://%s:%s/%s' % (schema, hostname, port, command)
-    auth = HTTPBasicAuth(username, password)
-    logging.debug("Proxying request: %s, %s" % (url, command))
+    logging.info("Checking if port " + port + " is open on host " + hostname + ".")
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    isRunning = False;
     try:
-        response = requests.post(url, data=None, headers=None, auth=auth, verify=False, timeout=3)
-        logging.info("Got response code %s " % response.status_code)
-    except requests.exceptions.RequestException as e:  # This is the correct syntax
-        logging.error("Could not connect to given child in the config.ini file.")
+        s.connect((hostname, int(port)))
+        s.close()
+        isRunning = True
+        logging.info("Port is open")
+    except:
+        logging.error("The port is not open.")
+
+    if (isRunning):
+        logging.info("Sending " + command + " single to " + hostname + ":" + port + "")
+        url = '%s://%s:%s/%s' % (schema, hostname, port, command)
+        auth = HTTPBasicAuth(username, password)
+        logging.debug("Proxying request: %s, %s" % (url, command))
+        try:
+            response = requests.post(url, data=None, headers=None, auth=auth, verify=False)
+            logging.info("Got response code %s " % response.status_code)
+        except requests.exceptions.RequestException:  # This is the correct syntax
+            logging.error("Could not connect to given child in the config.ini file.")
+
 
 
 
