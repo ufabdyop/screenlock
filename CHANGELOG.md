@@ -1,3 +1,7 @@
+## [1.1.17]  -  05/10/2017
+### Changed
+- Bug fixes
+
 ## [1.1.16]  -  05/08/2017
 ### Added
 - Support for unlocking multiple computer
@@ -45,6 +49,7 @@
 ### Changed
 - Switched to Pyinstaller instead of Py2exe to build the exe files
 
+[1.1.17]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.17
 [1.1.16]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.16
 [1.1.13]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.13
 [1.1.12]: https://github.com/ufabdyop/screenlock/releases/tag/1.1.12
