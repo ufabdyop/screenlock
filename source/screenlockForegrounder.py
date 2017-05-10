@@ -18,7 +18,6 @@ from screenlockWindowHelper import getWindow, getAllVisibleWindows, windowTitleM
 import win32gui
 import win32con
 import pprint
-
 class ControlFrameThread(Thread):
     windows = {}
 
@@ -34,10 +33,12 @@ class ControlFrameThread(Thread):
             0: "Run Data Collector",
             1: "Warning",
             2: "Error",
-            3: "Coral",
-            4: "Screen Saver",
-            5: "Application Update",
-            6: "Transparent Window"
+            3: "Confirm Enable",
+            4: "Machine",
+            5: "Coral",
+            6: "Screen Saver",
+            7: "Application Update",
+            8: "Transparent Window"
         }
         self.config = {
             "order": preferred_order_of_windows
@@ -87,7 +88,9 @@ class ControlFrameThread(Thread):
         if topWindow not in windows_we_care_about:
             self.logger.debug("Why isn't the top window one of our preferred ones?")
             self.logger.debug(topWindow)
-            reOrder = True
+            print ("TITLE: " + topWindow['title'])
+            if topWindow['title'] != "":
+                reOrder = True
 
         if reOrder:
             for win in reversed(preferredOrder):

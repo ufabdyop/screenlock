@@ -121,6 +121,7 @@ Section -AdditionalIcons
 
    ;create desktop shortcut
   CreateShortCut "$DESKTOP\Lock Computer.lnk" "$INSTDIR\userLock.exe"
+  CreateShortCut "$DESKTOP\Admin Lock.lnk" "$INSTDIR\screenlockApp.exe"
 SectionEnd
 
 Section -Post
