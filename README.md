@@ -136,7 +136,7 @@ The device will respond with a 1 or a 0 byte to show it is enabled or disabled r
 
 More screenshots at:
 
-[more screenshots](https://github.com/ufabdyop/screenlock/blob/master/doc/screenshots/example.md "Examples") 
+[more screenshots](https://github.com/ufabdyop/screenlock/tree/master/screenshots/example.md "Examples") 
 
 ## More Info:
 https://github.com/ufabdyop/screenlock
