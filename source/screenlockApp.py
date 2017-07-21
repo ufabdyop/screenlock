@@ -38,7 +38,7 @@ class OverlayFrame( wx.Frame ):
 
     def __init__( self, userlock_name=None, userlock_password=None )  :
         global coral
-        coral = config.get('coral')
+        coral = config.get('use_client')
         self.logger=logging.getLogger('screenlockApp')
         self.logger.debug(" screenlockApp: Starting")
         self.appProcess = None
@@ -90,7 +90,7 @@ class OverlayFrame( wx.Frame ):
 
         if coral:
             START_CORAL = wx.NewId()
-            self.clientButton = wx.Button(self, START_CORAL, 'Start Coral', pos=(10,yPos), size=wx.Size(300, 50))
+            self.clientButton = wx.Button(self, START_CORAL, 'Start Client', pos=(10,yPos), size=wx.Size(300, 50))
             self.clientButton.SetFont(font)
             self.Bind(wx.EVT_BUTTON, self.OnStartCoral, id=START_CORAL)
             yPos += 60;

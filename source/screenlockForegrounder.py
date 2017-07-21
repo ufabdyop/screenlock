@@ -18,6 +18,12 @@ from screenlockWindowHelper import getWindow, getAllVisibleWindows, windowTitleM
 import win32gui
 import win32con
 import pprint
+
+import screenlockConfig
+global globalConfig
+globalConfig = screenlockConfig.SLConfig()
+
+
 class ControlFrameThread(Thread):
     windows = {}
 
@@ -29,17 +35,28 @@ class ControlFrameThread(Thread):
         self.setConfig()
 
     def setConfig(self):
-        preferred_order_of_windows = {
-            0: "Run Data Collector",
-            1: "Warning",
-            2: "Error",
-            3: "Confirm Enable",
-            4: "Machine",
-            5: "Coral",
-            6: "Screen Saver",
-            7: "Application Update",
-            8: "Transparent Window"
-        }
+        preferred_order_of_windows = {}
+        if 'WindowOrder' in globalConfig.config.sections():
+            self.logger.debug("WindowOrder Config: %s" % pprint.pformat(globalConfig.config.items('WindowOrder')))
+            for i in globalConfig.config.items('WindowOrder'):
+                key, val = i
+                key = key.replace('win', '')
+                key = int(key)
+                preferred_order_of_windows[key] = val
+        else:
+            preferred_order_of_windows = {
+                0: "Run Data Collector",
+                1: "Warning",
+                2: "Error",
+                3: "Confirm Enable",
+                4: "Machine",
+                5: "Coral",
+                6: "Screen Saver",
+                7: "Application Update",
+                8: "Transparent Window"
+            }
+        self.logger.debug(pprint.pformat(globalConfig.config.items('WindowOrder')))
+        self.logger.debug("Effective WindowOrder: %s" % pprint.pformat(preferred_order_of_windows))
         self.config = {
             "order": preferred_order_of_windows
         }
