@@ -37,13 +37,15 @@ USR_SUBMIT = wx.NewId()
 class OverlayFrame( wx.Frame ):
 
     def __init__( self, userlock_name=None, userlock_password=None )  :
+        global coral
+        coral = config.get('coral')
         self.logger=logging.getLogger('screenlockApp')
         self.logger.debug(" screenlockApp: Starting")
         self.appProcess = None
         self.userlock_name = userlock_name
         self.userlock_password = userlock_password
         # self.childController = child_controller()
-
+        self.logger.debug(" use coral: %s" % coral )
 
         wx.Frame.__init__( self, None, title="Transparent Window",
                            style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP )
@@ -86,10 +88,13 @@ class OverlayFrame( wx.Frame ):
 
         yPos += 50;
 
-        START_CORAL = wx.NewId()
-        self.clientButton = wx.Button(self, START_CORAL, 'Start Coral', pos=(10,yPos), size=wx.Size(300, 50))
-        self.clientButton.SetFont(font)
-        self.Bind(wx.EVT_BUTTON, self.OnStartCoral, id=START_CORAL)
+        if coral:
+            START_CORAL = wx.NewId()
+            self.clientButton = wx.Button(self, START_CORAL, 'Start Coral', pos=(10,yPos), size=wx.Size(300, 50))
+            self.clientButton.SetFont(font)
+            self.Bind(wx.EVT_BUTTON, self.OnStartCoral, id=START_CORAL)
+        else:
+            self.logger.debug("No coral client")
 
         yPos += 60;
         self.versionLable = wx.StaticText(self, -1, 'v' + version.VERSION, pos=(0, yPos), size=wx.Size(300, 50), style=wx.ALIGN_CENTER)
@@ -124,9 +129,6 @@ class OverlayFrame( wx.Frame ):
         self.status.SetFont(font)
 
         win32api.SetConsoleCtrlHandler(self.signalHandler, True)
-
-        global coral
-        coral = config.get('coral')
 
         self.openKeysBlock()
         try:
