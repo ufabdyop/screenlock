@@ -166,7 +166,7 @@ class PostInstallFrame(wx.Frame):
                 self.config.writeKey('true', 'use_client')
                 self.logger.debug(str(datetime.now()) + ' Postinstall: \'coral\' has been updated to \'true\'')
             else:
-                self.config.writeKey('false', 'use_client')
+                self.config.writeKey('', 'use_client')
                 self.logger.debug(str(datetime.now()) + ' Postinstall: \'coral\' has been updated to \'false\'')
 
         except Exception, e:
@@ -197,6 +197,7 @@ class PostInstallFrame(wx.Frame):
                 self.Close()
             except Exception, e:
                 self.logger.error(pprint.pformat(e))
+        writeComments()
 
     def errorMessage(self, message):
         self.status.SetLabel(message)
@@ -216,7 +217,7 @@ def makeConfigFileIfNeeded():
         newConfig.set('Section', 'port', '9092')
         newConfig.set('Section', 'admin_override', '')
         newConfig.set('Section', 'web_password', '')
-        newConfig.set('Section', 'coral', '')
+        newConfig.set('Section', 'use_client', '')
         newConfig.set('Section', 'coral_sleep_delay', '6')
         newConfig.set('Section', 'max_coral_open_attempts', '3')
         newConfig.set('Section', 'cert', 'cert.pem')
@@ -230,6 +231,31 @@ def makeConfigFileIfNeeded():
 
         newConfig.write(configFile)
         configFile.close()
+        writeComments()
+
+def writeComments():
+        with open("config.ini", "a") as f1:
+            f1.write("\n")
+            f1.write("""
+;multiple subhosts can be defined like so:
+;names = 155.98.11.50,155.98.11.49,155.98.11.48
+;schemas = http,http,http
+;ports = 9200,9200,9200
+
+
+;You can override window ordering with config items like the following:
+;[WindowOrder]
+;win0 = Notepad
+;win0 = Run Data Collector
+;win1 = Warning
+;win2 = Error
+;win3 = Confirm Enable
+;win4 = Machine
+;win5 = Coral
+;win6 = Screen Saver
+;win7 = Application Update
+;win8 = Transparent Window
+            """)
 
 # =======================================================#
 

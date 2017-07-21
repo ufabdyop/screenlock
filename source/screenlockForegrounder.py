@@ -55,7 +55,6 @@ class ControlFrameThread(Thread):
                 7: "Application Update",
                 8: "Transparent Window"
             }
-        self.logger.debug(pprint.pformat(globalConfig.config.items('WindowOrder')))
         self.logger.debug("Effective WindowOrder: %s" % pprint.pformat(preferred_order_of_windows))
         self.config = {
             "order": preferred_order_of_windows
