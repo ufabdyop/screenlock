@@ -93,11 +93,11 @@ class OverlayFrame( wx.Frame ):
             self.clientButton = wx.Button(self, START_CORAL, 'Start Coral', pos=(10,yPos), size=wx.Size(300, 50))
             self.clientButton.SetFont(font)
             self.Bind(wx.EVT_BUTTON, self.OnStartCoral, id=START_CORAL)
+            yPos += 60;
         else:
             self.logger.debug("No coral client")
 
-        yPos += 60;
-        self.versionLable = wx.StaticText(self, -1, 'v' + version.VERSION, pos=(0, yPos), size=wx.Size(300, 50), style=wx.ALIGN_CENTER)
+        self.versionLable = wx.StaticText(self, -1, 'v' + version.VERSION, pos=(30, yPos), size=wx.Size(100, 50), style=wx.ALIGN_LEFT)
         self.versionLable.SetForegroundColour(wx.Colour(255, 255, 255))
         self.versionLable.SetFont(wx.Font(10, wx.DECORATIVE, wx.NORMAL, wx.BOLD))
 
