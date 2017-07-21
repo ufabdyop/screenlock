@@ -163,10 +163,10 @@ class PostInstallFrame(wx.Frame):
 
         try:
             if self.setCoralCheckbox.IsChecked():
-                self.config.writeKey('true', 'coral')
+                self.config.writeKey('true', 'use_client')
                 self.logger.debug(str(datetime.now()) + ' Postinstall: \'coral\' has been updated to \'true\'')
             else:
-                self.config.writeKey('false', 'coral')
+                self.config.writeKey('false', 'use_client')
                 self.logger.debug(str(datetime.now()) + ' Postinstall: \'coral\' has been updated to \'false\'')
 
         except Exception, e:
