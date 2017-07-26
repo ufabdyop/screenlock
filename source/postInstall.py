@@ -178,26 +178,57 @@ class PostInstallFrame(wx.Frame):
         newWebPassword = self.newWebPasswordInputField.GetValue()
         confirmWebPassword = self.confirmWebPasswordInputField.GetValue()
 
-        if self.config.passwordCheck(oldPassword, 'admin_override') == False:
-            self.errorMessage('Wrong Current Admin Password!')
-        elif newPassword.strip() == "":
-            self.errorMessage('Empty Admin Password!')
-        elif newPassword != confirmPassword:
-            self.errorMessage('Admin Password Mismatch!')
-        elif newWebPassword.strip() == "":
-            self.errorMessage('Empty Web Password!')
-        elif newWebPassword != confirmWebPassword:
-            self.errorMessage('Web Password Mismatch!')
-        else:
-            try:
-                self.config.writePassword(newPassword, 'admin_override')
-                self.config.writePassword(newWebPassword, 'web_password')
-                self.message('Saved New Passwords')
-                self.logger.debug("Saved a New Password")
-                self.Close()
-            except Exception, e:
-                self.logger.error(pprint.pformat(e))
+        self.write_new_password(oldPassword, newPassword, confirmPassword, newWebPassword, confirmWebPassword)
         writeComments()
+
+    def write_new_password(self, oldPassword, newPassword, confirmPassword, newWebPassword, confirmWebPassword):
+
+        #check if they are providing a new password
+        if newPassword == confirmPassword and newPassword == "":
+            self.logger.debug("No admin password provided")
+            print( self.config.readPassword('admin_override').strip() )
+
+            #seems they are not providing a password
+            if self.config.readPassword('admin_override').strip() == "":
+                self.errorMessage('Please Set an Admin Password!')
+                self.logger.debug("error: Please Set an Admin Password!")
+                return
+
+        #check if they are providing a new web password
+        elif newWebPassword == confirmWebPassword and newWebPassword == "":
+            #seems they are not providing a password
+            if self.config.readPassword('web_password').strip() == "":
+                self.errorMessage('Please Set a Web Password!')
+                self.logger.debug("error: Please Set a Web Password!")
+                return
+
+        elif self.config.passwordCheck(oldPassword, 'admin_override') == False:
+            self.errorMessage('Wrong Current Admin Password!')
+            self.logger.debug("error: Wrong Current Admin Password!")
+            return
+
+        #at this point we know that they passed password check and either a new password, or web, or both are set
+        if newPassword != confirmPassword:
+            self.errorMessage('Admin Password Mismatch!')
+            self.logger.debug("Admin Password Mismatch!")
+            return
+
+        if newWebPassword != confirmWebPassword:
+            self.errorMessage('Web Password Mismatch!')
+            self.logger.debug("Web Password Mismatch!")
+            return
+
+        try:
+            if newPassword:
+                self.config.writePassword(newPassword.strip(), 'admin_override')
+            if newWebPassword:
+                self.config.writePassword(newWebPassword.strip(), 'web_password')
+            self.message('Saved New Password(s)')
+            self.logger.debug("Saved New Password(s)")
+            self.Close()
+        except Exception, e:
+            self.logger.error(pprint.pformat(e))
+            self.errorMessage("Error Saving Password!")
 
     def errorMessage(self, message):
         self.status.SetLabel(message)
