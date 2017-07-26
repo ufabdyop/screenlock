@@ -47,7 +47,6 @@ def create_exe():
     os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --icon=source/graphics/Lock_256.ico source/screenlockServer.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --icon=source/graphics/Lock_256.ico source/screenlockServerNCD.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --icon=source/graphics/Lock_256.ico source/screenlockApp.py')
-    os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --icon=source/graphics/Lock_256.ico source/screenlockApp.py')
     os.system('C:\\Python27\\Scripts\\pyinstaller  --windowed --icon=source/graphics/Lock_256.ico source/userLock.py')
 
 def merge_files():
