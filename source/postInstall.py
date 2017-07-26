@@ -273,6 +273,8 @@ def writeComments():
 ;schemas = http,http,http
 ;ports = 9200,9200,9200
 
+;You can override opacity (from 0 to 255):
+opacity = 240
 
 ;You can override window ordering with config items like the following:
 ;[WindowOrder]
