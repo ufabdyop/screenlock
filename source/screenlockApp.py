@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import pprint
 from threading import Thread
 import logging
 import os
@@ -52,12 +53,15 @@ class OverlayFrame( wx.Frame ):
 
         self.alphaValue = int(config.get('opacity'))
 
-        if self.alphaValue <= 180 or self.alphaValue > 255:
+        if self.alphaValue < 0 or self.alphaValue > 255:
             self.alphaValue = 240
 
         if wx.Display_GetCount() >= 2:
+            self.logger.debug("more than 1 monitor")
             xPos2 = wx.Display(1).GetGeometry()[0]
-            self.secondFrame = wx.Frame(None, title="Transparent Window", pos=(xPos2, 0),
+            yPos2 = wx.Display(1).GetGeometry()[1]
+            self.logger.debug("Second Display Geometry: %s" % pprint.pprint(wx.Display(1).GetGeometry()))
+            self.secondFrame = wx.Frame(None, title="Transparent Window", pos=(xPos2, yPos2),
                                         style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP)
             self.secondFrame.SetTransparent(self.alphaValue)
             self.secondFrame.SetBackgroundColour('#666666')
