@@ -34,7 +34,8 @@ class screenlockFlaskServer(object):
         self.childController = childController.child_controller()
 
     def run(self):
-        self.lock_screen()
+        if self.config.get('no_lock_on_start'):
+            self.lock_screen()
         interfaces = ("0.0.0.0", self.port)
 
         if self.ssl_context:
