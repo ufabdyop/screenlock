@@ -23,4 +23,8 @@ in Program Files\ScreenLock\
 Windows firewall might prompt you to allow screenlock to open a port. Make
 sure to allow the program through the firewall.
 
+Config file settings
+---
+use "lock_on_start = 0" to disable locking on startup of server
+
 

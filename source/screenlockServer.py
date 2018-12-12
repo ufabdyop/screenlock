@@ -34,7 +34,12 @@ class screenlockFlaskServer(object):
         self.childController = childController.child_controller()
 
     def run(self):
-        if self.config.get('no_lock_on_start'):
+        #check if we should lock on start
+        lock = self.config.get('lock_on_start', True)
+        if (lock == 'no') or (lock == '0') or (lock == 0) or (lock == 'false');
+            lock = False
+
+        if lock:
             self.lock_screen()
         interfaces = ("0.0.0.0", self.port)
 
