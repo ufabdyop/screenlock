@@ -169,7 +169,7 @@ class PostInstallFrame(wx.Frame):
                 self.config.writeKey('', 'use_client')
                 self.logger.debug(str(datetime.now()) + ' Postinstall: \'coral\' has been updated to \'false\'')
 
-        except Exception, e:
+        except Exception as e:
             self.logger.debug(str(datetime.now()) + ' Postinstall: ' + str(e))
 
         oldPassword = self.oldPasswordInputField.GetValue()
@@ -226,7 +226,7 @@ class PostInstallFrame(wx.Frame):
             self.message('Saved New Password(s)')
             self.logger.debug("Saved New Password(s)")
             self.Close()
-        except Exception, e:
+        except Exception as e:
             self.logger.error(pprint.pformat(e))
             self.errorMessage("Error Saving Password!")
 

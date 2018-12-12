@@ -3,11 +3,11 @@ import sys, requests
 def main():
 	num = len(sys.argv)
 	if num < 3:
-		print "Please enter at least two arguments"
-		print "eg. commandClient.exe https://localhost:9092 admin 1234 status"
-		print "eg. commandClient.exe https://localhost:9092 admin 1234 lock"
-		print "eg. commandClient.exe https://localhost:9092 admin 1234 unlock"
-		print "eg. commandClient.exe https://localhost:9092 version"
+		print("Please enter at least two arguments")
+		print("eg. commandClient.exe https://localhost:9092 admin 1234 status")
+		print("eg. commandClient.exe https://localhost:9092 admin 1234 lock")
+		print("eg. commandClient.exe https://localhost:9092 admin 1234 unlock")
+		print("eg. commandClient.exe https://localhost:9092 version")
 		sys.exit(0)
 	else:
 		mainUrl = sys.argv[1]
@@ -31,14 +31,14 @@ def main():
 			elif path == 'version':
 				response = requests.get(url, verify = False)
 			else:
-				print "Incorrect arguments"
+				print("Incorrect arguments")
 				sys.exit(0)
 			if response is not None:
 				if str(response.status_code) == '200':
-					print response.text
+					print(response.text)
 				else:
-					print response.status_code
-		except Exception, err:
+					print(response.status_code)
+		except Exception as err:
 			print ('Exception: ' + str(err))
 
 

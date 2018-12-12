@@ -36,7 +36,7 @@ class SocketClient(object):
                               % print_bytes(cmd))
             self.socket.sendall(cmd)
             self.receiveall(cmd, 1)
-        except IOError, e:
+        except IOError as e:
             print("Error")
             pprint.pprint(e)
 
@@ -51,7 +51,7 @@ class SocketClient(object):
                               % (msg_len, len(data)))
             print('Socket closed prematurely: %s' \
                 % bytearray(data))
-        except IOError, e:
+        except IOError as e:
             print('Socket receive error: %s' \
                 % bytearray(data))
 

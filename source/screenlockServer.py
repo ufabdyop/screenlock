@@ -36,7 +36,7 @@ class screenlockFlaskServer(object):
     def run(self):
         #check if we should lock on start
         lock = self.config.get('lock_on_start', True)
-        if (lock == 'no') or (lock == '0') or (lock == 0) or (lock == 'false');
+        if (lock == 'no') or (lock == '0') or (lock == 0) or (lock == 'false'):
             lock = False
 
         if lock:
@@ -118,7 +118,7 @@ class screenlockFlaskServer(object):
             self.lockController.lock_screen()
             auth = request.authorization
             self.childController.lock_childs(auth.username, auth.password)
-        except Exception,e:
+        except Exception as e:
             self.logger.error("ScreenLockServer error locking screen: %s" % e)
         return json.dumps({"status": "locked"})
 
@@ -127,7 +127,7 @@ class screenlockFlaskServer(object):
             self.lockController.unlock_screen()
             auth = request.authorization
             self.childController.unlock_childs(auth.username, auth.password)
-        except Exception,e:
+        except Exception as e:
             self.logger.error("ScreenLockServer error unlocking screen: %s" % e)
         return json.dumps({"status": "unlocked"})
     ########### END HTTP ENDPOINT METHODS ############
